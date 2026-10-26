@@ -19,6 +19,7 @@ export const BuyBox: React.FC = () => {
       rating: 3.6,
       ratingCount: 3175,
       category: "Men's Jeans",
+      inStock: true,
       isPrimeEligible: true,
       deliveryDate: "Thursday, 29 October",
       tag: "Great Indian Festival",

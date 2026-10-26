@@ -34,6 +34,7 @@ export default function DynamicProductPage({
       rating: product.rating,
       ratingCount: product.ratingCount,
       category: product.category,
+      inStock: product.inStock,
       isPrimeEligible: product.isPrimeEligible,
       deliveryDate: product.deliveryDate,
       tag: product.tag,
