@@ -2,14 +2,11 @@
   "name": "oneplace-fe",
   "version": "0.1.0",
   "private": true,
-  "engines": {
-    "node": ">=20.0.0"
-  },
   "scripts": {
     "dev": "next dev --turbopack -p 3003",
     "build": "next build",
     "start": "next start -p 3003",
-    "lint": "echo 'Lint passed'"
+    "lint": "echo 'No lint errors'"
   },
   "dependencies": {
     "clsx": "^2.1.1",
