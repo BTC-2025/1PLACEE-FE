@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Star, ChevronRight, ShieldCheck, RotateCcw, Truck, Award, Lock, Sparkles } from "lucide-react";
+import { Star, ChevronRight, ShieldCheck, RotateCcw, Truck, Award, Lock } from "lucide-react";
 
 interface ProductInfoProps {
   onColorChange: (color: string) => void;
@@ -67,7 +67,7 @@ export const ProductInfo: React.FC<ProductInfoProps> = ({ onColorChange, selecte
             #1 Best Seller
           </span>
           <span className="text-xs text-[#007185] hover:underline cursor-pointer">
-            in Men's Jeans & Chinos
+            in Men&apos;s Jeans & Chinos
           </span>
         </div>
 

@@ -1,8 +1,6 @@
 "use client";
 
-import React from "react";
-import Image from "next/image";
-import { Star, ShieldCheck, Zap, Plus } from "lucide-react";
+import { Star, Zap, Plus } from "lucide-react";
 import { Product } from "@/types";
 import { useCartStore } from "@/stores/cartStore";
 

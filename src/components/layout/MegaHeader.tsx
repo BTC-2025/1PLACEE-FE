@@ -7,7 +7,6 @@ import {
   ShoppingCart, 
   MapPin, 
   Menu, 
-  Heart, 
   User, 
   ChevronDown, 
   Sparkles,

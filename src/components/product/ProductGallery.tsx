@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Share2, Heart, Sparkles, MessageSquare } from "lucide-react";
+import { Share2, Heart, Sparkles } from "lucide-react";
 
 interface ProductGalleryProps {
   images: string[];

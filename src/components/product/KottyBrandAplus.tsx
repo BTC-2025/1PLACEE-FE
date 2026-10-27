@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Star, ShieldCheck, Play } from "lucide-react";
+import { Play } from "lucide-react";
 
 export const KottyBrandAplus: React.FC = () => {
   return (

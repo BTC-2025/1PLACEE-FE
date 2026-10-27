@@ -10,8 +10,6 @@ import {
   ShoppingBag,
   User,
   X,
-  Menu,
-  ChevronRight,
   Headset,
   Settings
 } from "lucide-react";
@@ -309,7 +307,7 @@ export const AmazonNavbar: React.FC = () => {
                     onClick={() => setIsSidebarOpen(false)}
                     className="hover:bg-blue-50 text-[#1559ac] font-bold p-1.5 rounded cursor-pointer block"
                   >
-                    Men's Apparel, Chinos & Jeans →
+                    Men&apos;s Apparel, Chinos & Jeans →
                   </Link>
                   <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Wireless Headphones & Audio</p>
                   <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Laptops & Smart Electronics</p>
@@ -333,9 +331,9 @@ export const AmazonNavbar: React.FC = () => {
                     onClick={() => setIsSidebarOpen(false)}
                     className="hover:bg-blue-50 text-[#1559ac] font-bold p-1.5 rounded cursor-pointer block"
                   >
-                    Men's Fashion & Trousers →
+                    Men&apos;s Fashion & Trousers →
                   </Link>
-                  <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Women's Fashion</p>
+                  <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Women&apos;s Fashion</p>
                   <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Home, Kitchen, Pets</p>
                   <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Beauty, Health & Personal Care</p>
                 </div>
