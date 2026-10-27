@@ -323,7 +323,13 @@ export const AmazonNavbar: React.FC = () => {
                   Shop by Department
                 </h4>
                 <div className="space-y-2 text-gray-700">
-                  <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Fresh & Grocery</p>
+                  <Link
+                    href="/categories"
+                    onClick={() => setIsSidebarOpen(false)}
+                    className="hover:bg-emerald-50 text-emerald-800 font-bold p-1.5 rounded cursor-pointer block"
+                  >
+                    Fresh & Grocery (Blinkit 8-Mins) →
+                  </Link>
                   <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Mobiles & Computers</p>
                   <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">TV, Appliances, Electronics</p>
                   <Link
