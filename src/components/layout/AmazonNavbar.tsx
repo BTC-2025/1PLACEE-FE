@@ -128,7 +128,7 @@ export const AmazonNavbar: React.FC = () => {
               Home
             </Link>
             <Link
-              href="/products/kotty-mens-jeans"
+              href="/categories"
               onClick={() => setActiveTab("Categorys")}
               className={`px-4 py-1.5 rounded-full font-bold text-xs transition duration-200 cursor-pointer ${activeTab === "Categorys"
                 ? "bg-white text-[#1559ac] shadow-sm"
