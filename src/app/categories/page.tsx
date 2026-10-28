@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { ChevronDown, Clock, Plus, Check, ChevronRight, Sparkles, ShoppingBag } from "lucide-react";
+import { ChevronDown, Clock, Plus, Check, ChevronRight, Sparkles, Filter } from "lucide-react";
 import {
   BLINKIT_CATEGORIES,
   CATEGORY_PRODUCTS_DATABASE,
@@ -21,7 +21,7 @@ export default function CategoryMasterPage() {
 
   // Active Category & Subcategory Resolution
   const activeMainGroup: CategoryGroup =
-    BLINKIT_CATEGORIES.find((c) => c.id === selectedMainCat) || BLINKIT_CATEGORIES[2];
+    BLINKIT_CATEGORIES.find((c) => c.id === selectedMainCat) || BLINKIT_CATEGORIES[0];
 
   const activeSubcategories = activeMainGroup.subcategories;
 
@@ -66,13 +66,13 @@ export default function CategoryMasterPage() {
   };
 
   return (
-    <div className="w-full bg-[#f4f6f8] min-h-screen text-[#0F1111] pb-16">
+    <div className="w-full bg-[#f8f9fa] min-h-screen text-[#0F1111] pb-16">
       
-      {/* 1. TOP HEADER BAR: Main Category Dropdown Selector */}
+      {/* 1. TOP HEADER BAR: Main Category Dropdown Selector matching Image 2 top strip */}
       <div className="sticky top-[64px] z-40 bg-white border-b border-gray-200 shadow-xs px-3 sm:px-6 py-2.5">
-        <div className="max-w-[1500px] mx-auto flex flex-wrap items-center justify-between gap-3">
+        <div className="max-w-[1540px] mx-auto flex flex-wrap items-center justify-between gap-3">
           
-          {/* Breadcrumb & Main Category Selector */}
+          {/* Breadcrumb + Main Category Dropdown Selector */}
           <div className="flex items-center gap-2 flex-wrap">
             <Link href="/" className="text-xs text-gray-500 hover:text-[#1559ac] hover:underline font-medium">
               Home
@@ -81,12 +81,12 @@ export default function CategoryMasterPage() {
             <span className="text-xs text-gray-500">Categories</span>
             <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
             
-            {/* Custom Modern Dropdown for Main Category Selection */}
+            {/* Top Main Category Selector Dropdown with Icon */}
             <div className="relative inline-block">
               <select
                 value={selectedMainCat}
                 onChange={(e) => handleMainCategoryChange(e.target.value)}
-                className="appearance-none bg-emerald-50 text-emerald-900 border border-emerald-300 font-bold text-xs sm:text-sm pl-3 pr-8 py-1.5 rounded-full cursor-pointer hover:bg-emerald-100 transition focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="appearance-none bg-emerald-50 text-emerald-900 border border-emerald-300 font-bold text-xs sm:text-sm pl-3.5 pr-8 py-1.5 rounded-full cursor-pointer hover:bg-emerald-100 transition focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-xs"
               >
                 {BLINKIT_CATEGORIES.map((cat) => (
                   <option key={cat.id} value={cat.id}>
@@ -98,7 +98,7 @@ export default function CategoryMasterPage() {
             </div>
           </div>
 
-          {/* Quick Commerce 8-Mins Fast Dispatch Badge */}
+          {/* Blinkit Quick Delivery ETA Badge */}
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1.5 bg-amber-50 border border-amber-200 text-amber-900 px-3 py-1 rounded-full text-xs font-bold">
               <Clock className="w-3.5 h-3.5 text-amber-600" />
@@ -112,65 +112,53 @@ export default function CategoryMasterPage() {
         </div>
       </div>
 
-      {/* 2. MAIN 2-COLUMN BLINKIT WORKFLOW (Left Subcategories, Right Products) */}
-      <div className="max-w-[1500px] mx-auto px-2 sm:px-4 pt-3 flex flex-col md:flex-row gap-3 sm:gap-4 items-start">
+      {/* 2. AUTHENTIC BLINKIT 2-COLUMN LAYOUT (Image 2 Model) */}
+      <div className="max-w-[1540px] mx-auto px-2 sm:px-4 pt-3 flex flex-col md:flex-row gap-3 items-start">
         
-        {/* LEFT COLUMN: All Subcategories List (Matching Image 2 Sidebar) */}
-        <aside className="w-full md:w-[260px] lg:w-[280px] shrink-0 bg-white rounded-xl border border-gray-200 p-2 shadow-xs md:sticky md:top-[122px] max-h-[calc(100vh-140px)] overflow-y-auto">
-          <div className="px-2 py-1.5 border-b border-gray-100 flex items-center justify-between mb-1">
-            <span className="text-xs font-extrabold uppercase tracking-wider text-gray-500">
-              {activeMainGroup.name}
-            </span>
-            <span className="text-[11px] font-bold text-[#1559ac] bg-blue-50 px-2 py-0.5 rounded-full">
-              {activeSubcategories.length} Types
-            </span>
-          </div>
-
-          <div className="space-y-1 pt-1">
-            {activeSubcategories.map((sub) => {
-              const isActive = selectedSubCat === sub.id;
-              return (
-                <button
-                  key={sub.id}
-                  onClick={() => setSelectedSubCat(sub.id)}
-                  className={`w-full text-left px-3 py-2.5 rounded-lg text-xs font-semibold transition flex items-center justify-between cursor-pointer ${
+        {/* LEFT COLUMN: Subcategories Slim Vertical List with Thumbnails & Dedicated Scrollbar */}
+        <aside className="w-full md:w-[92px] lg:w-[104px] shrink-0 bg-white rounded-xl border border-gray-200 py-2 shadow-xs md:sticky md:top-[122px] max-h-[calc(100vh-140px)] overflow-y-auto scrollbar-thin flex md:flex-col gap-1.5 overflow-x-auto">
+          {activeSubcategories.map((sub) => {
+            const isActive = selectedSubCat === sub.id;
+            return (
+              <button
+                key={sub.id}
+                onClick={() => setSelectedSubCat(sub.id)}
+                className={`flex flex-col items-center justify-center p-1.5 text-center transition cursor-pointer relative shrink-0 w-20 md:w-full rounded-lg ${
+                  isActive
+                    ? "bg-emerald-50 text-emerald-900 font-bold border-l-4 border-emerald-600"
+                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                }`}
+              >
+                {/* Subcategory circular/square thumbnail matching Blinkit left sidebar */}
+                <div
+                  className={`w-12 h-12 rounded-xl bg-gray-50 border flex items-center justify-center overflow-hidden mb-1 transition ${
                     isActive
-                      ? "bg-emerald-50 text-emerald-800 font-bold border-l-4 border-emerald-600 shadow-xs"
-                      : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                      ? "border-emerald-500 ring-2 ring-emerald-500/20 shadow-xs"
+                      : "border-gray-200"
                   }`}
                 >
-                  <div className="flex items-center gap-2 truncate">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                    <span className="truncate">{sub.name}</span>
-                  </div>
-                  <ChevronRight className={`w-3.5 h-3.5 shrink-0 transition-transform ${isActive ? "text-emerald-700 translate-x-0.5" : "text-gray-300"}`} />
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Quick link to other main categories in sidebar */}
-          <div className="mt-4 pt-3 border-t border-gray-100 space-y-1">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 px-2">
-              Other Popular Departments
-            </span>
-            {BLINKIT_CATEGORIES.filter((c) => c.id !== selectedMainCat).slice(0, 5).map((other) => (
-              <button
-                key={other.id}
-                onClick={() => handleMainCategoryChange(other.id)}
-                className="w-full text-left px-2 py-1.5 rounded text-xs text-gray-600 hover:text-[#1559ac] hover:bg-blue-50/50 flex items-center gap-2 cursor-pointer transition"
-              >
-                <span>{other.icon}</span>
-                <span className="truncate">{other.name}</span>
+                  {sub.image ? (
+                    <img
+                      src={sub.image}
+                      alt={sub.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-xl">{activeMainGroup.icon}</span>
+                  )}
+                </div>
+                <span className="text-[10px] sm:text-[11px] leading-tight line-clamp-2 px-0.5">
+                  {sub.name}
+                </span>
               </button>
-            ))}
-          </div>
+            );
+          })}
         </aside>
 
-        {/* RIGHT COLUMN: Subcategory Based All Products Grid (Matching Image 2 Product Cards) */}
+        {/* RIGHT COLUMN: Products Grid & Bottom SEO Details (Image 2 Model) */}
         <main className="flex-1 w-full bg-white rounded-xl border border-gray-200 p-3 sm:p-5 shadow-xs space-y-8">
           
-          {/* Subcategory Header Banner */}
+          {/* Header Strip with Subcategory Title and Sort Dropdown */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-gray-200 gap-2">
             <div>
               <h1 className="text-lg sm:text-xl font-black text-gray-900 tracking-tight">
@@ -192,8 +180,8 @@ export default function CategoryMasterPage() {
             </div>
           </div>
 
-          {/* Product Cards Grid: Exactly matching second image Blinkit card structure */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
+          {/* Product Cards Grid: Exactly matching second screenshot Blinkit card style with 5-column responsive layout */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 sm:gap-3.5">
             {currentProducts.map((item) => {
               const isAdded = addedItemIds[item.id];
               return (
@@ -201,7 +189,7 @@ export default function CategoryMasterPage() {
                   key={item.id}
                   className="bg-white rounded-xl border border-gray-200 hover:border-emerald-500 p-2.5 flex flex-col justify-between hover:shadow-md transition group relative"
                 >
-                  {/* Discount Badge */}
+                  {/* Discount Badge on top left corner */}
                   {item.discountBadge && (
                     <div className="absolute top-2 left-2 z-10 bg-[#1559ac] text-white text-[10px] font-extrabold px-1.5 py-0.5 rounded shadow-xs">
                       {item.discountBadge}
@@ -214,8 +202,8 @@ export default function CategoryMasterPage() {
                     <span>{item.deliveryTime}</span>
                   </div>
 
-                  {/* Product Thumbnail */}
-                  <div className="w-full h-32 sm:h-36 flex items-center justify-center p-1 overflow-hidden">
+                  {/* Product Packaging Image */}
+                  <div className="w-full h-28 sm:h-32 flex items-center justify-center p-1 overflow-hidden">
                     <img
                       src={item.image}
                       alt={item.name}
@@ -223,7 +211,7 @@ export default function CategoryMasterPage() {
                     />
                   </div>
 
-                  {/* Title & Weight */}
+                  {/* Product Title & Weight */}
                   <div className="pt-2 flex-1 flex flex-col">
                     <h3 className="text-xs font-bold text-gray-900 line-clamp-2 leading-tight group-hover:text-[#1559ac] transition">
                       {item.name}
@@ -233,7 +221,7 @@ export default function CategoryMasterPage() {
                     </span>
                   </div>
 
-                  {/* Price & Add to Cart Button */}
+                  {/* Price & Green ADD Button */}
                   <div className="pt-3 mt-auto flex items-center justify-between border-t border-gray-100">
                     <div>
                       <div className="text-xs sm:text-sm font-black text-gray-950">
@@ -273,8 +261,8 @@ export default function CategoryMasterPage() {
           </div>
 
           {/* ============================================================== */}
-          {/* 3. BELOW PRODUCT DETAILS: FULL RICH SEO CONTENT & WRITE-UP      */}
-          {/*    (Matching the second screenshot's extensive article & table) */}
+          {/* 3. BELOW PRODUCT DETAILS: EXTENSIVE SEO CONTENT WRITE-UP        */}
+          {/*    (Matching the second screenshot's complete article & table) */}
           {/* ============================================================== */}
           <div className="pt-8 border-t border-gray-200 space-y-6 text-gray-800">
             
