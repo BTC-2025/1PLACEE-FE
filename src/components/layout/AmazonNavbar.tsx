@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Search,
   MapPin,
@@ -11,7 +12,6 @@ import {
   Heart,
   ShoppingCart,
   User,
-  X,
   Bell,
   Headset,
   Settings
@@ -43,6 +43,7 @@ const SUB_NAV_LINKS = [
 ];
 
 export const AmazonNavbar: React.FC = () => {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<"Home" | "Categorys" | "Bookings">("Home");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -51,6 +52,35 @@ export const AmazonNavbar: React.FC = () => {
   const totalItems = useCartStore((state) => state.totalItems());
   const toggleCart = useCartStore((state) => state.toggleCart);
   const subnavScrollRef = useRef<HTMLDivElement>(null);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
+
+  // Click outside search container to automatically hide search bar
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        searchContainerRef.current &&
+        !searchContainerRef.current.contains(event.target as Node)
+      ) {
+        setIsSearchOpen(false);
+      }
+    };
+
+    if (isSearchOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isSearchOpen]);
+
+  // Universal search handler
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/categories?q=${encodeURIComponent(searchQuery.trim())}`);
+      setIsSearchOpen(false);
+    }
+  };
 
   const scrollSubnav = (direction: "left" | "right") => {
     if (subnavScrollRef.current) {
@@ -59,46 +89,47 @@ export const AmazonNavbar: React.FC = () => {
     }
   };
 
+
   return (
     <>
-      <header className="sticky top-0 z-50 w-full select-none text-white text-xs font-sans shadow-md">
-        {/* Tier 1: Top Navbar with Royal Blue (#1559ac) background from image 3 and pill container layout from image 2 */}
-        <div className="bg-[#1559ac] px-3 sm:px-6 py-2 flex items-center justify-between h-[64px] border-b border-[#124b91] relative">
+      <header className="sticky top-0 z-50 w-full select-none text-xs font-sans shadow-xs">
+        {/* Tier 1: Top Navbar with requested #e9f4ff light background and increased height */}
+        <div className="bg-[#e9f4ff] px-3 sm:px-6 py-2 flex items-center justify-between h-[60px] sm:h-[60px] border-b border-[#cde2f8] relative">
           {/* Left Group: 1PLACEE Logo + Location with Name */}
-          <div className="flex items-center gap-3 shrink-0 z-10">
-            {/* 1PLACEE Logo from Image 3 */}
+          <div className="flex items-center gap-3.5 sm:gap-4 shrink-0 z-10">
+            {/* 1PLACEE Logo - increased height */}
             <Link
               href="/"
-              className="flex items-center hover:opacity-95 transition select-none py-0.5"
+              className="flex items-center hover:opacity-90 transition select-none py-0.5"
             >
               <img
                 src="/logo.png?v=2"
                 alt="1Placee"
-                className="h-11 sm:h-12 w-auto object-contain drop-shadow-md"
+                className="h-24 sm:h-26 w-auto object-contain drop-shadow-xs"
               />
             </Link>
 
-            {/* Location with Icon and Name + Drop Arrow (No outer border) */}
+            {/* Location with Icon and Name + Drop Arrow - increased padding and text */}
             <button
               aria-label="Location"
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-white/95 hover:text-white hover:bg-white/15 transition-all duration-200 cursor-pointer select-none"
+              className="group flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/90 hover:bg-[#1559ac] border border-[#b8dcfa] shadow-2xs transition-all duration-200 cursor-pointer select-none text-[#1559ac] hover:text-white"
             >
-              <MapPin className="w-4 h-4 text-white stroke-[2.2] shrink-0" />
+              <MapPin className="w-4.5 h-4.5 text-[#1559ac] group-hover:text-white stroke-[2.2] shrink-0 transition-colors" />
               <div className="flex flex-col text-left leading-tight">
-                <span className="font-bold text-xs text-white truncate max-w-[110px]">Chennai, TN</span>
+                <span className="font-bold text-[13px] sm:text-sm text-[#1e293b] group-hover:text-white truncate max-w-[130px] transition-colors">Chennai, TN</span>
               </div>
-              <ChevronDown className="w-3.5 h-3.5 text-white/80 shrink-0 ml-0.5" />
+              <ChevronDown className="w-4 h-4.5 text-[#1559ac] group-hover:text-white shrink-0 ml-0.5 transition-colors" />
             </button>
           </div>
 
-          {/* Center Group: Eclipse Container with Three Buttons: Home, Categorys, Bookings - FIXED STATIC CENTER */}
-          <div className="hidden md:flex items-center absolute left-1/2 -translate-x-1/2 bg-[#0d4285] p-1 rounded-full border border-white/20 shadow-inner z-10 pointer-events-auto">
+          {/* Center Group: Eclipse Container with Three Buttons: Home, Categorys, Bookings - font size & height increased */}
+          <div className="hidden md:flex items-center absolute left-1/2 -translate-x-1/2 bg-[#d7ebfc] p-1.5 rounded-full border border-[#b8dcfa] shadow-2xs z-10 pointer-events-auto">
             <Link
               href="/"
               onClick={() => setActiveTab("Home")}
-              className={`px-4 py-1.5 rounded-full font-bold text-xs transition duration-200 cursor-pointer ${activeTab === "Home"
-                ? "bg-white text-[#1559ac] shadow-sm"
-                : "text-white/90 hover:text-white hover:bg-white/10"
+              className={`px-4 sm:px-5 py-1.5 sm:py-2 rounded-full font-bold text-[13px] sm:text-sm transition duration-200 cursor-pointer ${activeTab === "Home"
+                ? "bg-[#1559ac] text-white shadow-sm"
+                : "text-[#1559ac] hover:text-white hover:bg-[#1559ac]"
                 }`}
             >
               Home
@@ -106,54 +137,51 @@ export const AmazonNavbar: React.FC = () => {
             <Link
               href="/categories"
               onClick={() => setActiveTab("Categorys")}
-              className={`px-4 py-1.5 rounded-full font-bold text-xs transition duration-200 cursor-pointer ${activeTab === "Categorys"
-                ? "bg-white text-[#1559ac] shadow-sm"
-                : "text-white/90 hover:text-white hover:bg-white/10"
+              className={`px-4 sm:px-5 py-1.5 sm:py-2 rounded-full font-bold text-[13px] sm:text-sm transition duration-200 cursor-pointer ${activeTab === "Categorys"
+                ? "bg-[#1559ac] text-white shadow-sm"
+                : "text-[#1559ac] hover:text-white hover:bg-[#1559ac]"
                 }`}
             >
-              Categorys
+              Categories
             </Link>
             <button
               onClick={() => setActiveTab("Bookings")}
-              className={`px-4 py-1.5 rounded-full font-bold text-xs transition duration-200 cursor-pointer ${activeTab === "Bookings"
-                ? "bg-white text-[#1559ac] shadow-sm"
-                : "text-white/90 hover:text-white hover:bg-white/10"
+              className={`px-4 sm:px-5 py-1.5 sm:py-2 rounded-full font-bold text-[13px] sm:text-sm transition duration-200 cursor-pointer ${activeTab === "Bookings"
+                ? "bg-[#1559ac] text-white shadow-sm"
+                : "text-[#1559ac] hover:text-white hover:bg-[#1559ac]"
                 }`}
             >
-              Bookings
+              Orders
             </button>
           </div>
 
-          {/* Right Group: Search Box + Bell Notification + Wishlist + Orders + Cart + Profile (Icons only, no words, no bg, hover very light blue round) */}
+          {/* Right Group: Search Box + Bell Notification + Wishlist + Orders + Cart + Profile - compact width, icons intact */}
           <div className="flex items-center gap-1 sm:gap-1.5 shrink-0 z-20">
-            {/* Search Box: Expands leftwards without pushing center container */}
-            <div className="relative flex items-center">
+            {/* Search Box: Expands slightly leftwards, no close icon, click outside to hide, form submit for universal search */}
+            <div ref={searchContainerRef} className="relative flex items-center">
               {isSearchOpen ? (
-                <div className="flex items-center bg-white rounded-full px-3 py-1 shadow-lg w-52 sm:w-64 border border-gray-300 animate-in fade-in zoom-in-95 duration-200">
-                  <Search className="w-4 h-4 text-gray-500 mr-1.5 shrink-0" />
+                <form
+                  onSubmit={handleSearchSubmit}
+                  className="flex items-center bg-white rounded-full px-4 py-1.5 shadow-md w-56 sm:w-72 border border-[#b8dcfa] animate-in fade-in zoom-in-95 duration-200"
+                >
+                  <Search className="w-4.5 h-4.5 text-[#1559ac] mr-2 shrink-0 stroke-[2.2]" />
                   <input
                     type="text"
                     placeholder="Search 1PLACE..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     autoFocus
-                    className="w-full text-xs text-gray-900 outline-none placeholder:text-gray-400 bg-transparent"
+                    className="w-full text-xs sm:text-[13px] text-gray-900 outline-none placeholder:text-gray-400 bg-transparent"
                   />
-                  <button
-                    onClick={() => setIsSearchOpen(false)}
-                    className="text-gray-400 hover:text-gray-600 p-0.5"
-                  >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                </div>
+                </form>
               ) : (
                 <button
                   onClick={() => setIsSearchOpen(true)}
                   aria-label="Open Search"
-                  title="Search"
-                  className="w-10 h-10 rounded-full flex items-center justify-center text-white/95 hover:text-white hover:bg-white/15 transition-all duration-200 cursor-pointer"
+                  title="Search 1PLACE..."
+                  className="group w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-white/90 hover:bg-[#1559ac] border border-[#b8dcfa] shadow-2xs text-[#1559ac] hover:text-white transition-all duration-200 cursor-pointer"
                 >
-                  <Search className="w-5 h-5 stroke-[2]" />
+                  <Search className="w-5 h-5 text-[#1559ac] group-hover:text-white stroke-[2] transition-colors" />
                 </button>
               )}
             </div>
@@ -162,33 +190,32 @@ export const AmazonNavbar: React.FC = () => {
             <button
               aria-label="Notifications"
               title="Notifications"
-              className="w-10 h-10 rounded-full flex items-center justify-center text-white/95 hover:text-white hover:bg-white/15 transition-all duration-200 cursor-pointer relative"
+              className="group w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-white/90 hover:bg-[#1559ac] border border-[#b8dcfa] shadow-2xs text-[#1559ac] hover:text-white transition-all duration-200 cursor-pointer relative"
             >
-              <Bell className="w-5 h-5 stroke-[2]" />
+              <Bell className="w-5 h-5 text-[#1559ac] group-hover:text-white stroke-[2] transition-colors" />
               {/* Subtle active notification dot */}
-              <span className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-[#ff9900] ring-2 ring-[#1559ac]" />
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#ff9900] ring-2 ring-white group-hover:ring-[#1559ac] transition-all" />
             </button>
 
             {/* Wishlist Icon */}
             <button
               aria-label="Wishlist"
               title="Wishlist"
-              className="w-10 h-10 rounded-full flex items-center justify-center text-white/95 hover:text-white hover:bg-white/15 transition-all duration-200 cursor-pointer group"
+              className="group w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-white/90 hover:bg-[#1559ac] border border-[#b8dcfa] shadow-2xs text-[#1559ac] hover:text-white transition-all duration-200 cursor-pointer"
             >
-              <Heart className="w-5 h-5 stroke-[2] fill-transparent group-hover:fill-red-400 group-hover:text-red-400 transition-colors" />
+              <Heart className="w-5 h-5 text-[#1559ac] group-hover:text-white stroke-[2] fill-transparent group-hover:fill-white transition-all" />
             </button>
 
-
-            {/* Cart Icon Button with Counter Badge - Shopping trolley icon matching image 2 */}
+            {/* Cart Icon Button with Counter Badge */}
             <button
               onClick={() => toggleCart()}
               aria-label="Cart"
               title="Cart"
-              className="w-10 h-10 rounded-full flex items-center justify-center text-white/95 hover:text-white hover:bg-white/15 transition-all duration-200 cursor-pointer relative"
+              className="group w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-white/90 hover:bg-[#1559ac] border border-[#b8dcfa] shadow-2xs text-[#1559ac] hover:text-white transition-all duration-200 cursor-pointer relative"
             >
               <svg
                 viewBox="0 0 24 24"
-                className="w-5 h-5 text-white"
+                className="w-5 h-5 text-[#1559ac] group-hover:text-white transition-colors"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"
@@ -203,31 +230,32 @@ export const AmazonNavbar: React.FC = () => {
                 <circle cx="17.5" cy="19.5" r="1.5" fill="currentColor" stroke="none" />
               </svg>
               {totalItems > 0 && (
-                <span className="absolute 1 top-1 -right-0.5 bg-[#ff9900] text-black font-black text-[10px] w-4 h-4 rounded-full flex items-center justify-center shadow">
+                <span className="absolute -top-1 -right-1 bg-[#ff9900] text-black font-black text-[10px] w-4 h-4 rounded-full flex items-center justify-center shadow">
                   {totalItems}
                 </span>
               )}
             </button>
 
-            {/* Profile with Icon + Name + Dropdown (No outer border) */}
+            {/* Profile with Icon + Name + Dropdown - compact padding */}
             <div className="relative">
               <button
                 onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
                 aria-label="Profile"
-                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-white/95 hover:text-white hover:bg-white/15 transition-all duration-200 cursor-pointer select-none"
+                className="group flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full bg-white/90 hover:bg-[#1559ac] border border-[#b8dcfa] shadow-2xs text-[#1e293b] hover:text-white transition-all duration-200 cursor-pointer select-none"
               >
-                <div className="w-6 h-6 rounded-full bg-white/20 text-white flex items-center justify-center font-bold text-xs">
+                <div className="w-6 h-6 rounded-full bg-[#1559ac] group-hover:bg-white text-white group-hover:text-[#1559ac] flex items-center justify-center font-bold text-xs shadow-xs transition-colors">
                   <User className="w-3.5 h-3.5" />
                 </div>
                 <div className="flex flex-col text-left leading-tight hidden sm:flex">
-                  <span className="font-bold text-xs text-white truncate max-w-[90px]">Vinothkumar</span>
+                  <span className="font-bold text-xs sm:text-[13px] text-[#1e293b] group-hover:text-white truncate max-w-[85px] transition-colors">Vinothkumar</span>
                 </div>
-                <ChevronDown className={`w-3.5 h-3.5 text-white/80 transition-transform duration-200 ${isProfileMenuOpen ? "rotate-180" : ""}`} />
+                <ChevronDown className="w-3.5 h-3.5 text-[#1559ac] group-hover:text-white transition-all duration-200" />
               </button>
 
               {/* Profile Dropdown Menu */}
               {isProfileMenuOpen && (
                 <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-2xl py-2 border border-gray-100 z-50 text-gray-800 animate-in fade-in zoom-in-95 duration-150">
+
                   <div className="px-4 py-2.5 border-b border-gray-100 bg-gray-50/70">
                     <p className="text-[11px] text-gray-500 font-medium">Signed in as</p>
                     <p className="text-xs font-bold text-gray-900 truncate">vinothkumar@1place.in</p>
@@ -272,17 +300,17 @@ export const AmazonNavbar: React.FC = () => {
           </div>
         </div>
 
-        {/* Tier 2: Subnav Ribbon - 'For you' removed, visible bottom scrollbar + Left & Right Arrows */}
-        <div className="bg-[#0f4484] px-2 sm:px-4 py-1 flex items-center justify-between text-xs h-[44px] border-t border-white/10 relative select-none">
+        {/* Tier 2: Subnav Ribbon - White background, grey text, slightly increased font size */}
+        <div className="bg-white px-2 sm:px-4 py-1 flex items-center justify-between text-[13px] h-[44px] border-b border-gray-200/80 shadow-2xs relative select-none">
           {/* Middle Scrollable Container with Left & Right Arrow Buttons */}
           <div className="flex-1 flex items-center min-w-0 mr-2 sm:mr-3 relative overflow-hidden">
             {/* Scroll Left Arrow Button */}
             <button
               onClick={() => scrollSubnav("left")}
               aria-label="Scroll left"
-              className="w-6 h-6 rounded-full bg-[#0d3b73] hover:bg-white/25 text-white flex items-center justify-center shrink-0 shadow transition cursor-pointer z-10 mr-1.5"
+              className="w-6.5 h-6.5 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 flex items-center justify-center shrink-0 shadow-xs transition cursor-pointer z-10 mr-1.5"
             >
-              <ChevronLeft className="w-3.5 h-3.5 stroke-[2.5]" />
+              <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
             </button>
 
             {/* Scrollable Links Track without bottom scrollbar, hover bottom line show */}
@@ -294,11 +322,11 @@ export const AmazonNavbar: React.FC = () => {
                 <a
                   key={link.label}
                   href={link.href}
-                  className="relative flex items-center h-[42px] px-2.5 text-white font-medium text-xs transition-colors shrink-0 select-none group"
+                  className="relative flex items-center h-[42px] px-2.5 sm:px-3 text-gray-600 font-semibold text-[14px] hover:text-gray-900 transition-colors shrink-0 select-none group"
                 >
-                  <span className="text-white/90 group-hover:text-white transition-colors">{link.label}</span>
-                  {/* Clean bottom line indicator on hover, exactly matching the reference image */}
-                  <span className="absolute bottom-0 left-2 right-2 h-[2.5px] bg-white rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-center" />
+                  <span className="text-gray-600 group-hover:text-[#1559ac] font-medium transition-colors">{link.label}</span>
+                  {/* Clean bottom line indicator on hover */}
+                  <span className="absolute bottom-0 left-2 right-2 h-[2.5px] bg-[#1559ac] rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-center" />
                 </a>
               ))}
             </div>
@@ -307,29 +335,29 @@ export const AmazonNavbar: React.FC = () => {
             <button
               onClick={() => scrollSubnav("right")}
               aria-label="Scroll right"
-              className="w-6 h-6 rounded-full bg-[#0d3b73] hover:bg-white/25 text-white flex items-center justify-center shrink-0 shadow transition cursor-pointer z-10 ml-1.5"
+              className="w-6.5 h-6.5 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 flex items-center justify-center shrink-0 shadow-xs transition cursor-pointer z-10 ml-1.5"
             >
-              <ChevronRight className="w-3.5 h-3.5 stroke-[2.5]" />
+              <ChevronRight className="w-4 h-4 stroke-[2.5]" />
             </button>
           </div>
 
-          {/* Right Fixed Group: Help & Support + Settings (Preserved) */}
-          <div className="flex items-center gap-1 sm:gap-2 shrink-0 pl-1 z-10">
+          {/* Right Fixed Group: Help & Support + Settings */}
+          <div className="flex items-center gap-1 sm:gap-1.5 shrink-0 pl-1 z-10">
             {/* Help & Support Customer Care Headset Button with Word */}
             <button
               aria-label="Help & Support"
-              className="flex items-center gap-1.5 text-white/90 hover:text-white hover:bg-white/10 px-2.5 py-1 rounded-full text-xs font-semibold transition cursor-pointer select-none"
+              className="flex items-center gap-1.5 text-gray-600 hover:text-[#1559ac] hover:bg-gray-100 px-2.5 py-1 rounded-full text-xs sm:text-[13px] font-medium transition cursor-pointer select-none"
             >
-              <Headset className="w-4 h-4 text-white stroke-[2.2]" />
+              <Headset className="w-4 h-4 text-gray-600 group-hover:text-[#1559ac] stroke-[2.2]" />
               <span className="hidden sm:inline">Help&Support</span>
             </button>
 
             {/* Settings Button with Word */}
             <button
               aria-label="Settings"
-              className="flex items-center gap-1.5 text-white/90 hover:text-white hover:bg-white/10 px-2.5 py-1 rounded-full text-xs font-semibold transition cursor-pointer select-none"
+              className="flex items-center gap-1.5 text-gray-600 hover:text-[#1559ac] hover:bg-gray-100 px-2.5 py-1 rounded-full text-xs sm:text-[13px] font-medium transition cursor-pointer select-none"
             >
-              <Settings className="w-4 h-4 text-white stroke-[2]" />
+              <Settings className="w-4 h-4 text-gray-600 group-hover:text-[#1559ac] stroke-[2]" />
               <span className="hidden sm:inline">Settings</span>
             </button>
           </div>
