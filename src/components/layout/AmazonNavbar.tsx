@@ -1,27 +1,45 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Link from "next/link";
 import {
   Search,
   MapPin,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   Heart,
-  ShoppingBag,
+  ShoppingCart,
   User,
   X,
+  Bell,
   Headset,
   Settings
 } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 
-// Subnav links strictly matching user prompt & sketch
+// Subnav categories & links from second image with scroll navigation
 const SUB_NAV_LINKS = [
   { label: "Bestsellers", href: "#" },
   { label: "Today Deals", href: "#" },
   { label: "Coupons", href: "#" },
   { label: "New Release", href: "#" },
   { label: "Buy Again", href: "#" },
+  { label: "Electronics", href: "/categories" },
+  { label: "Mobiles & Accessories", href: "/categories" },
+  { label: "Home & Kitchen", href: "/categories" },
+  { label: "Grocery", href: "/categories" },
+  { label: "Men's Fashion", href: "/categories" },
+  { label: "Women's Fashion", href: "/categories" },
+  { label: "Kids & Baby", href: "/categories" },
+  { label: "Toys", href: "/categories" },
+  { label: "Car & Motorbike", href: "/categories" },
+  { label: "Sports & Outdoors", href: "/categories" },
+  { label: "Books", href: "/categories" },
+  { label: "Beauty & Personal Care", href: "/categories" },
+  { label: "Computers & Laptops", href: "/categories" },
+  { label: "Home Improvement", href: "/categories" },
+  { label: "Pet Supplies", href: "/categories" },
 ];
 
 export const AmazonNavbar: React.FC = () => {
@@ -29,89 +47,47 @@ export const AmazonNavbar: React.FC = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const totalItems = useCartStore((state) => state.totalItems());
   const toggleCart = useCartStore((state) => state.toggleCart);
+  const subnavScrollRef = useRef<HTMLDivElement>(null);
+
+  const scrollSubnav = (direction: "left" | "right") => {
+    if (subnavScrollRef.current) {
+      const scrollAmount = direction === "left" ? -280 : 280;
+      subnavScrollRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
+    }
+  };
 
   return (
     <>
       <header className="sticky top-0 z-50 w-full select-none text-white text-xs font-sans shadow-md">
         {/* Tier 1: Top Navbar with Royal Blue (#1559ac) background from image 3 and pill container layout from image 2 */}
         <div className="bg-[#1559ac] px-3 sm:px-6 py-2 flex items-center justify-between h-[64px] border-b border-[#124b91] relative">
-          {/* Left Group: 1PLACE Logo Capsule + Location Pill */}
-          <div className="flex items-center gap-2.5 shrink-0 z-10">
-            {/* 1PLACEE Logo Pill Container - Exactly matching user pencil sketch & prompt */}
+          {/* Left Group: 1PLACEE Logo + Location with Name */}
+          <div className="flex items-center gap-3 shrink-0 z-10">
+            {/* 1PLACEE Logo from Image 3 */}
             <Link
               href="/"
-              className="bg-white px-3.5 py-1.5 rounded-full flex items-center shadow-xs hover:shadow-md transition group select-none"
+              className="flex items-center hover:opacity-95 transition select-none py-0.5"
             >
-              <svg
-                className="h-8 w-auto overflow-visible"
-                viewBox="0 0 162 46"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                {/* 1. Bold Solid '1' in Red-Orange (#ff4500) matching drawing */}
-                <path
-                  d="M6 19 L15 7 L23 7 L23 34 L15 34 L15 15 L9 21 Z"
-                  fill="#ff4500"
-                />
-
-                {/* 2. Seamless Solid Underline Border in Orange (#ff4500) attached to 1 */}
-                <rect
-                  x="6"
-                  y="34"
-                  width="152"
-                  height="6"
-                  rx="1"
-                  fill="#ff4500"
-                />
-
-                {/* 3. 'PLACEE' Word in Solid Royal Blue (#1559ac) with NO GAPS between letters */}
-                {/* P */}
-                <g transform="translate(25, 13)">
-                  <rect x="0" y="0" width="5.5" height="21" fill="#1559ac" />
-                  <path d="M5.5 0 H14.5 C18 0 20 2.5 20 6 C20 9.5 18 12 14.5 12 H5.5 Z M5.5 4.5 V7.5 H13 C14.5 7.5 15.5 7 15.5 6 C15.5 5 14.5 4.5 13 4.5 Z" fill="#1559ac" />
-                </g>
-
-                {/* L */}
-                <g transform="translate(48, 13)">
-                  <rect x="0" y="0" width="5.5" height="21" fill="#1559ac" />
-                  <rect x="5.5" y="16.5" width="13" height="4.5" fill="#1559ac" />
-                </g>
-
-                {/* A */}
-                <g transform="translate(69, 13)">
-                  <path d="M0 21 L8 0 H14 L22 21 H16.5 L15 16 H7 L5.5 21 Z M8.2 12 H13.8 L11 4 Z" fill="#1559ac" />
-                </g>
-
-                {/* C */}
-                <g transform="translate(93, 13)">
-                  <path d="M19 4.5 C17.5 1.5 14 0 10.5 0 C4.5 0 0 4.5 0 10.5 C0 16.5 4.5 21 10.5 21 C14 21 17.5 19.5 19 16.5 L14.5 14 C13.5 15.5 12 16.5 10.5 16.5 C7 16.5 5 14 5 10.5 C5 7 7 4.5 10.5 4.5 C12 4.5 13.5 5.5 14.5 7 Z" fill="#1559ac" />
-                </g>
-
-                {/* First E (with shorter middle arm) */}
-                <g transform="translate(114, 13)">
-                  <rect x="0" y="0" width="5.5" height="21" fill="#1559ac" />
-                  <rect x="5.5" y="0" width="14" height="4.5" fill="#1559ac" />
-                  <rect x="5.5" y="8.2" width="9.5" height="4.5" fill="#1559ac" />
-                  <rect x="5.5" y="16.5" width="14" height="4.5" fill="#1559ac" />
-                </g>
-
-                {/* Second E (with shorter middle arm) */}
-                <g transform="translate(136, 13)">
-                  <rect x="0" y="0" width="5.5" height="21" fill="#1559ac" />
-                  <rect x="5.5" y="0" width="14" height="4.5" fill="#1559ac" />
-                  <rect x="5.5" y="8.2" width="9.5" height="4.5" fill="#1559ac" />
-                  <rect x="5.5" y="16.5" width="14" height="4.5" fill="#1559ac" />
-                </g>
-              </svg>
+              <img
+                src="/logo.png?v=2"
+                alt="1Placee"
+                className="h-11 sm:h-12 w-auto object-contain drop-shadow-md"
+              />
             </Link>
 
-            {/* Location Pill */}
-            <button className="bg-white/15 hover:bg-white/25 text-white px-3 py-1.5 rounded-full flex items-center gap-1.5 transition border border-white/20">
-              <MapPin className="w-3.5 h-3.5 text-white shrink-0" />
-              <span className="font-bold text-xs truncate max-w-[130px]">Chennai, TN</span>
-              <ChevronDown className="w-3 h-3 text-white/80" />
+            {/* Location with Icon and Name + Drop Arrow (No outer border) */}
+            <button
+              aria-label="Location"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-white/95 hover:text-white hover:bg-white/15 transition-all duration-200 cursor-pointer select-none"
+            >
+              <MapPin className="w-4 h-4 text-white stroke-[2.2] shrink-0" />
+              <div className="flex flex-col text-left leading-tight">
+                <span className="font-bold text-xs text-white truncate max-w-[110px]">Chennai, TN</span>
+              </div>
+              <ChevronDown className="w-3.5 h-3.5 text-white/80 shrink-0 ml-0.5" />
             </button>
           </div>
 
@@ -148,8 +124,8 @@ export const AmazonNavbar: React.FC = () => {
             </button>
           </div>
 
-          {/* Right Group: Search Box + Wishlist + Cart + Profile with Dropdown */}
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0 z-20">
+          {/* Right Group: Search Box + Bell Notification + Wishlist + Orders + Cart + Profile (Icons only, no words, no bg, hover very light blue round) */}
+          <div className="flex items-center gap-1 sm:gap-1.5 shrink-0 z-20">
             {/* Search Box: Expands leftwards without pushing center container */}
             <div className="relative flex items-center">
               {isSearchOpen ? (
@@ -174,84 +150,178 @@ export const AmazonNavbar: React.FC = () => {
                 <button
                   onClick={() => setIsSearchOpen(true)}
                   aria-label="Open Search"
-                  className="w-9 h-9 rounded-full bg-white hover:bg-gray-100 text-gray-900 flex items-center justify-center shadow-xs transition hover:scale-105 cursor-pointer"
+                  title="Search"
+                  className="w-10 h-10 rounded-full flex items-center justify-center text-white/95 hover:text-white hover:bg-white/15 transition-all duration-200 cursor-pointer"
                 >
-                  <Search className="w-4 h-4 text-gray-800 stroke-[2.5]" />
+                  <Search className="w-5 h-5 stroke-[2]" />
                 </button>
               )}
             </div>
 
-            {/* Wishlist Icon Button */}
+            {/* Notification Bell Icon */}
             <button
-              aria-label="Wishlist"
-              className="w-9 h-9 rounded-full bg-white hover:bg-gray-100 text-gray-900 flex items-center justify-center shadow-xs transition hover:scale-105 cursor-pointer"
+              aria-label="Notifications"
+              title="Notifications"
+              className="w-10 h-10 rounded-full flex items-center justify-center text-white/95 hover:text-white hover:bg-white/15 transition-all duration-200 cursor-pointer relative"
             >
-              <Heart className="w-4 h-4 text-gray-800 stroke-[2.2] fill-transparent hover:fill-red-500 hover:text-red-500 transition-colors" />
+              <Bell className="w-5 h-5 stroke-[2]" />
+              {/* Subtle active notification dot */}
+              <span className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-[#ff9900] ring-2 ring-[#1559ac]" />
             </button>
 
-            {/* Cart Icon Button with Counter Badge */}
+            {/* Wishlist Icon */}
+            <button
+              aria-label="Wishlist"
+              title="Wishlist"
+              className="w-10 h-10 rounded-full flex items-center justify-center text-white/95 hover:text-white hover:bg-white/15 transition-all duration-200 cursor-pointer group"
+            >
+              <Heart className="w-5 h-5 stroke-[2] fill-transparent group-hover:fill-red-400 group-hover:text-red-400 transition-colors" />
+            </button>
+
+
+            {/* Cart Icon Button with Counter Badge - Shopping trolley icon matching image 2 */}
             <button
               onClick={() => toggleCart()}
               aria-label="Cart"
-              className="w-9 h-9 rounded-full bg-white hover:bg-gray-100 text-gray-900 flex items-center justify-center shadow-xs transition hover:scale-105 cursor-pointer relative"
+              title="Cart"
+              className="w-10 h-10 rounded-full flex items-center justify-center text-white/95 hover:text-white hover:bg-white/15 transition-all duration-200 cursor-pointer relative"
             >
-              <ShoppingBag className="w-4 h-4 text-gray-800 stroke-[2.2]" />
+              <svg
+                viewBox="0 0 24 24"
+                className="w-5 h-5 text-white"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M1 2h3.2l2.4 11.5a1.8 1.8 0 0 0 1.8 1.5h10.4a1.8 1.8 0 0 0 1.8-1.4l1.6-7.6H5" />
+                <line x1="9.5" y1="7" x2="9.5" y2="12" strokeWidth="2" />
+                <line x1="13" y1="7" x2="13" y2="12" strokeWidth="2" />
+                <line x1="16.5" y1="7" x2="16.5" y2="12" strokeWidth="2" />
+                <circle cx="8.5" cy="19.5" r="1.5" fill="currentColor" stroke="none" />
+                <circle cx="17.5" cy="19.5" r="1.5" fill="currentColor" stroke="none" />
+              </svg>
               {totalItems > 0 && (
-                <span className="absolute -top-1 -right-1 bg-[#ff9900] text-black font-black text-[10px] w-4 h-4 rounded-full flex items-center justify-center shadow">
+                <span className="absolute 1 top-1 -right-0.5 bg-[#ff9900] text-black font-black text-[10px] w-4 h-4 rounded-full flex items-center justify-center shadow">
                   {totalItems}
                 </span>
               )}
             </button>
 
-            {/* End Profile Capsule with Drop Arrow */}
-            <button className="bg-white text-gray-900 pl-2 pr-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-xs hover:shadow-md transition hover:bg-gray-50 cursor-pointer">
-              <div className="w-6 h-6 rounded-full bg-[#1559ac] text-white flex items-center justify-center font-bold text-xs">
-                <User className="w-3.5 h-3.5" />
-              </div>
-              <span className="font-bold text-xs text-gray-900 max-w-[100px] truncate">
-                Vinothkumar
-              </span>
-              <ChevronDown className="w-3.5 h-3.5 text-gray-500" />
-            </button>
+            {/* Profile with Icon + Name + Dropdown (No outer border) */}
+            <div className="relative">
+              <button
+                onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                aria-label="Profile"
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-white/95 hover:text-white hover:bg-white/15 transition-all duration-200 cursor-pointer select-none"
+              >
+                <div className="w-6 h-6 rounded-full bg-white/20 text-white flex items-center justify-center font-bold text-xs">
+                  <User className="w-3.5 h-3.5" />
+                </div>
+                <div className="flex flex-col text-left leading-tight hidden sm:flex">
+                  <span className="font-bold text-xs text-white truncate max-w-[90px]">Vinothkumar</span>
+                </div>
+                <ChevronDown className={`w-3.5 h-3.5 text-white/80 transition-transform duration-200 ${isProfileMenuOpen ? "rotate-180" : ""}`} />
+              </button>
+
+              {/* Profile Dropdown Menu */}
+              {isProfileMenuOpen && (
+                <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-2xl py-2 border border-gray-100 z-50 text-gray-800 animate-in fade-in zoom-in-95 duration-150">
+                  <div className="px-4 py-2.5 border-b border-gray-100 bg-gray-50/70">
+                    <p className="text-[11px] text-gray-500 font-medium">Signed in as</p>
+                    <p className="text-xs font-bold text-gray-900 truncate">vinothkumar@1place.in</p>
+                  </div>
+                  <div className="py-1">
+                    <Link
+                      href="#"
+                      className="flex items-center px-4 py-2 text-xs font-semibold hover:bg-blue-50 hover:text-[#1559ac] transition"
+                    >
+                      Your Profile
+                    </Link>
+                    <Link
+                      href="#"
+                      className="flex items-center px-4 py-2 text-xs font-semibold hover:bg-blue-50 hover:text-[#1559ac] transition"
+                    >
+                      Your Orders
+                    </Link>
+                    <Link
+                      href="#"
+                      className="flex items-center px-4 py-2 text-xs font-semibold hover:bg-blue-50 hover:text-[#1559ac] transition"
+                    >
+                      Wishlist & Saved
+                    </Link>
+                    <Link
+                      href="#"
+                      className="flex items-center px-4 py-2 text-xs font-semibold hover:bg-blue-50 hover:text-[#1559ac] transition"
+                    >
+                      Account Settings
+                    </Link>
+                  </div>
+                  <div className="border-t border-gray-100 pt-1">
+                    <button
+                      onClick={() => setIsProfileMenuOpen(false)}
+                      className="w-full text-left px-4 py-2 text-xs font-bold text-red-600 hover:bg-red-50 transition"
+                    >
+                      Sign Out
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Tier 2: Subnav Ribbon - Exactly matching user pencil sketch & prompt */}
-        <div className="bg-[#0f4484] px-3 sm:px-6 py-1 flex items-center justify-between text-xs overflow-x-auto whitespace-nowrap scrollbar-none h-[42px] border-t border-white/10">
-          {/* Left Group: Light Curve Category Button with Down Arrow + Links */}
-          <div className="flex items-center gap-3 sm:gap-4">
-            {/* Light Curve Category Button with Down Arrow (Pill from user sketch) */}
+        {/* Tier 2: Subnav Ribbon - 'For you' removed, visible bottom scrollbar + Left & Right Arrows */}
+        <div className="bg-[#0f4484] px-2 sm:px-4 py-1 flex items-center justify-between text-xs h-[44px] border-t border-white/10 relative select-none">
+          {/* Middle Scrollable Container with Left & Right Arrow Buttons */}
+          <div className="flex-1 flex items-center min-w-0 mr-2 sm:mr-3 relative overflow-hidden">
+            {/* Scroll Left Arrow Button */}
             <button
-              onClick={() => setIsSidebarOpen(true)}
-              className="bg-white/15 hover:bg-white/25 text-white font-bold text-xs px-3.5 py-1.5 rounded-full flex items-center gap-1.5 transition border border-white/25 shadow-xs cursor-pointer select-none"
+              onClick={() => scrollSubnav("left")}
+              aria-label="Scroll left"
+              className="w-6 h-6 rounded-full bg-[#0d3b73] hover:bg-white/25 text-white flex items-center justify-center shrink-0 shadow transition cursor-pointer z-10 mr-1.5"
             >
-              <span>For you</span>
-              <ChevronDown className="w-3.5 h-3.5 text-white/90 stroke-[2.5]" />
+              <ChevronLeft className="w-3.5 h-3.5 stroke-[2.5]" />
             </button>
 
-            {/* Subnav links: Bestsellers, Today Deals, Coupons, New Release, Buy Again */}
-            <div className="flex items-center gap-2 sm:gap-3">
+            {/* Scrollable Links Track without bottom scrollbar, hover bottom line show */}
+            <div
+              ref={subnavScrollRef}
+              className="flex items-center gap-1 sm:gap-2 overflow-x-auto whitespace-nowrap no-scrollbar scroll-smooth h-full py-0"
+            >
               {SUB_NAV_LINKS.map((link) => (
                 <a
                   key={link.label}
                   href={link.href}
-                  className="hover:bg-white/10 px-2.5 py-1 rounded-md text-white/90 hover:text-white font-medium text-xs transition select-none"
+                  className="relative flex items-center h-[42px] px-2.5 text-white font-medium text-xs transition-colors shrink-0 select-none group"
                 >
-                  {link.label}
+                  <span className="text-white/90 group-hover:text-white transition-colors">{link.label}</span>
+                  {/* Clean bottom line indicator on hover, exactly matching the reference image */}
+                  <span className="absolute bottom-0 left-2 right-2 h-[2.5px] bg-white rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-center" />
                 </a>
               ))}
             </div>
+
+            {/* Scroll Right Arrow Button */}
+            <button
+              onClick={() => scrollSubnav("right")}
+              aria-label="Scroll right"
+              className="w-6 h-6 rounded-full bg-[#0d3b73] hover:bg-white/25 text-white flex items-center justify-center shrink-0 shadow transition cursor-pointer z-10 ml-1.5"
+            >
+              <ChevronRight className="w-3.5 h-3.5 stroke-[2.5]" />
+            </button>
           </div>
 
-          {/* Right Group: Help & Support with Word + Settings with Word */}
-          <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+          {/* Right Fixed Group: Help & Support + Settings (Preserved) */}
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0 pl-1 z-10">
             {/* Help & Support Customer Care Headset Button with Word */}
             <button
               aria-label="Help & Support"
               className="flex items-center gap-1.5 text-white/90 hover:text-white hover:bg-white/10 px-2.5 py-1 rounded-full text-xs font-semibold transition cursor-pointer select-none"
             >
               <Headset className="w-4 h-4 text-white stroke-[2.2]" />
-              <span>Help&Support</span>
+              <span className="hidden sm:inline">Help&Support</span>
             </button>
 
             {/* Settings Button with Word */}
@@ -260,7 +330,7 @@ export const AmazonNavbar: React.FC = () => {
               className="flex items-center gap-1.5 text-white/90 hover:text-white hover:bg-white/10 px-2.5 py-1 rounded-full text-xs font-semibold transition cursor-pointer select-none"
             >
               <Settings className="w-4 h-4 text-white stroke-[2]" />
-              <span>Settings</span>
+              <span className="hidden sm:inline">Settings</span>
             </button>
           </div>
         </div>

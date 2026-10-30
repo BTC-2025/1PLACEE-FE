@@ -16,7 +16,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased min-h-screen flex flex-col bg-[#e3e6e6] text-[#0F1111]">
+      <body className="antialiased min-h-screen flex flex-col bg-[#fafafa] text-[#0F1111]">
         <AmazonNavbar />
         <main className="flex-1 w-full mx-auto">
           {children}
