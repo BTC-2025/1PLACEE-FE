@@ -30,16 +30,6 @@ export const AmazonFooter: React.FC = () => {
 
   return (
     <footer className="w-full text-gray-800 select-none mt-10 font-sans">
-      {/* Back to top button with Soft Blue theme */}
-      <button
-        onClick={scrollToTop}
-        className="w-full bg-[#1559ac] hover:bg-[#0d4285] text-white py-3 text-center font-bold text-xs transition duration-200 flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
-        aria-label="Back to top"
-      >
-        <ChevronUp className="w-4 h-4 stroke-[2.5]" />
-        <span>Back to top</span>
-      </button>
-
       {/* Main Footer Container with #e9f4ff background */}
       <div className="bg-[#e9f4ff] py-12 px-4 sm:px-8 lg:px-14 border-t border-[#cde2f8]">
         <div className="max-w-[1440px] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10">
@@ -267,9 +257,9 @@ export const AmazonFooter: React.FC = () => {
       </div>
 
       {/* Bottom Sub-Footer: Copyright and Payment Cards */}
-      <div className="bg-[#d7ebfc] py-4 px-4 sm:px-8 lg:px-14 border-t border-[#cde2f8]">
-        <div className="max-w-[1440px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-700">
-          <p>© Copyright 2026 1PLACE.in. All rights reserved.</p>
+      <div className="bg-[#1559ac] py-4 px-4 sm:px-8 lg:px-14 border-t border-[#cde2f8]">
+        <div className="max-w-[1440px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white">
+          <p>© Copyright 2026 1PLACEE All rights reserved.</p>
 
           {/* Payment Method Badges */}
           <div className="flex items-center gap-2">

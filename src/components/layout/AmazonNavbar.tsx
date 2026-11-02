@@ -33,7 +33,6 @@ const SUB_NAV_LINKS = [
   { label: "Women's Fashion", href: "/categories" },
   { label: "Kids & Baby", href: "/categories" },
   { label: "Toys", href: "/categories" },
-  { label: "Car & Motorbike", href: "/categories" },
   { label: "Sports & Outdoors", href: "/categories" },
   { label: "Books", href: "/categories" },
   { label: "Beauty & Personal Care", href: "/categories" },
@@ -94,7 +93,7 @@ export const AmazonNavbar: React.FC = () => {
     <>
       <header className="sticky top-0 z-50 w-full select-none text-xs font-sans shadow-xs">
         {/* Tier 1: Top Navbar with requested #e9f4ff light background and increased height */}
-        <div className="bg-[#e9f4ff] px-3 sm:px-6 py-2 flex items-center justify-between h-[60px] sm:h-[60px] border-b border-[#cde2f8] relative">
+        <div className="bg-[#e9f4ff] pl-3 sm:pl-6 pr-1 sm:pr-2 py-2 flex items-center justify-between h-[60px] sm:h-[60px] border-b border-[#cde2f8] relative">
           {/* Left Group: 1PLACEE Logo + Location with Name */}
           <div className="flex items-center gap-3.5 sm:gap-4 shrink-0 z-10">
             {/* 1PLACEE Logo - increased height */}
@@ -129,7 +128,7 @@ export const AmazonNavbar: React.FC = () => {
               onClick={() => setActiveTab("Home")}
               className={`px-4 sm:px-5 py-1.5 sm:py-2 rounded-full font-bold text-[13px] sm:text-sm transition duration-200 cursor-pointer ${activeTab === "Home"
                 ? "bg-[#1559ac] text-white shadow-sm"
-                : "text-[#1559ac] hover:text-white hover:bg-[#1559ac]"
+                : "text-[#1559ac] hover:text[#1559ac] hover:bg-white"
                 }`}
             >
               Home
@@ -139,7 +138,7 @@ export const AmazonNavbar: React.FC = () => {
               onClick={() => setActiveTab("Categorys")}
               className={`px-4 sm:px-5 py-1.5 sm:py-2 rounded-full font-bold text-[13px] sm:text-sm transition duration-200 cursor-pointer ${activeTab === "Categorys"
                 ? "bg-[#1559ac] text-white shadow-sm"
-                : "text-[#1559ac] hover:text-white hover:bg-[#1559ac]"
+                : "text-[#1559ac] hover:text-[#1559ac] hover:bg-white"
                 }`}
             >
               Categories
@@ -148,7 +147,7 @@ export const AmazonNavbar: React.FC = () => {
               onClick={() => setActiveTab("Bookings")}
               className={`px-4 sm:px-5 py-1.5 sm:py-2 rounded-full font-bold text-[13px] sm:text-sm transition duration-200 cursor-pointer ${activeTab === "Bookings"
                 ? "bg-[#1559ac] text-white shadow-sm"
-                : "text-[#1559ac] hover:text-white hover:bg-[#1559ac]"
+                : "text-[#1559ac] hover:text-[#1559ac] hover:bg-white"
                 }`}
             >
               Orders
@@ -162,7 +161,7 @@ export const AmazonNavbar: React.FC = () => {
               {isSearchOpen ? (
                 <form
                   onSubmit={handleSearchSubmit}
-                  className="flex items-center bg-white rounded-full px-4 py-1.5 shadow-md w-56 sm:w-72 border border-[#b8dcfa] animate-in fade-in zoom-in-95 duration-200"
+                  className="flex items-center bg-white rounded-full px-3.5 py-1.5 shadow-md w-44 sm:w-64 md:w-66 max-w-[250px] border border-[#b8dcfa] animate-in fade-in zoom-in-95 duration-200"
                 >
                   <Search className="w-4.5 h-4.5 text-[#1559ac] mr-2 shrink-0 stroke-[2.2]" />
                   <input
@@ -289,7 +288,7 @@ export const AmazonNavbar: React.FC = () => {
                   <div className="border-t border-gray-100 pt-1">
                     <button
                       onClick={() => setIsProfileMenuOpen(false)}
-                      className="w-full text-left px-4 py-2 text-xs font-bold text-red-600 hover:bg-red-50 transition"
+                      className="w-full text-left px-4 py-2 text-xs font-bold text-red-600 hover:bg-red-50 transition cursor-pointer"
                     >
                       Sign Out
                     </button>
@@ -297,13 +296,29 @@ export const AmazonNavbar: React.FC = () => {
                 </div>
               )}
             </div>
+
+            {/* Vertical Divider Line */}
+            <div className="h-6 w-[1px] bg-[#b8dcfa]/80 " />
+
+            {/* Equalizer / Control Sliders Icon Button with the exact uploaded image inside round container */}
+            <button
+              aria-label="Preferences & Quick Settings"
+              title="Preferences & Quick Filters"
+              className="group w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-white/90 hover:bg-[#1559ac] border border-[#b8dcfa] shadow-2xs transition-all duration-200 cursor-pointer overflow-hidden"
+            >
+              <img
+                src="/equalizer-icon.png"
+                alt="Quick Settings"
+                className="w-5 h-5 object-contain transition-all duration-200 group-hover:brightness-0 group-hover:invert"
+              />
+            </button>
           </div>
         </div>
 
         {/* Tier 2: Subnav Ribbon - White background, grey text, slightly increased font size */}
         <div className="bg-white px-2 sm:px-4 py-1 flex items-center justify-between text-[13px] h-[44px] border-b border-gray-200/80 shadow-2xs relative select-none">
-          {/* Middle Scrollable Container with Left & Right Arrow Buttons */}
-          <div className="flex-1 flex items-center min-w-0 mr-2 sm:mr-3 relative overflow-hidden">
+          {/* Middle Scrollable Container with Left & Right Arrow Buttons - constrained width so it neatly ends at Home & Kitchen initially */}
+          <div className="flex items-center min-w-0 mr-2 sm:mr-3 relative overflow-hidden max-w-[820px] lg:max-w-[885px] xl:max-w-[920px]">
             {/* Scroll Left Arrow Button */}
             <button
               onClick={() => scrollSubnav("left")}
@@ -316,13 +331,13 @@ export const AmazonNavbar: React.FC = () => {
             {/* Scrollable Links Track without bottom scrollbar, hover bottom line show */}
             <div
               ref={subnavScrollRef}
-              className="flex items-center gap-1 sm:gap-2 overflow-x-auto whitespace-nowrap no-scrollbar scroll-smooth h-full py-0"
+              className="flex items-center gap-0.5 sm:gap-1 overflow-x-auto whitespace-nowrap no-scrollbar scroll-smooth h-full py-0"
             >
               {SUB_NAV_LINKS.map((link) => (
                 <a
                   key={link.label}
                   href={link.href}
-                  className="relative flex items-center h-[42px] px-2.5 sm:px-3 text-gray-600 font-semibold text-[14px] hover:text-gray-900 transition-colors shrink-0 select-none group"
+                  className="relative flex items-center h-[42px] px-2.5 text-gray-600 font-semibold text-[13.5px] hover:text-gray-900 transition-colors shrink-0 select-none group"
                 >
                   <span className="text-gray-600 group-hover:text-[#1559ac] font-medium transition-colors">{link.label}</span>
                   {/* Clean bottom line indicator on hover */}
