@@ -14,9 +14,11 @@ import {
   User,
   Bell,
   Headset,
-  Settings
+  Settings,
+  X
 } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
+import { useQuickSidebarStore } from "@/stores/quickSidebarStore";
 
 // Subnav categories & links from second image with scroll navigation
 const SUB_NAV_LINKS = [
@@ -50,6 +52,7 @@ export const AmazonNavbar: React.FC = () => {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const totalItems = useCartStore((state) => state.totalItems());
   const toggleCart = useCartStore((state) => state.toggleCart);
+  const { isSidebarOpen: isQuickBarOpen, toggleSidebar: toggleQuickSidebar, activePanel } = useQuickSidebarStore();
   const subnavScrollRef = useRef<HTMLDivElement>(null);
   const searchContainerRef = useRef<HTMLDivElement>(null);
 
@@ -113,9 +116,9 @@ export const AmazonNavbar: React.FC = () => {
               aria-label="Location"
               className="group flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/90 hover:bg-[#1559ac] border border-[#b8dcfa] shadow-2xs transition-all duration-200 cursor-pointer select-none text-[#1559ac] hover:text-white"
             >
-              <MapPin className="w-4.5 h-4.5 text-[#1559ac] group-hover:text-white stroke-[2.2] shrink-0 transition-colors" />
+              <MapPin className="w-4.5 h-4 text-[#1559ac] group-hover:text-white stroke-[2.2] shrink-0 transition-colors" />
               <div className="flex flex-col text-left leading-tight">
-                <span className="font-bold text-[13px] sm:text-sm text-[#1e293b] group-hover:text-white truncate max-w-[130px] transition-colors">Chennai, TN</span>
+                <span className="font-bold text-[10px] sm:text-sm text-[#1e293b] group-hover:text-white truncate max-w-[130px] transition-colors">Chennai, TN</span>
               </div>
               <ChevronDown className="w-4 h-4.5 text-[#1559ac] group-hover:text-white shrink-0 ml-0.5 transition-colors" />
             </button>
@@ -297,28 +300,43 @@ export const AmazonNavbar: React.FC = () => {
               )}
             </div>
 
-            {/* Vertical Divider Line */}
-            <div className="h-6 w-[1px] bg-[#b8dcfa]/80 " />
+            {/* Vertical Divider Line with width align matching quick filter: moved 1px right */}
+            <div className="h-6 w-[1.5px] bg-[#b8dcfa] ml-0.5 mr-1" />
 
             {/* Equalizer / Control Sliders Icon Button with the exact uploaded image inside round container */}
             <button
+              onClick={toggleQuickSidebar}
               aria-label="Preferences & Quick Settings"
               title="Preferences & Quick Filters"
-              className="group w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-white/90 hover:bg-[#1559ac] border border-[#b8dcfa] shadow-2xs transition-all duration-200 cursor-pointer overflow-hidden"
+              className={`group w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center border shadow-2xs transition-all duration-200 cursor-pointer overflow-hidden mr-0.2 sm:mr-0.5 ${isQuickBarOpen
+                ? "bg-[#1559ac] border-[#1559ac] ring-2 ring-[#b8dcfa]"
+                : "bg-white/90 hover:bg-[#1559ac] border-[#b8dcfa]"
+                }`}
             >
               <img
                 src="/equalizer-icon.png"
                 alt="Quick Settings"
-                className="w-5 h-5 object-contain transition-all duration-200 group-hover:brightness-0 group-hover:invert"
+                className={`w-5 h-5 object-contain transition-all duration-200 ${isQuickBarOpen
+                  ? "brightness-0 invert"
+                  : "group-hover:brightness-0 group-hover:invert"
+                  }`}
               />
             </button>
           </div>
         </div>
 
-        {/* Tier 2: Subnav Ribbon - White background, grey text, slightly increased font size */}
-        <div className="bg-white px-2 sm:px-4 py-1 flex items-center justify-between text-[13px] h-[44px] border-b border-gray-200/80 shadow-2xs relative select-none">
-          {/* Middle Scrollable Container with Left & Right Arrow Buttons - constrained width so it neatly ends at Home & Kitchen initially */}
-          <div className="flex items-center min-w-0 mr-2 sm:mr-3 relative overflow-hidden max-w-[820px] lg:max-w-[885px] xl:max-w-[920px]">
+        {/* Tier 2: Subnav Ribbon - White background, grey text, seamlessly meets the top nav with no vertical gap */}
+        <div
+          className={`bg-white pl-2 sm:pl-4 py-1 flex items-center justify-between text-[13px] h-[44px] border-b border-gray-200/80 shadow-2xs relative select-none transition-all duration-300 ease-in-out ${
+            !isQuickBarOpen
+              ? "mr-0"
+              : activePanel === "calendar"
+              ? "mr-[350px] sm:mr-[372px]"
+              : "mr-[60px] sm:mr-[62px]"
+          }`}
+        >
+          {/* Middle Scrollable Container with Left & Right Arrow Buttons - expanded to fill subnav smoothly */}
+          <div className="flex-1 flex items-center min-w-0 mr-2 sm:mr-3 relative overflow-hidden">
             {/* Scroll Left Arrow Button */}
             <button
               onClick={() => scrollSubnav("left")}

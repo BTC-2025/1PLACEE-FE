@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { AmazonNavbar } from "@/components/layout/AmazonNavbar";
-import { AmazonFooter } from "@/components/layout/AmazonFooter";
-import { CartDrawer } from "@/features/cart/CartDrawer";
+import { ClientAppShell } from "@/components/layout/ClientAppShell";
 
 export const metadata: Metadata = {
   title: "1Placee Online Shopping site in India: Shop Online for Mobiles, Books, Watches, Shoes and More...",
@@ -33,14 +31,10 @@ export default function RootLayout({
         <link rel="shortcut icon" href="/favicon.ico?v=4" />
         <link rel="apple-touch-icon" href="/favicon.png?v=4" />
       </head>
-      <body className="antialiased min-h-screen flex flex-col bg-[#fafafa] text-[#0F1111]">
-
-        <AmazonNavbar />
-        <main className="flex-1 w-full mx-auto">
+      <body className="antialiased min-h-screen flex flex-col bg-[#fafafa] text-[#0F1111] overflow-x-hidden relative">
+        <ClientAppShell>
           {children}
-        </main>
-        <AmazonFooter />
-        <CartDrawer />
+        </ClientAppShell>
       </body>
     </html>
   );
