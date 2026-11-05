@@ -9,17 +9,20 @@ import {
   Check,
   Sparkles,
   ArrowRight,
-  Grid,
-  Apple,
-  UtensilsCrossed,
-  Milk,
-  Cookie,
-  Coffee,
-  Sparkle,
-  ShoppingBag,
-  PackageCheck,
-  Wheat,
-  Search,
+  ShoppingCart,
+  Shirt,
+  Tv,
+  Home,
+  Wrench,
+  Armchair,
+  Flower2,
+  BookOpen,
+  Baby,
+  ArrowLeft,
+  Heart,
+  SlidersHorizontal,
+  ChevronDown,
+  ArrowUpDown,
 } from "lucide-react";
 import {
   BLINKIT_CATEGORIES,
@@ -29,28 +32,35 @@ import {
   CategoryProduct,
 } from "@/data/blinkitCategoryData";
 import { CATEGORY_SEO_ARTICLES } from "@/data/blinkitSeoData";
+import { GROCERY_SECTIONS } from "@/data/grocerySectionsData";
+import { FASHION_SECTIONS } from "@/data/fashionSectionsData";
+import {
+  getSubrailForSubcategory,
+  SubrailItem,
+  FRUITS_SUBRAIL,
+} from "@/data/categorySubrailRegistry";
 import { useCartStore } from "@/stores/cartStore";
 
-// Lucide icon helper mapping for sleek category sidebar
+// Lucide icon helper mapping for left vertical rail matching Image 1 exactly
 const CATEGORY_ICONS: Record<string, React.ReactNode> = {
-  "vegetables-fruits": <Apple className="w-5 h-5 text-emerald-600" />,
-  "dairy-breakfast": <Milk className="w-5 h-5 text-blue-600" />,
-  "munchies": <Cookie className="w-5 h-5 text-amber-600" />,
-  "cold-drinks-juices": <Coffee className="w-5 h-5 text-orange-600" />,
-  "instant-food": <UtensilsCrossed className="w-5 h-5 text-rose-600" />,
-  "bakery-biscuits": <Cookie className="w-5 h-5 text-yellow-700" />,
-  "tea-coffee": <Coffee className="w-5 h-5 text-stone-700" />,
-  "atta-rice-dal": <Wheat className="w-5 h-5 text-amber-700" />,
-  "cleaning-essentials": <Sparkle className="w-5 h-5 text-cyan-600" />,
-  "personal-care": <ShoppingBag className="w-5 h-5 text-purple-600" />,
+  "groceries": <ShoppingCart className="w-5 h-5 stroke-[2.2]" />,
+  "fashion": <Shirt className="w-5 h-5 stroke-[2.2]" />,
+  "electronics": <Tv className="w-5 h-5 stroke-[2.2]" />,
+  "home-lifestyle": <Home className="w-5 h-5 stroke-[2.2]" />,
+  "industrial-professional": <Wrench className="w-5 h-5 stroke-[2.2]" />,
+  "furniture": <Armchair className="w-5 h-5 stroke-[2.2]" />,
+  "beauty-personal-care": <Flower2 className="w-5 h-5 stroke-[2.2]" />,
+  "stationery-books": <BookOpen className="w-5 h-5 stroke-[2.2]" />,
+  "baby-kids": <Baby className="w-5 h-5 stroke-[2.2]" />,
 };
 
 export default function CategoryMasterPage() {
-  // Left Sidebar active category
-  const [activeCatId, setActiveCatId] = useState<string>("vegetables-fruits");
+  // Left Sidebar active category - defaults to 'groceries' from Image 1
+  const [activeCatId, setActiveCatId] = useState<string>("groceries");
   // If user clicks on a subcategory to view its products directly
   const [selectedSubCatId, setSelectedSubCatId] = useState<string | null>(null);
   const [addedItemIds, setAddedItemIds] = useState<Record<string, boolean>>({});
+  const [activeSubrailId, setActiveSubrailId] = useState<string>("fresh-fruits");
 
   const addToCart = useCartStore((state) => state.addToCart);
 
@@ -58,21 +68,25 @@ export default function CategoryMasterPage() {
   const activeCategory: CategoryGroup =
     BLINKIT_CATEGORIES.find((c) => c.id === activeCatId) || BLINKIT_CATEGORIES[0];
 
-  // If a subcategory is explicitly chosen, find it; otherwise show all subcategories of current category
-  const activeSubcategory = selectedSubCatId
-    ? activeCategory.subcategories.find((s) => s.id === selectedSubCatId)
-    : null;
-
-  // Products to display when in product view
-  const currentProducts: CategoryProduct[] = selectedSubCatId
-    ? CATEGORY_PRODUCTS_DATABASE[selectedSubCatId] ||
-      CATEGORY_PRODUCTS_DATABASE["instant-noodles"] ||
-      []
+  // Dynamic subrail items corresponding to the clicked subcategory card
+  const currentSubrailItems: SubrailItem[] = selectedSubCatId
+    ? getSubrailForSubcategory(selectedSubCatId)
     : [];
 
-  const seoDetails =
-    CATEGORY_SEO_ARTICLES[selectedSubCatId || "instant-noodles"] ||
-    CATEGORY_SEO_ARTICLES["instant-noodles"];
+  // Active item in the subrail (defaulting to the selected subcategory)
+  const activeSubrailItem =
+    currentSubrailItems.find((s) => s.id === activeSubrailId) ||
+    currentSubrailItems.find((s) => s.id === selectedSubCatId) ||
+    currentSubrailItems[0];
+
+  // Products to display when in product view
+  const currentProducts: CategoryProduct[] = activeSubrailItem
+    ? CATEGORY_PRODUCTS_DATABASE[activeSubrailItem.id] ||
+      CATEGORY_PRODUCTS_DATABASE[selectedSubCatId || ""] ||
+      CATEGORY_PRODUCTS_DATABASE["fresh-fruits"] ||
+      CATEGORY_PRODUCTS_DATABASE["chips-crisps"] ||
+      []
+    : [];
 
   const handleSelectCategory = (catId: string) => {
     setActiveCatId(catId);
@@ -81,6 +95,7 @@ export default function CategoryMasterPage() {
 
   const handleSelectSubcategory = (subId: string) => {
     setSelectedSubCatId(subId);
+    setActiveSubrailId(subId);
   };
 
   const handleAddProduct = (product: CategoryProduct) => {
@@ -105,387 +120,354 @@ export default function CategoryMasterPage() {
   };
 
   return (
-    <div className="w-full bg-[#f4f7fb] min-h-screen text-[#0F1111] pb-16">
+    <div className="w-full bg-[#f8fbff] min-h-screen text-[#0F1111] pb-16">
       
-      {/* TOP BREADCRUMB / STATUS BAR */}
-      <div className="bg-white border-b border-gray-200 sticky top-[64px] z-30 px-3 sm:px-6 py-2.5 shadow-xs">
-        <div className="max-w-[1540px] mx-auto flex items-center justify-between flex-wrap gap-2">
-          
-          <div className="flex items-center gap-2 text-xs sm:text-sm">
-            <Link href="/" className="text-gray-500 hover:text-[#1559ac] font-medium transition">
-              Home
-            </Link>
-            <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
-            <button
-              onClick={() => setSelectedSubCatId(null)}
-              className={`font-semibold hover:text-[#1559ac] transition cursor-pointer ${
-                selectedSubCatId ? "text-gray-500" : "text-[#1559ac]"
-              }`}
-            >
-              All Categories
-            </button>
-            <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
-            <span className="font-bold text-gray-900">{activeCategory.name}</span>
-            {activeSubcategory && (
-              <>
-                <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
-                <span className="font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                  {activeSubcategory.name}
-                </span>
-              </>
-            )}
-          </div>
-
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1 rounded-full text-xs font-bold">
-              <Clock className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Instant 8 Mins Delivery</span>
-            </div>
-            <span className="text-xs text-gray-500 font-medium hidden sm:inline">
-              100% Genuine & Fresh
-            </span>
-          </div>
-
-        </div>
-      </div>
-
-      {/* MAIN 2-COLUMN AMAZON / BLINKIT SPLIT CONTAINER */}
-      <div className="max-w-[1540px] mx-auto px-2 sm:px-4 lg:px-6 pt-3 flex flex-col md:flex-row gap-3 items-start">
+      {/* MAIN 2-COLUMN VIEW (LEFT ICON RAIL + RIGHT CONTENT) */}
+      <div className="max-w-[1580px] mx-auto px-2 sm:px-4 lg:px-6 pt-4 flex flex-col md:flex-row gap-4 items-start">
         
         {/* ============================================================== */}
-        {/* LEFT SIDEBAR: ALL CATEGORIES (Exact Match to Image 2 Left Rail)*/}
+        {/* LEFT SIDEBAR: DYNAMIC SINGLE RAIL                             */}
+        {/* State 1: When on Category list -> Shows Groceries, Fashion... (Image 2) */}
+        {/* State 2: When Fresh Fruits clicked -> Directly transforms to   */}
+        {/*          Fresh Fruits, Premium Fruits, Papaya... (Image 1)     */}
         {/* ============================================================== */}
-        <aside className="w-full md:w-[220px] lg:w-[240px] shrink-0 bg-white rounded-xl border border-gray-200 shadow-xs md:sticky md:top-[124px] max-h-[calc(100vh-140px)] overflow-y-auto flex md:flex-col overflow-x-auto p-1.5 gap-1">
-          <div className="hidden md:flex items-center justify-between px-3 py-2 border-b border-gray-100 mb-1">
-            <span className="text-xs font-bold uppercase tracking-wider text-gray-400">
-              Categories
-            </span>
-            <span className="text-[11px] font-bold text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">
-              {BLINKIT_CATEGORIES.length}
-            </span>
-          </div>
-
-          {BLINKIT_CATEGORIES.map((cat) => {
-            const isActive = activeCatId === cat.id;
-            return (
-              <button
-                key={cat.id}
-                onClick={() => handleSelectCategory(cat.id)}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition cursor-pointer shrink-0 md:shrink md:w-full group relative ${
-                  isActive
-                    ? "bg-[#e9f4ff] text-[#1559ac] font-bold border-l-4 border-[#1559ac] shadow-xs"
-                    : "text-gray-700 hover:bg-gray-50 hover:text-gray-950 font-medium"
-                }`}
-              >
-                {/* Icon thumbnail */}
-                <div
-                  className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 text-lg transition ${
-                    isActive
-                      ? "bg-white shadow-xs border border-blue-200"
-                      : "bg-gray-100 group-hover:bg-white border border-transparent"
+        <aside className="w-full md:w-[98px] lg:w-[108px] shrink-0 bg-white rounded-2xl border border-[#e2eaf4] shadow-xs md:sticky md:top-[74px] max-h-[calc(100vh-90px)] overflow-y-auto no-scrollbar flex md:flex-col overflow-x-auto p-1.5 gap-2">
+          {selectedSubCatId ? (
+            /* Subcategory Rail (Dynamically shows the items related to the clicked card) */
+            currentSubrailItems.map((sub) => {
+              const isSelected = activeSubrailItem?.id === sub.id;
+              return (
+                <button
+                  key={sub.id}
+                  onClick={() => setActiveSubrailId(sub.id)}
+                  className={`relative flex flex-col items-center justify-center py-2.5 px-1 rounded-xl transition-all cursor-pointer group shrink-0 md:shrink md:w-full ${
+                    isSelected
+                      ? "bg-[#eaf4fe] text-[#0284c7] font-bold"
+                      : "text-[#334155] hover:text-[#0284c7] hover:bg-slate-50 font-medium"
                   }`}
                 >
-                  {CATEGORY_ICONS[cat.id] || <span>{cat.icon}</span>}
-                </div>
+                  {/* Active Indicator Bar on Left */}
+                  {isSelected && (
+                    <span className="absolute left-0 top-2 bottom-2 w-1.5 bg-[#0284c7] rounded-r-md" />
+                  )}
 
-                <div className="flex-1 min-w-0 pr-1">
-                  <div className="text-xs sm:text-[13px] leading-tight truncate">
-                    {cat.name}
+                  {/* Clean High-Resolution Item Icon */}
+                  <div className="w-12 h-12 flex items-center justify-center transition-transform group-hover:scale-105 mb-1.5">
+                    {sub.image ? (
+                      <img
+                        src={sub.image}
+                        alt={sub.name}
+                        className="max-w-[46px] max-h-[46px] object-contain drop-shadow-xs"
+                      />
+                    ) : (
+                      <span className="text-2xl">{activeCategory.icon}</span>
+                    )}
                   </div>
-                  <div className="text-[10px] text-gray-400 font-normal mt-0.5">
-                    {cat.subcategories.length} sub-items
-                  </div>
-                </div>
 
-                {/* Active arrow indicator */}
-                <ChevronRight
-                  className={`w-4 h-4 shrink-0 transition ${
-                    isActive ? "text-[#1559ac] translate-x-0.5" : "text-gray-300 opacity-0 group-hover:opacity-100"
+                  {/* Item Label */}
+                  <span
+                    className={`text-[12px] leading-tight text-center px-0.5 line-clamp-2 ${
+                      isSelected ? "text-[#0284c7] font-bold" : "text-[#1e293b]"
+                    }`}
+                  >
+                    {sub.name}
+                  </span>
+                </button>
+              );
+            })
+          ) : (
+            /* Main Categories Rail (Groceries, Fashion, Electronics... Image 2) */
+            BLINKIT_CATEGORIES.map((cat) => {
+              const isActive = activeCatId === cat.id;
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => handleSelectCategory(cat.id)}
+                  className={`relative flex flex-col items-center justify-center p-2.5 rounded-xl transition-all cursor-pointer group shrink-0 md:shrink md:w-full ${
+                    isActive
+                      ? "bg-[#eaf4fe] text-[#0284c7] font-bold"
+                      : "text-[#64748b] hover:text-[#0f172a] hover:bg-slate-50 font-medium"
                   }`}
-                />
-              </button>
-            );
-          })}
+                >
+                  {/* Active Indicator Bar on Left */}
+                  {isActive && (
+                    <span className="absolute left-0 top-2 bottom-2 w-1 bg-[#0284c7] rounded-r-md" />
+                  )}
+
+                  {/* Category Icon */}
+                  <div
+                    className={`w-10 h-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 ${
+                      isActive
+                        ? "text-[#0284c7]"
+                        : "text-[#64748b] group-hover:text-[#0f172a]"
+                    }`}
+                  >
+                    {CATEGORY_ICONS[cat.id] || <span className="text-xl">{cat.icon}</span>}
+                  </div>
+
+                  {/* Category Label */}
+                  <span className="text-[11px] leading-tight text-center mt-1 px-0.5 line-clamp-2">
+                    {cat.name}
+                  </span>
+                </button>
+              );
+            })
+          )}
         </aside>
 
         {/* ============================================================== */}
-        {/* RIGHT SIDE: SUBCATEGORIES GRID / PRODUCTS (Matching Image 2)   */}
+        {/* RIGHT SIDE: SUBCATEGORIES GRID / PRODUCTS (MATCHING IMAGE 1)    */}
         {/* ============================================================== */}
-        <main className="flex-1 w-full bg-white rounded-xl border border-gray-200 p-4 sm:p-6 shadow-xs min-h-[500px]">
+        <main className="flex-1 w-full bg-white rounded-2xl border border-[#e2eaf4] p-4 sm:p-6 shadow-xs min-h-[550px]">
           
-          {/* If NO subcategory is selected, show ALL SUBCATEGORIES AS RICH CARDS (Exact match to Image 2!) */}
+          {/* If NO subcategory is selected, show SUBCATEGORIES matching Image 1 layout */}
           {!selectedSubCatId ? (
             <div className="space-y-6">
               
-              {/* Category Title Header */}
-              <div className="flex items-center justify-between pb-3 border-b border-gray-200">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-2xl">{activeCategory.icon}</span>
-                    <h1 className="text-xl sm:text-2xl font-black text-gray-900 tracking-tight">
-                      {activeCategory.name}
-                    </h1>
-                  </div>
-                  <p className="text-xs sm:text-sm text-gray-500 mt-1">
-                    Select a sub-category below to explore fresh products, brands and deals
-                  </p>
+              {/* Subcategories Sections */}
+              {activeCategory.id === "groceries" ? (
+                <div className="space-y-8">
+                  {GROCERY_SECTIONS.map((section) => (
+                    <div key={section.id} className="space-y-3">
+                      <h2 className="text-xl sm:text-2xl font-black text-[#2d3748] tracking-tight">
+                        {section.title}
+                      </h2>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                        {section.items.map((item) => (
+                          <button
+                            key={item.id}
+                            onClick={() => handleSelectSubcategory(item.id)}
+                            className="group flex flex-col items-center text-center cursor-pointer transition"
+                          >
+                            {/* Rounded Square Card with crisp border */}
+                            <div className="w-full aspect-square max-w-[155px] bg-white border border-[#e2e8f0] group-hover:border-[#0284c7] rounded-3xl p-3.5 flex items-center justify-center transition-all duration-200 shadow-xs group-hover:shadow-sm">
+                              {item.image ? (
+                                <img
+                                  src={item.image}
+                                  alt={item.name}
+                                  className="w-full h-full object-contain group-hover:scale-105 transition duration-300 drop-shadow-xs"
+                                />
+                              ) : (
+                                <span className="text-4xl">{activeCategory.icon}</span>
+                              )}
+                            </div>
+
+                            {/* Card below name */}
+                            <span className="mt-2 text-xs sm:text-[13px] font-medium text-[#2d3748] group-hover:text-[#0284c7] transition line-clamp-2">
+                              {item.name}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                
-                <span className="text-xs font-bold bg-blue-50 text-[#1559ac] border border-blue-200 px-3 py-1.5 rounded-full">
-                  {activeCategory.subcategories.length} Sub-Categories
-                </span>
-              </div>
+              ) : activeCategory.id === "fashion" ? (
+                /* Fashion category sections matching uploaded images */
+                <div className="space-y-8">
+                  {FASHION_SECTIONS.map((section) => (
+                    <div key={section.id} className="space-y-3">
+                      <h2 className="text-xl sm:text-2xl font-black text-[#2d3748] tracking-tight">
+                        {section.title}
+                      </h2>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                        {section.items.map((item) => (
+                          <button
+                            key={item.id}
+                            onClick={() => handleSelectSubcategory(item.id)}
+                            className="group flex flex-col items-center text-center cursor-pointer transition"
+                          >
+                            {/* Rounded Square Card with crisp border */}
+                            <div className="w-full aspect-square max-w-[155px] bg-white border border-[#e2e8f0] group-hover:border-[#0284c7] rounded-3xl p-3.5 flex items-center justify-center transition-all duration-200 shadow-xs group-hover:shadow-sm">
+                              {item.image ? (
+                                <img
+                                  src={item.image}
+                                  alt={item.name}
+                                  className="w-full h-full object-contain group-hover:scale-105 transition duration-300 drop-shadow-xs"
+                                />
+                              ) : (
+                                <span className="text-4xl">{activeCategory.icon}</span>
+                              )}
+                            </div>
 
-              {/* Subcategories Grid (Image 2 style: rounded white card, crisp clean product photo, clear bold title) */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 gap-3.5 sm:gap-4">
-                {activeCategory.subcategories.map((sub: CategorySubItem) => (
-                  <button
-                    key={sub.id}
-                    onClick={() => handleSelectSubcategory(sub.id)}
-                    className="group bg-white border border-gray-200 hover:border-[#1559ac] rounded-xl p-3 flex flex-col items-center text-center transition hover:shadow-lg cursor-pointer relative overflow-hidden"
-                  >
-                    {/* Top subtle highlight */}
-                    <div className="absolute top-0 left-0 right-0 h-1 bg-transparent group-hover:bg-[#1559ac] transition" />
-
-                    {/* Subcategory Image Container */}
-                    <div className="w-full aspect-square max-w-[140px] bg-gray-50 rounded-xl overflow-hidden mb-3 p-2 flex items-center justify-center border border-gray-100 group-hover:border-blue-100 transition">
-                      {sub.image ? (
-                        <img
-                          src={sub.image}
-                          alt={sub.name}
-                          className="w-full h-full object-cover rounded-lg group-hover:scale-108 transition duration-300"
-                        />
-                      ) : (
-                        <span className="text-4xl">{activeCategory.icon}</span>
-                      )}
+                            {/* Card below name */}
+                            <span className="mt-2 text-xs sm:text-[13px] font-medium text-[#2d3748] group-hover:text-[#0284c7] transition line-clamp-2">
+                              {item.name}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
                     </div>
-
-                    {/* Subcategory Name */}
-                    <h3 className="text-xs sm:text-sm font-bold text-gray-900 group-hover:text-[#1559ac] transition line-clamp-2 leading-snug">
-                      {sub.name}
-                    </h3>
-
-                    {/* Explore Link Pill */}
-                    <div className="mt-2.5 inline-flex items-center gap-1 text-[11px] font-bold text-gray-400 group-hover:text-[#1559ac] transition">
-                      <span>Explore</span>
-                      <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition" />
-                    </div>
-                  </button>
-                ))}
-              </div>
-
-              {/* All Other Category Highlights Carousel / Group Preview (Image 2 also shows grouped sections like Biscuits, Drinks below) */}
-              <div className="pt-6 border-t border-gray-200 space-y-6">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-base sm:text-lg font-bold text-gray-900">
-                    Popular in Other Categories
+                  ))}
+                </div>
+              ) : (
+                /* Other Categories standard grouped view */
+                <div className="space-y-4">
+                  <h2 className="text-lg sm:text-xl font-bold text-[#2d3748] tracking-tight">
+                    {activeCategory.name} Collections
                   </h2>
-                </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-                  {BLINKIT_CATEGORIES.filter((c) => c.id !== activeCatId)
-                    .slice(0, 6)
-                    .map((otherCat) => (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                    {activeCategory.subcategories.map((sub: CategorySubItem) => (
                       <button
-                        key={otherCat.id}
-                        onClick={() => handleSelectCategory(otherCat.id)}
-                        className="p-3 bg-gray-50 hover:bg-[#e9f4ff] border border-gray-200 hover:border-blue-300 rounded-xl flex flex-col items-center text-center transition cursor-pointer group"
+                        key={sub.id}
+                        onClick={() => handleSelectSubcategory(sub.id)}
+                        className="group flex flex-col items-center text-center cursor-pointer transition"
                       >
-                        <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-xl shadow-xs mb-2 group-hover:scale-110 transition">
-                          {CATEGORY_ICONS[otherCat.id] || otherCat.icon}
+                        <div className="w-full aspect-square max-w-[155px] bg-white border border-gray-200 group-hover:border-[#0284c7] rounded-3xl p-3 flex items-center justify-center shadow-xs group-hover:shadow-md transition-all duration-200 overflow-hidden">
+                          {sub.image ? (
+                            <img
+                              src={sub.image}
+                              alt={sub.name}
+                              className="w-full h-full object-contain group-hover:scale-105 transition duration-300"
+                            />
+                          ) : (
+                            <span className="text-4xl">{activeCategory.icon}</span>
+                          )}
                         </div>
-                        <span className="text-xs font-bold text-gray-800 group-hover:text-[#1559ac] line-clamp-1">
-                          {otherCat.name}
-                        </span>
-                        <span className="text-[10px] text-gray-400 mt-0.5">
-                          {otherCat.subcategories.length} sub-items
+                        <span className="mt-2 text-xs sm:text-[13px] font-medium text-[#2d3748] group-hover:text-[#0284c7] transition line-clamp-2">
+                          {sub.name}
                         </span>
                       </button>
                     ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
             </div>
           ) : (
             
             /* ============================================================== */
-            /* SUBCATEGORY DETAIL VIEW: Shows Products Grid + SEO Write-Up    */
+            /* SUBCATEGORY DETAIL VIEW: EXACT MATCH TO USER'S UPLOADED SCREENSHOT */
             /* ============================================================== */
-            <div className="space-y-6">
+            <div className="space-y-4">
               
-              {/* Back to all subcategories bar + subcategory title */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-gray-200 gap-3">
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => setSelectedSubCatId(null)}
-                    className="p-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 transition cursor-pointer text-xs font-bold flex items-center gap-1 shrink-0"
-                  >
-                    <ChevronRight className="w-4 h-4 rotate-180" />
-                    <span>Back to {activeCategory.name}</span>
+              {/* Top Navigation Row: Back Arrow + Category Title */}
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setSelectedSubCatId(null)}
+                  className="p-1.5 rounded-full hover:bg-gray-100 text-[#0f172a] transition cursor-pointer"
+                  title="Back to Categories"
+                >
+                  <ArrowLeft className="w-6 h-6 stroke-[2.2]" />
+                </button>
+                <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0f172a] tracking-tight">
+                  {activeSubrailItem?.name || "Products"}
+                </h1>
+              </div>
+
+              {/* Main Content: Filter Pills Bar + Grid of Products (Right side content occupies full width smoothly) */}
+              <div className="space-y-4 pt-1">
+                
+                {/* Filter Pills Bar (Sort by, Brands, Price, Discount, All Filters with red dot) */}
+                <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar text-xs font-semibold text-[#334155]">
+                  <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-gray-200 bg-white hover:border-gray-400 transition cursor-pointer shrink-0">
+                    <ArrowUpDown className="w-3.5 h-3.5 text-gray-500" />
+                    <span>Sort by</span>
                   </button>
 
-                  <div>
-                    <h1 className="text-lg sm:text-xl font-black text-gray-900 tracking-tight">
-                      {activeSubcategory?.name || "Products"}
-                    </h1>
-                    <p className="text-xs text-gray-500">
-                      Delivered in 8-10 mins directly from 1PLACE Darkstore
-                    </p>
-                  </div>
+                  <button className="flex items-center gap-1 px-3 py-1.5 rounded-full border border-gray-200 bg-white hover:border-gray-400 transition cursor-pointer shrink-0">
+                    <span>Brands</span>
+                    <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
+                  </button>
+
+                  <button className="flex items-center gap-1 px-3 py-1.5 rounded-full border border-gray-200 bg-white hover:border-gray-400 transition cursor-pointer shrink-0">
+                    <span>Price</span>
+                    <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
+                  </button>
+
+                  <button className="flex items-center gap-1 px-3 py-1.5 rounded-full border border-gray-200 bg-white hover:border-gray-400 transition cursor-pointer shrink-0">
+                    <span>Discount</span>
+                    <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
+                  </button>
+
+                  <button className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-[#0284c7] bg-white text-[#0284c7] font-bold hover:bg-blue-50 transition cursor-pointer shrink-0 ml-auto sm:ml-0">
+                    <SlidersHorizontal className="w-3.5 h-3.5" />
+                    <span>All Filters</span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
+                  </button>
                 </div>
 
-                {/* Subcategory Pills Carousel for quick switching within the category */}
-                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 max-w-full sm:max-w-md">
-                  {activeCategory.subcategories.map((sub) => {
-                    const isCur = selectedSubCatId === sub.id;
-                    return (
-                      <button
-                        key={sub.id}
-                        onClick={() => setSelectedSubCatId(sub.id)}
-                        className={`text-xs px-2.5 py-1 rounded-full whitespace-nowrap transition cursor-pointer font-bold ${
-                          isCur
-                            ? "bg-[#1559ac] text-white shadow-xs"
-                            : "bg-gray-100 hover:bg-gray-200 text-gray-700"
-                        }`}
-                      >
-                        {sub.name}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Product Cards Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3.5">
-                {currentProducts.map((item) => {
-                  const isAdded = addedItemIds[item.id];
-                  return (
-                    <div
-                      key={item.id}
-                      className="bg-white rounded-xl border border-gray-200 hover:border-emerald-500 p-2.5 flex flex-col justify-between hover:shadow-md transition group relative"
-                    >
-                      {item.discountBadge && (
-                        <div className="absolute top-2 left-2 z-10 bg-[#1559ac] text-white text-[10px] font-extrabold px-1.5 py-0.5 rounded shadow-xs">
-                          {item.discountBadge}
-                        </div>
-                      )}
-
-                      <div className="flex items-center gap-1 text-[10px] font-bold text-gray-500 bg-gray-100 w-fit px-1.5 py-0.5 rounded mb-2">
-                        <Clock className="w-3 h-3 text-emerald-600" />
-                        <span>{item.deliveryTime}</span>
-                      </div>
-
-                      <div className="w-full h-28 sm:h-32 flex items-center justify-center p-1 overflow-hidden">
-                        <img
-                          src={item.image}
-                          alt={item.name}
-                          className="max-h-full max-w-full object-contain group-hover:scale-105 transition duration-300"
-                        />
-                      </div>
-
-                      <div className="pt-2 flex-1 flex flex-col">
-                        <h3 className="text-xs font-bold text-gray-900 line-clamp-2 leading-tight group-hover:text-[#1559ac] transition">
-                          {item.name}
-                        </h3>
-                        <span className="text-[11px] text-gray-500 font-medium mt-1">
-                          {item.weight}
-                        </span>
-                      </div>
-
-                      <div className="pt-3 mt-auto flex items-center justify-between border-t border-gray-100">
-                        <div>
-                          <div className="text-xs sm:text-sm font-black text-gray-950">
-                            ₹{item.price}
-                          </div>
-                          {item.originalPrice > item.price && (
-                            <div className="text-[10px] text-gray-400 line-through">
-                              ₹{item.originalPrice}
-                            </div>
-                          )}
-                        </div>
-
-                        <button
-                          onClick={() => handleAddProduct(item)}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 cursor-pointer shadow-xs active:scale-95 ${
-                            isAdded
-                              ? "bg-emerald-600 text-white"
-                              : "bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-400"
-                          }`}
+                {/* Products Grid matching exact image (5 cards per row, top-right heart icon, veg green square dot, Add button) */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5">
+                    {currentProducts.map((item) => {
+                      const isAdded = addedItemIds[item.id];
+                      return (
+                        <div
+                          key={item.id}
+                          className="bg-white rounded-2xl border border-gray-200 hover:border-[#0284c7]/40 p-2.5 flex flex-col justify-between transition-all hover:shadow-md group relative"
                         >
-                          {isAdded ? (
-                            <>
-                              <Check className="w-3 h-3" />
-                              <span>ADDED</span>
-                            </>
-                          ) : (
-                            <>
-                              <Plus className="w-3 h-3" />
-                              <span>ADD</span>
-                            </>
+                          {/* Heart wishlist button at top-left */}
+                          <button
+                            title="Add to Wishlist"
+                            className="absolute top-2.5 left-2.5 z-10 w-6 h-6 rounded-full flex items-center justify-center text-gray-300 hover:text-red-500 transition cursor-pointer"
+                          >
+                            <Heart className="w-4 h-4 fill-transparent stroke-[2]" />
+                          </button>
+
+                          {/* Product Image Box */}
+                          <div className="w-full aspect-square rounded-xl bg-white flex items-center justify-center p-1 overflow-hidden relative mb-2">
+                            <img
+                              src={item.image}
+                              alt={item.name}
+                              className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300"
+                            />
+                          </div>
+
+                          {/* Weight + Veg Symbol + Add Button Row */}
+                          <div className="flex items-center justify-between gap-1 mb-1.5">
+                            <span className="text-[11px] font-semibold text-gray-500">
+                              {item.weight}
+                            </span>
+
+                            <div className="flex items-center gap-1.5">
+                              {/* Green Veg Indicator Icon */}
+                              <div className="w-3.5 h-3.5 border border-emerald-600 p-[1.5px] rounded-[2px] flex items-center justify-center">
+                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
+                              </div>
+
+                              {/* Add Button */}
+                              <button
+                                onClick={() => handleAddProduct(item)}
+                                className={`px-3 py-0.5 rounded-lg text-xs font-bold transition cursor-pointer ${
+                                  isAdded
+                                    ? "bg-emerald-600 text-white"
+                                    : "border border-[#0284c7] text-[#0284c7] hover:bg-[#0284c7] hover:text-white"
+                                }`}
+                              >
+                                {isAdded ? "Added" : "Add"}
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Price Row: Bold Black Price + Strikethrough Original Price */}
+                          <div className="flex items-baseline gap-1.5 mt-0.5">
+                            <span className="text-base sm:text-lg font-black text-[#0f172a]">
+                              ₹{item.price.toLocaleString("en-IN")}
+                            </span>
+                            {item.originalPrice > item.price && (
+                              <span className="text-xs text-gray-400 line-through">
+                                ₹{item.originalPrice.toLocaleString("en-IN")}
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Product Title */}
+                          <h3 className="text-xs text-gray-700 font-medium line-clamp-2 leading-tight mt-1">
+                            {item.name}
+                          </h3>
+
+                          {/* Optional delivery tag if applicable */}
+                          {item.deliveryTime && (
+                            <span className="text-[10px] text-gray-400 mt-1 block">
+                              + {item.deliveryTime}
+                            </span>
                           )}
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* SEO Content Write-up */}
-              <div className="pt-8 border-t border-gray-200 space-y-5 text-gray-800">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-amber-500" />
-                  <h2 className="text-base sm:text-lg font-bold text-gray-950">
-                    {seoDetails.title}
-                  </h2>
-                </div>
-                <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
-                  {seoDetails.intro}
-                </p>
-
-                <div className="space-y-3">
-                  <h3 className="text-sm sm:text-base font-bold text-gray-900 border-l-4 border-[#1559ac] pl-2.5">
-                    Types of Items Available
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs sm:text-sm">
-                    {seoDetails.typesOfItems.map((item, idx) => (
-                      <div key={idx} className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-                        <strong className="font-bold text-gray-900 block mb-1">
-                          {idx + 1}. {item.title}
-                        </strong>
-                        <span className="text-gray-600 text-xs leading-normal">
-                          {item.desc}
-                        </span>
-                      </div>
-                    ))}
+                        </div>
+                      );
+                    })}
                   </div>
-                </div>
 
-                {seoDetails.nutritionalTable && (
-                  <div className="space-y-2">
-                    <h3 className="text-sm sm:text-base font-bold text-gray-900 border-l-4 border-emerald-600 pl-2.5">
-                      {seoDetails.nutritionalTitle || "Nutritional Breakdown"}
-                    </h3>
-                    <div className="overflow-x-auto rounded-lg border border-gray-200">
-                      <table className="w-full text-xs text-left">
-                        <thead className="bg-gray-100 text-gray-700 uppercase font-bold border-b border-gray-200">
-                          <tr>
-                            <th className="px-4 py-2">Nutritional Component</th>
-                            <th className="px-4 py-2">Amount per Standard Serving</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-200">
-                          {seoDetails.nutritionalTable.map((row, i) => (
-                            <tr key={i} className="hover:bg-gray-50/80">
-                              <td className="px-4 py-2 font-medium text-gray-800">{row.nutrient}</td>
-                              <td className="px-4 py-2 font-bold text-emerald-800">{row.value}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                )}
-              </div>
+                </div>
 
             </div>
           )}
@@ -493,6 +475,7 @@ export default function CategoryMasterPage() {
         </main>
 
       </div>
+
     </div>
   );
 }
