@@ -34,11 +34,6 @@ import {
 import { CATEGORY_SEO_ARTICLES } from "@/data/blinkitSeoData";
 import { GROCERY_SECTIONS } from "@/data/grocerySectionsData";
 import { FASHION_SECTIONS } from "@/data/fashionSectionsData";
-import {
-  getSubrailForSubcategory,
-  SubrailItem,
-  FRUITS_SUBRAIL,
-} from "@/data/categorySubrailRegistry";
 import { useCartStore } from "@/stores/cartStore";
 
 // Lucide icon helper mapping for left vertical rail matching Image 1 exactly
@@ -54,13 +49,23 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   "baby-kids": <Baby className="w-5 h-5 stroke-[2.2]" />,
 };
 
+// Subcategories specific to Fresh Fruits matching image 1
+const FRUITS_SUBRAIL = [
+  { id: "fresh-fruits", name: "Fresh Fruits", image: "/products/fruits/fruit-fresh.png" },
+  { id: "premium-fruits", name: "Premium Fruits", image: "/products/fruits/fruit-premium.png" },
+  { id: "papaya", name: "Papaya", image: "/products/fruits/fruit-papaya.png" },
+  { id: "citrus-fruits", name: "Citrus Fruits", image: "/products/fruits/fruit-citrus.png" },
+  { id: "apples", name: "Apples", image: "/products/fruits/fruit-apples.png" },
+  { id: "others", name: "Others", image: "/products/fruits/fruit-others.png" },
+];
+
 export default function CategoryMasterPage() {
   // Left Sidebar active category - defaults to 'groceries' from Image 1
   const [activeCatId, setActiveCatId] = useState<string>("groceries");
   // If user clicks on a subcategory to view its products directly
   const [selectedSubCatId, setSelectedSubCatId] = useState<string | null>(null);
   const [addedItemIds, setAddedItemIds] = useState<Record<string, boolean>>({});
-  const [activeSubrailId, setActiveSubrailId] = useState<string>("fresh-fruits");
+  const [selectedFruitSub, setSelectedFruitSub] = useState("fresh-fruits");
 
   const addToCart = useCartStore((state) => state.addToCart);
 
@@ -68,25 +73,29 @@ export default function CategoryMasterPage() {
   const activeCategory: CategoryGroup =
     BLINKIT_CATEGORIES.find((c) => c.id === activeCatId) || BLINKIT_CATEGORIES[0];
 
-  // Dynamic subrail items corresponding to the clicked subcategory card
-  const currentSubrailItems: SubrailItem[] = selectedSubCatId
-    ? getSubrailForSubcategory(selectedSubCatId)
-    : [];
-
-  // Active item in the subrail (defaulting to the selected subcategory)
-  const activeSubrailItem =
-    currentSubrailItems.find((s) => s.id === activeSubrailId) ||
-    currentSubrailItems.find((s) => s.id === selectedSubCatId) ||
-    currentSubrailItems[0];
+  // If a subcategory is explicitly chosen, find it; otherwise show all subcategories of current category
+  const activeSubcategory = selectedSubCatId
+    ? activeCategory.subcategories.find((s) => s.id === selectedSubCatId)
+    : null;
 
   // Products to display when in product view
-  const currentProducts: CategoryProduct[] = activeSubrailItem
-    ? CATEGORY_PRODUCTS_DATABASE[activeSubrailItem.id] ||
-      CATEGORY_PRODUCTS_DATABASE[selectedSubCatId || ""] ||
+  const currentProducts: CategoryProduct[] = selectedSubCatId
+    ? CATEGORY_PRODUCTS_DATABASE[selectedSubCatId] ||
       CATEGORY_PRODUCTS_DATABASE["fresh-fruits"] ||
       CATEGORY_PRODUCTS_DATABASE["chips-crisps"] ||
       []
     : [];
+
+  const seoDetails =
+    CATEGORY_SEO_ARTICLES[selectedSubCatId || "fresh-fruits"] ||
+    CATEGORY_SEO_ARTICLES["fresh-vegetables"] || {
+      title: "Fresh & Quality Products at 1PLACE",
+      intro: "Browse authentic top brands with lightning delivery directly to your door.",
+      typesOfItems: [
+        { title: "Wide Variety", desc: "Choose from high quality verified items." },
+        { title: "Fast Delivery", desc: "Delivered straight from our nearest darkstore." },
+      ],
+    };
 
   const handleSelectCategory = (catId: string) => {
     setActiveCatId(catId);
@@ -95,7 +104,6 @@ export default function CategoryMasterPage() {
 
   const handleSelectSubcategory = (subId: string) => {
     setSelectedSubCatId(subId);
-    setActiveSubrailId(subId);
   };
 
   const handleAddProduct = (product: CategoryProduct) => {
@@ -133,13 +141,13 @@ export default function CategoryMasterPage() {
         {/* ============================================================== */}
         <aside className="w-full md:w-[98px] lg:w-[108px] shrink-0 bg-white rounded-2xl border border-[#e2eaf4] shadow-xs md:sticky md:top-[74px] max-h-[calc(100vh-90px)] overflow-y-auto no-scrollbar flex md:flex-col overflow-x-auto p-1.5 gap-2">
           {selectedSubCatId ? (
-            /* Subcategory Rail (Dynamically shows the items related to the clicked card) */
-            currentSubrailItems.map((sub) => {
-              const isSelected = activeSubrailItem?.id === sub.id;
+            /* Fruit Subcategory Rail (Replaces main categories in place, exactly matching Image 1!) */
+            FRUITS_SUBRAIL.map((sub) => {
+              const isSelected = selectedFruitSub === sub.id;
               return (
                 <button
                   key={sub.id}
-                  onClick={() => setActiveSubrailId(sub.id)}
+                  onClick={() => setSelectedFruitSub(sub.id)}
                   className={`relative flex flex-col items-center justify-center py-2.5 px-1 rounded-xl transition-all cursor-pointer group shrink-0 md:shrink md:w-full ${
                     isSelected
                       ? "bg-[#eaf4fe] text-[#0284c7] font-bold"
@@ -151,22 +159,18 @@ export default function CategoryMasterPage() {
                     <span className="absolute left-0 top-2 bottom-2 w-1.5 bg-[#0284c7] rounded-r-md" />
                   )}
 
-                  {/* Clean High-Resolution Item Icon */}
+                  {/* Clean High-Resolution Fruit Icon */}
                   <div className="w-12 h-12 flex items-center justify-center transition-transform group-hover:scale-105 mb-1.5">
-                    {sub.image ? (
-                      <img
-                        src={sub.image}
-                        alt={sub.name}
-                        className="max-w-[46px] max-h-[46px] object-contain drop-shadow-xs"
-                      />
-                    ) : (
-                      <span className="text-2xl">{activeCategory.icon}</span>
-                    )}
+                    <img
+                      src={sub.image}
+                      alt={sub.name}
+                      className="max-w-[46px] max-h-[46px] object-contain drop-shadow-xs"
+                    />
                   </div>
 
-                  {/* Item Label */}
+                  {/* Fruit Label */}
                   <span
-                    className={`text-[12px] leading-tight text-center px-0.5 line-clamp-2 ${
+                    className={`text-[12px] leading-tight text-center px-0.5 ${
                       isSelected ? "text-[#0284c7] font-bold" : "text-[#1e293b]"
                     }`}
                   >
@@ -351,7 +355,7 @@ export default function CategoryMasterPage() {
                   <ArrowLeft className="w-6 h-6 stroke-[2.2]" />
                 </button>
                 <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0f172a] tracking-tight">
-                  {activeSubrailItem?.name || "Products"}
+                  {FRUITS_SUBRAIL.find(f => f.id === selectedFruitSub)?.name || activeSubcategory?.name || "Fresh Fruits"}
                 </h1>
               </div>
 

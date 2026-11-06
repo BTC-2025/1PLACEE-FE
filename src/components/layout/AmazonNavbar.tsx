@@ -59,6 +59,12 @@ export const AmazonNavbar: React.FC = () => {
   // Click outside search container to automatically hide search bar
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
+      // Don't close if clicking virtual keyboard or any of its keys
+      const target = event.target as HTMLElement | null;
+      if (target?.closest('[data-virtual-keyboard="true"]')) {
+        return;
+      }
+
       if (
         searchContainerRef.current &&
         !searchContainerRef.current.contains(event.target as Node)
@@ -168,6 +174,7 @@ export const AmazonNavbar: React.FC = () => {
                 >
                   <Search className="w-4.5 h-4.5 text-[#1559ac] mr-2 shrink-0 stroke-[2.2]" />
                   <input
+                    id="main-search-input"
                     type="text"
                     placeholder="Search 1PLACE..."
                     value={searchQuery}
@@ -327,26 +334,26 @@ export const AmazonNavbar: React.FC = () => {
 
         {/* Tier 2: Subnav Ribbon - White background, grey text, seamlessly meets the top nav with no vertical gap */}
         <div
-          className={`bg-white pl-2 sm:pl-4 py-1 flex items-center justify-between text-[13px] h-[44px] border-b border-gray-200/80 shadow-2xs relative select-none transition-all duration-300 ease-in-out ${
-            !isQuickBarOpen
-              ? "mr-0"
-              : activePanel === "calendar"
-              ? "mr-[350px] sm:mr-[372px]"
+          className={`bg-white pl-2 sm:pl-4 py-1 flex items-center justify-between text-[13px] h-[44px] border-b border-gray-200/80 shadow-2xs relative select-none transition-all duration-300 ease-in-out ${!isQuickBarOpen
+            ? "mr-0"
+            : activePanel === "calendar" || activePanel === "beta" || activePanel === "users" || activePanel === "notes" || activePanel === "weather" || activePanel === "customize"
+              ? "mr-[410px] sm:mr-[422px]"
               : "mr-[60px] sm:mr-[62px]"
-          }`}
+            }`}
         >
-          {/* Middle Scrollable Container with Left & Right Arrow Buttons - expanded to fill subnav smoothly */}
-          <div className="flex-1 flex items-center min-w-0 mr-2 sm:mr-3 relative overflow-hidden">
-            {/* Scroll Left Arrow Button */}
-            <button
-              onClick={() => scrollSubnav("left")}
-              aria-label="Scroll left"
-              className="w-6.5 h-6.5 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 flex items-center justify-center shrink-0 shadow-xs transition cursor-pointer z-10 mr-1.5"
-            >
-              <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
-            </button>
+        {/* Middle Scrollable Container with Left & Right Arrow Buttons - sized to show 9 items default */}
+        <div className="flex-1 flex items-center min-w-0 mr-2 sm:mr-3 relative overflow-hidden">
+          {/* Scroll Left Arrow Button */}
+          <button
+            onClick={() => scrollSubnav("left")}
+            aria-label="Scroll left"
+            className="w-6.5 h-6.5 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 flex items-center justify-center shrink-0 shadow-xs transition cursor-pointer z-10 mr-1.5"
+          >
+            <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
+          </button>
 
-            {/* Scrollable Links Track without bottom scrollbar, hover bottom line show */}
+          {/* Scrollable Links Track without bottom scrollbar - constrained to 9 items visible width */}
+          <div className="flex-1 overflow-hidden min-w-0 max-w-[925px]">
             <div
               ref={subnavScrollRef}
               className="flex items-center gap-0.5 sm:gap-1 overflow-x-auto whitespace-nowrap no-scrollbar scroll-smooth h-full py-0"
@@ -363,129 +370,132 @@ export const AmazonNavbar: React.FC = () => {
                 </a>
               ))}
             </div>
-
-            {/* Scroll Right Arrow Button */}
-            <button
-              onClick={() => scrollSubnav("right")}
-              aria-label="Scroll right"
-              className="w-6.5 h-6.5 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 flex items-center justify-center shrink-0 shadow-xs transition cursor-pointer z-10 ml-1.5"
-            >
-              <ChevronRight className="w-4 h-4 stroke-[2.5]" />
-            </button>
           </div>
 
-          {/* Right Fixed Group: Help & Support + Settings */}
-          <div className="flex items-center gap-1 sm:gap-1.5 shrink-0 pl-1 z-10">
-            {/* Help & Support Customer Care Headset Button with Word */}
-            <button
-              aria-label="Help & Support"
-              className="flex items-center gap-1.5 text-gray-600 hover:text-[#1559ac] hover:bg-gray-100 px-2.5 py-1 rounded-full text-xs sm:text-[13px] font-medium transition cursor-pointer select-none"
-            >
-              <Headset className="w-4 h-4 text-gray-600 group-hover:text-[#1559ac] stroke-[2.2]" />
-              <span className="hidden sm:inline">Help&Support</span>
-            </button>
-
-            {/* Settings Button with Word */}
-            <button
-              aria-label="Settings"
-              className="flex items-center gap-1.5 text-gray-600 hover:text-[#1559ac] hover:bg-gray-100 px-2.5 py-1 rounded-full text-xs sm:text-[13px] font-medium transition cursor-pointer select-none"
-            >
-              <Settings className="w-4 h-4 text-gray-600 group-hover:text-[#1559ac] stroke-[2]" />
-              <span className="hidden sm:inline">Settings</span>
-            </button>
-          </div>
+          {/* Scroll Right Arrow Button */}
+          <button
+            onClick={() => scrollSubnav("right")}
+            aria-label="Scroll right"
+            className="w-6.5 h-6.5 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 flex items-center justify-center shrink-0 shadow-xs transition cursor-pointer z-10 ml-1.5"
+          >
+            <ChevronRight className="w-4 h-4 stroke-[2.5]" />
+          </button>
         </div>
-      </header>
 
-      {/* Slide-in Hamburger Sidebar Drawer */}
-      {isSidebarOpen && (
-        <div className="fixed inset-0 z-50 flex">
-          <div
+        {/* Right Fixed Group: Help & Support + Settings */}
+        <div className="flex items-center gap-1 sm:gap-1.5 shrink-0 pl-1 z-10">
+          {/* Help & Support Customer Care Headset Button with Word */}
+          <button
+            aria-label="Help & Support"
+            className="flex items-center gap-1.5 text-gray-600 hover:text-[#1559ac] hover:bg-gray-100 px-2.5 py-1 rounded-full text-xs sm:text-[13px] font-medium transition cursor-pointer select-none"
+          >
+            <Headset className="w-4 h-4 text-gray-600 group-hover:text-[#1559ac] stroke-[2.2]" />
+            <span className="hidden sm:inline">Help&Support</span>
+          </button>
+
+          {/* Settings Button with Word */}
+          <button
+            aria-label="Settings"
+            className="flex items-center gap-1.5 text-gray-600 hover:text-[#1559ac] hover:bg-gray-100 px-2.5 py-1 rounded-full text-xs sm:text-[13px] font-medium transition cursor-pointer select-none"
+          >
+            <Settings className="w-4 h-4 text-gray-600 group-hover:text-[#1559ac] stroke-[2]" />
+            <span className="hidden sm:inline">Settings</span>
+          </button>
+        </div>
+      </div>
+    </header >
+
+      {/* Slide-in Hamburger Sidebar Drawer */ }
+  {
+    isSidebarOpen && (
+      <div className="fixed inset-0 z-50 flex">
+        <div
+          onClick={() => setIsSidebarOpen(false)}
+          className="fixed inset-0 bg-black/70 backdrop-blur-xs transition-opacity"
+        />
+        <div className="relative w-80 max-w-[85vw] bg-white h-full shadow-2xl flex flex-col z-10 text-gray-900 overflow-y-auto">
+          {/* User Greeting */}
+          <div className="bg-[#1559ac] text-white p-4 flex items-center gap-3">
+            <User className="w-7 h-7 bg-white/20 p-1 rounded-full" />
+            <span className="font-bold text-base">Hello, Vinothkumar</span>
+          </div>
+
+          <div className="p-4 space-y-4 text-xs font-semibold">
+            {/* 1. TRENDING */}
+            <div>
+              <h4 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-2">
+                Trending
+              </h4>
+              <div className="space-y-2 text-gray-700">
+                <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Bestsellers</p>
+                <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">New Releases</p>
+                <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Movers and Shakers</p>
+              </div>
+            </div>
+
+            <hr className="border-gray-200" />
+
+            {/* 2. YOUR VIEWS (5 Category Names) */}
+            <div>
+              <h4 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-2">
+                Your Views
+              </h4>
+              <div className="space-y-2 text-gray-700">
+                <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Recently Viewed Products</p>
+                <Link
+                  href="/products/kotty-mens-jeans"
+                  onClick={() => setIsSidebarOpen(false)}
+                  className="hover:bg-blue-50 text-[#1559ac] font-bold p-1.5 rounded cursor-pointer block"
+                >
+                  Men&apos;s Apparel, Chinos & Jeans →
+                </Link>
+                <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Wireless Headphones & Audio</p>
+                <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Laptops & Smart Electronics</p>
+                <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Haircare & Herbal Products</p>
+              </div>
+            </div>
+
+            <hr className="border-gray-200" />
+
+            {/* 3. SHOP BY DEPARTMENT (7 Departments) */}
+            <div>
+              <h4 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-2">
+                Shop by Department
+              </h4>
+              <div className="space-y-2 text-gray-700">
+                <Link
+                  href="/categories"
+                  onClick={() => setIsSidebarOpen(false)}
+                  className="hover:bg-emerald-50 text-emerald-800 font-bold p-1.5 rounded cursor-pointer block"
+                >
+                  Fresh & Grocery (Blinkit 8-Mins) →
+                </Link>
+                <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Mobiles & Computers</p>
+                <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">TV, Appliances, Electronics</p>
+                <Link
+                  href="/products/kotty-mens-jeans"
+                  onClick={() => setIsSidebarOpen(false)}
+                  className="hover:bg-blue-50 text-[#1559ac] font-bold p-1.5 rounded cursor-pointer block"
+                >
+                  Men&apos;s Fashion & Trousers →
+                </Link>
+                <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Women&apos;s Fashion</p>
+                <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Home, Kitchen, Pets</p>
+                <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Beauty, Health & Personal Care</p>
+              </div>
+            </div>
+          </div>
+
+          <button
             onClick={() => setIsSidebarOpen(false)}
-            className="fixed inset-0 bg-black/70 backdrop-blur-xs transition-opacity"
-          />
-          <div className="relative w-80 max-w-[85vw] bg-white h-full shadow-2xl flex flex-col z-10 text-gray-900 overflow-y-auto">
-            {/* User Greeting */}
-            <div className="bg-[#1559ac] text-white p-4 flex items-center gap-3">
-              <User className="w-7 h-7 bg-white/20 p-1 rounded-full" />
-              <span className="font-bold text-base">Hello, Vinothkumar</span>
-            </div>
-
-            <div className="p-4 space-y-4 text-xs font-semibold">
-              {/* 1. TRENDING */}
-              <div>
-                <h4 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-2">
-                  Trending
-                </h4>
-                <div className="space-y-2 text-gray-700">
-                  <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Bestsellers</p>
-                  <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">New Releases</p>
-                  <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Movers and Shakers</p>
-                </div>
-              </div>
-
-              <hr className="border-gray-200" />
-
-              {/* 2. YOUR VIEWS (5 Category Names) */}
-              <div>
-                <h4 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-2">
-                  Your Views
-                </h4>
-                <div className="space-y-2 text-gray-700">
-                  <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Recently Viewed Products</p>
-                  <Link
-                    href="/products/kotty-mens-jeans"
-                    onClick={() => setIsSidebarOpen(false)}
-                    className="hover:bg-blue-50 text-[#1559ac] font-bold p-1.5 rounded cursor-pointer block"
-                  >
-                    Men&apos;s Apparel, Chinos & Jeans →
-                  </Link>
-                  <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Wireless Headphones & Audio</p>
-                  <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Laptops & Smart Electronics</p>
-                  <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Haircare & Herbal Products</p>
-                </div>
-              </div>
-
-              <hr className="border-gray-200" />
-
-              {/* 3. SHOP BY DEPARTMENT (7 Departments) */}
-              <div>
-                <h4 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-2">
-                  Shop by Department
-                </h4>
-                <div className="space-y-2 text-gray-700">
-                  <Link
-                    href="/categories"
-                    onClick={() => setIsSidebarOpen(false)}
-                    className="hover:bg-emerald-50 text-emerald-800 font-bold p-1.5 rounded cursor-pointer block"
-                  >
-                    Fresh & Grocery (Blinkit 8-Mins) →
-                  </Link>
-                  <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Mobiles & Computers</p>
-                  <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">TV, Appliances, Electronics</p>
-                  <Link
-                    href="/products/kotty-mens-jeans"
-                    onClick={() => setIsSidebarOpen(false)}
-                    className="hover:bg-blue-50 text-[#1559ac] font-bold p-1.5 rounded cursor-pointer block"
-                  >
-                    Men&apos;s Fashion & Trousers →
-                  </Link>
-                  <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Women&apos;s Fashion</p>
-                  <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Home, Kitchen, Pets</p>
-                  <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Beauty, Health & Personal Care</p>
-                </div>
-              </div>
-            </div>
-
-            <button
-              onClick={() => setIsSidebarOpen(false)}
-              className="absolute top-3 -right-10 text-white hover:text-[#febd69]"
-            >
-              <X className="w-8 h-8" />
-            </button>
-          </div>
+            className="absolute top-3 -right-10 text-white hover:text-[#febd69]"
+          >
+            <X className="w-8 h-8" />
+          </button>
         </div>
-      )}
+      </div>
+    )
+  }
     </>
   );
 };

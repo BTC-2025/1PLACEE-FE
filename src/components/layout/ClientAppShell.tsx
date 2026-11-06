@@ -18,6 +18,36 @@ const CalendarPanel = dynamic(
   { ssr: false }
 );
 
+const BetaPanel = dynamic(
+  () => import("@/components/layout/BetaPanel").then((mod) => mod.BetaPanel),
+  { ssr: false }
+);
+
+const ContactsPanel = dynamic(
+  () => import("@/components/layout/ContactsPanel").then((mod) => mod.ContactsPanel),
+  { ssr: false }
+);
+
+const NotesPanel = dynamic(
+  () => import("@/components/layout/NotesPanel").then((mod) => mod.NotesPanel),
+  { ssr: false }
+);
+
+const WeatherPanel = dynamic(
+  () => import("@/components/layout/WeatherPanel").then((mod) => mod.WeatherPanel),
+  { ssr: false }
+);
+
+const CustomizeBarPanel = dynamic(
+  () => import("@/components/layout/CustomizeBarPanel").then((mod) => mod.CustomizeBarPanel),
+  { ssr: false }
+);
+
+const VirtualKeyboardModal = dynamic(
+  () => import("@/components/layout/VirtualKeyboardModal").then((mod) => mod.VirtualKeyboardModal),
+  { ssr: false }
+);
+
 const QuickSideRail = dynamic(
   () => import("@/components/layout/QuickSideRail").then((mod) => mod.QuickSideRail),
   { ssr: false }
@@ -33,7 +63,13 @@ export const ClientAppShell: React.FC<{ children: React.ReactNode }> = ({
         {children}
         <AmazonFooter />
       </PageContentWrapper>
+      <BetaPanel />
       <CalendarPanel />
+      <ContactsPanel />
+      <NotesPanel />
+      <WeatherPanel />
+      <CustomizeBarPanel />
+      <VirtualKeyboardModal />
       <QuickSideRail />
       <CartDrawer />
     </>

@@ -9,11 +9,11 @@ export const PageContentWrapper: React.FC<{ children: React.ReactNode }> = ({
   const isSidebarOpen = useQuickSidebarStore((state) => state.isSidebarOpen);
   const activePanel = useQuickSidebarStore((state) => state.activePanel);
 
-  // Shrink page: 60px when rail open, or 60px + 300px (360px) when calendar panel is also open
+  // Shrink page: 60px when rail open, or 60px + 350px/360px when calendar, beta or contacts panel is also open
   const shrinkPadding = !isSidebarOpen
     ? "pr-0"
-    : activePanel === "calendar"
-    ? "pr-[350px] sm:pr-[372px]"
+    : activePanel === "calendar" || activePanel === "beta" || activePanel === "users" || activePanel === "notes" || activePanel === "weather" || activePanel === "customize"
+    ? "pr-[410px] sm:pr-[422px]"
     : "pr-[60px] sm:pr-[62px]";
 
   return (

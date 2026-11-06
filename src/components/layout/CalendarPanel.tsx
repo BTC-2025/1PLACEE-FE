@@ -191,7 +191,7 @@ export const CalendarPanel: React.FC = () => {
   return (
     <div
       aria-label="Calendar Panel"
-      className="fixed right-[60px] sm:right-[62px] top-[60px] bottom-0 w-[300px] sm:w-[315px] bg-[#f8fbff] border-l border-[#b9d9f9] shadow-[-6px_0_24px_rgba(30,58,138,0.08)] z-50 flex flex-col select-none transition-transform duration-300 ease-in-out animate-in slide-in-from-right-4 overflow-y-auto no-scrollbar"
+      className="fixed right-[60px] sm:right-[62px] top-[60px] bottom-0 w-[350px] sm:w-[360px] bg-[#f8fbff] border-l border-[#b9d9f9] shadow-[-6px_0_24px_rgba(30,58,138,0.08)] z-50 flex flex-col select-none transition-transform duration-300 ease-in-out animate-in slide-in-from-right-4 overflow-y-auto no-scrollbar"
     >
       {/* Top Header matching exact screenshot */}
       <div className="h-[52px] px-4 flex items-center justify-between border-b border-[#e2eaf4] bg-white shrink-0">
@@ -265,11 +265,10 @@ export const CalendarPanel: React.FC = () => {
                         ? dayHolidays.map((h) => h.name).join(", ")
                         : `Day ${day}`
                     }
-                    className={`w-8 h-8 rounded-full flex items-center justify-center text-xs transition-all cursor-pointer relative ${
-                      isSelected
+                    className={`w-8 h-8 rounded-full flex items-center justify-center text-xs transition-all cursor-pointer relative ${isSelected
                         ? "bg-[#1d4ed8] text-white font-bold shadow-md shadow-blue-500/25"
                         : "text-[#334155] hover:bg-[#f1f5f9] font-medium"
-                    }`}
+                      }`}
                   >
                     {day}
                   </button>
