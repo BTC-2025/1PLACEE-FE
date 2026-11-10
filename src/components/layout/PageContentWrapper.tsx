@@ -12,7 +12,7 @@ export const PageContentWrapper: React.FC<{ children: React.ReactNode }> = ({
   // Shrink page: 60px when rail open, or 60px + 350px/360px when calendar, beta or contacts panel is also open
   const shrinkPadding = !isSidebarOpen
     ? "pr-0"
-    : activePanel === "calendar" || activePanel === "beta" || activePanel === "users" || activePanel === "notes" || activePanel === "weather" || activePanel === "customize"
+    : activePanel === "calendar" || activePanel === "calculator" || activePanel === "beta" || activePanel === "users" || activePanel === "notes" || activePanel === "customize"
     ? "pr-[410px] sm:pr-[422px]"
     : "pr-[60px] sm:pr-[62px]";
 

@@ -18,6 +18,7 @@ import {
   X
 } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
+import { useWishlistStore } from "@/stores/wishlistStore";
 import { useQuickSidebarStore } from "@/stores/quickSidebarStore";
 
 // Subnav categories & links from second image with scroll navigation
@@ -52,6 +53,7 @@ export const AmazonNavbar: React.FC = () => {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const totalItems = useCartStore((state) => state.totalItems());
   const toggleCart = useCartStore((state) => state.toggleCart);
+  const totalWishlistCount = useWishlistStore((state) => state.totalWishlistItems());
   const { isSidebarOpen: isQuickBarOpen, toggleSidebar: toggleQuickSidebar, activePanel } = useQuickSidebarStore();
   const subnavScrollRef = useRef<HTMLDivElement>(null);
   const searchContainerRef = useRef<HTMLDivElement>(null);
@@ -120,16 +122,15 @@ export const AmazonNavbar: React.FC = () => {
             {/* Location with Icon and Name + Drop Arrow - increased padding and text */}
             <button
               aria-label="Location"
-              className="group flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/90 hover:bg-[#1559ac] border border-[#b8dcfa] shadow-2xs transition-all duration-200 cursor-pointer select-none text-[#1559ac] hover:text-white"
+              className="group flex items-center gap-2 px-2.5 py-1 rounded-full bg-white/90 hover:bg-[#1559ac] border border-[#b8dcfa] shadow-2xs transition-all duration-200 cursor-pointer select-none text-[#1559ac] hover:text-white"
             >
               <MapPin className="w-4.5 h-4 text-[#1559ac] group-hover:text-white stroke-[2.2] shrink-0 transition-colors" />
               <div className="flex flex-col text-left leading-tight">
-                <span className="font-bold text-[10px] sm:text-sm text-[#1e293b] group-hover:text-white truncate max-w-[130px] transition-colors">Chennai, TN</span>
+                <span className="mt-[-1.5px] font-bold text-[10px] sm:text-sm text-[#1e293b] group-hover:text-white truncate max-w-[130px] transition-colors">Chennai, TN</span>
               </div>
               <ChevronDown className="w-4 h-4.5 text-[#1559ac] group-hover:text-white shrink-0 ml-0.5 transition-colors" />
             </button>
           </div>
-
           {/* Center Group: Eclipse Container with Three Buttons: Home, Categorys, Bookings - font size & height increased */}
           <div className="hidden md:flex items-center absolute left-1/2 -translate-x-1/2 bg-[#d7ebfc] p-1.5 rounded-full border border-[#b8dcfa] shadow-2xs z-10 pointer-events-auto">
             <Link
@@ -206,18 +207,24 @@ export const AmazonNavbar: React.FC = () => {
               <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#ff9900] ring-2 ring-white group-hover:ring-[#1559ac] transition-all" />
             </button>
 
-            {/* Wishlist Icon */}
-            <button
+            {/* Wishlist Link Button with Live Counter Badge */}
+            <Link
+              href="/wishlist"
               aria-label="Wishlist"
               title="Wishlist"
-              className="group w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-white/90 hover:bg-[#1559ac] border border-[#b8dcfa] shadow-2xs text-[#1559ac] hover:text-white transition-all duration-200 cursor-pointer"
+              className="group w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-white/90 hover:bg-[#1559ac] border border-[#b8dcfa] shadow-2xs text-[#1559ac] hover:text-white transition-all duration-200 cursor-pointer relative"
             >
               <Heart className="w-5 h-5 text-[#1559ac] group-hover:text-white stroke-[2] fill-transparent group-hover:fill-white transition-all" />
-            </button>
+              {totalWishlistCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-rose-500 text-white font-black text-[10px] w-4 h-4 rounded-full flex items-center justify-center shadow">
+                  {totalWishlistCount}
+                </span>
+              )}
+            </Link>
 
-            {/* Cart Icon Button with Counter Badge */}
-            <button
-              onClick={() => toggleCart()}
+            {/* Cart Link Button with Live Counter Badge */}
+            <Link
+              href="/cart"
               aria-label="Cart"
               title="Cart"
               className="group w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-white/90 hover:bg-[#1559ac] border border-[#b8dcfa] shadow-2xs text-[#1559ac] hover:text-white transition-all duration-200 cursor-pointer relative"
@@ -243,7 +250,7 @@ export const AmazonNavbar: React.FC = () => {
                   {totalItems}
                 </span>
               )}
-            </button>
+            </Link>
 
             {/* Profile with Icon + Name + Dropdown - compact padding */}
             <div className="relative">
@@ -256,7 +263,7 @@ export const AmazonNavbar: React.FC = () => {
                   <User className="w-3.5 h-3.5" />
                 </div>
                 <div className="flex flex-col text-left leading-tight hidden sm:flex">
-                  <span className="font-bold text-xs sm:text-[13px] text-[#1e293b] group-hover:text-white truncate max-w-[85px] transition-colors">Vinothkumar</span>
+                  <span className="mt-[-1.5px] font-bold text-[10px] sm:text-sm text-[#1e293b] group-hover:text-white  max-w-[85px] transition-colors">Vinothkumar</span>
                 </div>
                 <ChevronDown className="w-3.5 h-3.5 text-[#1559ac] group-hover:text-white transition-all duration-200" />
               </button>
@@ -336,166 +343,166 @@ export const AmazonNavbar: React.FC = () => {
         <div
           className={`bg-white pl-2 sm:pl-4 py-1 flex items-center justify-between text-[13px] h-[44px] border-b border-gray-200/80 shadow-2xs relative select-none transition-all duration-300 ease-in-out ${!isQuickBarOpen
             ? "mr-0"
-            : activePanel === "calendar" || activePanel === "beta" || activePanel === "users" || activePanel === "notes" || activePanel === "weather" || activePanel === "customize"
+            : activePanel === "calendar" || activePanel === "calculator" || activePanel === "beta" || activePanel === "users" || activePanel === "notes" || activePanel === "customize"
               ? "mr-[410px] sm:mr-[422px]"
               : "mr-[60px] sm:mr-[62px]"
             }`}
         >
-        {/* Middle Scrollable Container with Left & Right Arrow Buttons - sized to show 9 items default */}
-        <div className="flex-1 flex items-center min-w-0 mr-2 sm:mr-3 relative overflow-hidden">
-          {/* Scroll Left Arrow Button */}
-          <button
-            onClick={() => scrollSubnav("left")}
-            aria-label="Scroll left"
-            className="w-6.5 h-6.5 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 flex items-center justify-center shrink-0 shadow-xs transition cursor-pointer z-10 mr-1.5"
-          >
-            <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
-          </button>
-
-          {/* Scrollable Links Track without bottom scrollbar - constrained to 9 items visible width */}
-          <div className="flex-1 overflow-hidden min-w-0 max-w-[925px]">
-            <div
-              ref={subnavScrollRef}
-              className="flex items-center gap-0.5 sm:gap-1 overflow-x-auto whitespace-nowrap no-scrollbar scroll-smooth h-full py-0"
+          {/* Middle Scrollable Container with Left & Right Arrow Buttons - sized to show 9 items default */}
+          <div className="flex-1 flex items-center min-w-0 mr-2 sm:mr-3 relative overflow-hidden">
+            {/* Scroll Left Arrow Button */}
+            <button
+              onClick={() => scrollSubnav("left")}
+              aria-label="Scroll left"
+              className="w-6.5 h-6.5 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 flex items-center justify-center shrink-0 shadow-xs transition cursor-pointer z-10 mr-1.5"
             >
-              {SUB_NAV_LINKS.map((link) => (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  className="relative flex items-center h-[42px] px-2.5 text-gray-600 font-semibold text-[13.5px] hover:text-gray-900 transition-colors shrink-0 select-none group"
-                >
-                  <span className="text-gray-600 group-hover:text-[#1559ac] font-medium transition-colors">{link.label}</span>
-                  {/* Clean bottom line indicator on hover */}
-                  <span className="absolute bottom-0 left-2 right-2 h-[2.5px] bg-[#1559ac] rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-center" />
-                </a>
-              ))}
-            </div>
-          </div>
+              <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
+            </button>
 
-          {/* Scroll Right Arrow Button */}
-          <button
-            onClick={() => scrollSubnav("right")}
-            aria-label="Scroll right"
-            className="w-6.5 h-6.5 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 flex items-center justify-center shrink-0 shadow-xs transition cursor-pointer z-10 ml-1.5"
-          >
-            <ChevronRight className="w-4 h-4 stroke-[2.5]" />
-          </button>
-        </div>
-
-        {/* Right Fixed Group: Help & Support + Settings */}
-        <div className="flex items-center gap-1 sm:gap-1.5 shrink-0 pl-1 z-10">
-          {/* Help & Support Customer Care Headset Button with Word */}
-          <button
-            aria-label="Help & Support"
-            className="flex items-center gap-1.5 text-gray-600 hover:text-[#1559ac] hover:bg-gray-100 px-2.5 py-1 rounded-full text-xs sm:text-[13px] font-medium transition cursor-pointer select-none"
-          >
-            <Headset className="w-4 h-4 text-gray-600 group-hover:text-[#1559ac] stroke-[2.2]" />
-            <span className="hidden sm:inline">Help&Support</span>
-          </button>
-
-          {/* Settings Button with Word */}
-          <button
-            aria-label="Settings"
-            className="flex items-center gap-1.5 text-gray-600 hover:text-[#1559ac] hover:bg-gray-100 px-2.5 py-1 rounded-full text-xs sm:text-[13px] font-medium transition cursor-pointer select-none"
-          >
-            <Settings className="w-4 h-4 text-gray-600 group-hover:text-[#1559ac] stroke-[2]" />
-            <span className="hidden sm:inline">Settings</span>
-          </button>
-        </div>
-      </div>
-    </header >
-
-      {/* Slide-in Hamburger Sidebar Drawer */ }
-  {
-    isSidebarOpen && (
-      <div className="fixed inset-0 z-50 flex">
-        <div
-          onClick={() => setIsSidebarOpen(false)}
-          className="fixed inset-0 bg-black/70 backdrop-blur-xs transition-opacity"
-        />
-        <div className="relative w-80 max-w-[85vw] bg-white h-full shadow-2xl flex flex-col z-10 text-gray-900 overflow-y-auto">
-          {/* User Greeting */}
-          <div className="bg-[#1559ac] text-white p-4 flex items-center gap-3">
-            <User className="w-7 h-7 bg-white/20 p-1 rounded-full" />
-            <span className="font-bold text-base">Hello, Vinothkumar</span>
-          </div>
-
-          <div className="p-4 space-y-4 text-xs font-semibold">
-            {/* 1. TRENDING */}
-            <div>
-              <h4 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-2">
-                Trending
-              </h4>
-              <div className="space-y-2 text-gray-700">
-                <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Bestsellers</p>
-                <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">New Releases</p>
-                <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Movers and Shakers</p>
+            {/* Scrollable Links Track without bottom scrollbar - constrained to 9 items visible width */}
+            <div className="flex-1 overflow-hidden min-w-0 max-w-[925px]">
+              <div
+                ref={subnavScrollRef}
+                className="flex items-center gap-0.5 sm:gap-1 overflow-x-auto whitespace-nowrap no-scrollbar scroll-smooth h-full py-0"
+              >
+                {SUB_NAV_LINKS.map((link) => (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    className="relative flex items-center h-[42px] px-2.5 text-gray-600 font-semibold text-[13.5px] hover:text-gray-900 transition-colors shrink-0 select-none group"
+                  >
+                    <span className="text-gray-600 group-hover:text-[#1559ac] font-medium transition-colors">{link.label}</span>
+                    {/* Clean bottom line indicator on hover */}
+                    <span className="absolute bottom-0 left-2 right-2 h-[2.5px] bg-[#1559ac] rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-center" />
+                  </a>
+                ))}
               </div>
             </div>
 
-            <hr className="border-gray-200" />
-
-            {/* 2. YOUR VIEWS (5 Category Names) */}
-            <div>
-              <h4 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-2">
-                Your Views
-              </h4>
-              <div className="space-y-2 text-gray-700">
-                <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Recently Viewed Products</p>
-                <Link
-                  href="/products/kotty-mens-jeans"
-                  onClick={() => setIsSidebarOpen(false)}
-                  className="hover:bg-blue-50 text-[#1559ac] font-bold p-1.5 rounded cursor-pointer block"
-                >
-                  Men&apos;s Apparel, Chinos & Jeans →
-                </Link>
-                <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Wireless Headphones & Audio</p>
-                <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Laptops & Smart Electronics</p>
-                <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Haircare & Herbal Products</p>
-              </div>
-            </div>
-
-            <hr className="border-gray-200" />
-
-            {/* 3. SHOP BY DEPARTMENT (7 Departments) */}
-            <div>
-              <h4 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-2">
-                Shop by Department
-              </h4>
-              <div className="space-y-2 text-gray-700">
-                <Link
-                  href="/categories"
-                  onClick={() => setIsSidebarOpen(false)}
-                  className="hover:bg-emerald-50 text-emerald-800 font-bold p-1.5 rounded cursor-pointer block"
-                >
-                  Fresh & Grocery (Blinkit 8-Mins) →
-                </Link>
-                <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Mobiles & Computers</p>
-                <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">TV, Appliances, Electronics</p>
-                <Link
-                  href="/products/kotty-mens-jeans"
-                  onClick={() => setIsSidebarOpen(false)}
-                  className="hover:bg-blue-50 text-[#1559ac] font-bold p-1.5 rounded cursor-pointer block"
-                >
-                  Men&apos;s Fashion & Trousers →
-                </Link>
-                <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Women&apos;s Fashion</p>
-                <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Home, Kitchen, Pets</p>
-                <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Beauty, Health & Personal Care</p>
-              </div>
-            </div>
+            {/* Scroll Right Arrow Button */}
+            <button
+              onClick={() => scrollSubnav("right")}
+              aria-label="Scroll right"
+              className="w-6.5 h-6.5 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 flex items-center justify-center shrink-0 shadow-xs transition cursor-pointer z-10 ml-1.5"
+            >
+              <ChevronRight className="w-4 h-4 stroke-[2.5]" />
+            </button>
           </div>
 
-          <button
-            onClick={() => setIsSidebarOpen(false)}
-            className="absolute top-3 -right-10 text-white hover:text-[#febd69]"
-          >
-            <X className="w-8 h-8" />
-          </button>
+          {/* Right Fixed Group: Help & Support + Settings */}
+          <div className="flex items-center gap-1 sm:gap-1.5 shrink-0 pl-1 z-10">
+            {/* Help & Support Customer Care Headset Button with Word */}
+            <button
+              aria-label="Help & Support"
+              className="flex items-center gap-1.5 text-gray-600 hover:text-[#1559ac] hover:bg-gray-100 px-2.5 py-1 rounded-full text-xs sm:text-[13px] font-medium transition cursor-pointer select-none"
+            >
+              <Headset className="w-4 h-4 text-gray-600 group-hover:text-[#1559ac] stroke-[2.2]" />
+              <span className="hidden sm:inline">Help&Support</span>
+            </button>
+
+            {/* Settings Button with Word */}
+            <button
+              aria-label="Settings"
+              className="flex items-center gap-1.5 text-gray-600 hover:text-[#1559ac] hover:bg-gray-100 px-2.5 py-1 rounded-full text-xs sm:text-[13px] font-medium transition cursor-pointer select-none"
+            >
+              <Settings className="w-4 h-4 text-gray-600 group-hover:text-[#1559ac] stroke-[2]" />
+              <span className="hidden sm:inline">Settings</span>
+            </button>
+          </div>
         </div>
-      </div>
-    )
-  }
+      </header >
+
+      {/* Slide-in Hamburger Sidebar Drawer */}
+      {
+        isSidebarOpen && (
+          <div className="fixed inset-0 z-50 flex">
+            <div
+              onClick={() => setIsSidebarOpen(false)}
+              className="fixed inset-0 bg-black/70 backdrop-blur-xs transition-opacity"
+            />
+            <div className="relative w-80 max-w-[85vw] bg-white h-full shadow-2xl flex flex-col z-10 text-gray-900 overflow-y-auto">
+              {/* User Greeting */}
+              <div className="bg-[#1559ac] text-white p-4 flex items-center gap-3">
+                <User className="w-7 h-7 bg-white/20 p-1 rounded-full" />
+                <span className="font-bold text-base">Hello, Vinothkumar</span>
+              </div>
+
+              <div className="p-4 space-y-4 text-xs font-semibold">
+                {/* 1. TRENDING */}
+                <div>
+                  <h4 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-2">
+                    Trending
+                  </h4>
+                  <div className="space-y-2 text-gray-700">
+                    <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Bestsellers</p>
+                    <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">New Releases</p>
+                    <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Movers and Shakers</p>
+                  </div>
+                </div>
+
+                <hr className="border-gray-200" />
+
+                {/* 2. YOUR VIEWS (5 Category Names) */}
+                <div>
+                  <h4 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-2">
+                    Your Views
+                  </h4>
+                  <div className="space-y-2 text-gray-700">
+                    <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Recently Viewed Products</p>
+                    <Link
+                      href="/products/kotty-mens-jeans"
+                      onClick={() => setIsSidebarOpen(false)}
+                      className="hover:bg-blue-50 text-[#1559ac] font-bold p-1.5 rounded cursor-pointer block"
+                    >
+                      Men&apos;s Apparel, Chinos & Jeans →
+                    </Link>
+                    <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Wireless Headphones & Audio</p>
+                    <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Laptops & Smart Electronics</p>
+                    <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Haircare & Herbal Products</p>
+                  </div>
+                </div>
+
+                <hr className="border-gray-200" />
+
+                {/* 3. SHOP BY DEPARTMENT (7 Departments) */}
+                <div>
+                  <h4 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-2">
+                    Shop by Department
+                  </h4>
+                  <div className="space-y-2 text-gray-700">
+                    <Link
+                      href="/categories"
+                      onClick={() => setIsSidebarOpen(false)}
+                      className="hover:bg-emerald-50 text-emerald-800 font-bold p-1.5 rounded cursor-pointer block"
+                    >
+                      Fresh & Grocery (Blinkit 8-Mins) →
+                    </Link>
+                    <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Mobiles & Computers</p>
+                    <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">TV, Appliances, Electronics</p>
+                    <Link
+                      href="/products/kotty-mens-jeans"
+                      onClick={() => setIsSidebarOpen(false)}
+                      className="hover:bg-blue-50 text-[#1559ac] font-bold p-1.5 rounded cursor-pointer block"
+                    >
+                      Men&apos;s Fashion & Trousers →
+                    </Link>
+                    <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Women&apos;s Fashion</p>
+                    <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Home, Kitchen, Pets</p>
+                    <p className="hover:bg-gray-100 p-1.5 rounded cursor-pointer">Beauty, Health & Personal Care</p>
+                  </div>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setIsSidebarOpen(false)}
+                className="absolute top-3 -right-10 text-white hover:text-[#febd69]"
+              >
+                <X className="w-8 h-8" />
+              </button>
+            </div>
+          </div>
+        )
+      }
     </>
   );
 };

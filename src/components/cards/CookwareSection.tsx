@@ -39,7 +39,7 @@ export const CookwareSection: React.FC = () => {
           href="/categories"
           className="lg:w-[260px] xl:w-[290px] shrink-0 rounded-2xl overflow-hidden group shadow-xs hover:shadow-md transition-all duration-300 border border-orange-100 bg-[#fdecdb] flex items-center justify-center cursor-pointer min-h-[260px] lg:min-h-full"
         >
-          <img
+          <img loading="lazy" decoding="async"
             src="/banners/cookware-poster.png"
             alt="Premium Cookware Set Showcase"
             className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300"
@@ -84,7 +84,7 @@ export const CookwareSection: React.FC = () => {
 
                 {/* Product Device Image Area */}
                 <div className="w-full h-36 sm:h-40 flex items-center justify-center my-1 pt-1 px-1 relative">
-                  <img
+                  <img loading="lazy" decoding="async"
                     src={product.image}
                     alt={product.name}
                     className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-xs"

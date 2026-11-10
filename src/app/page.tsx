@@ -1,82 +1,158 @@
 "use client";
 
 import React from "react";
+import dynamic from "next/dynamic";
 import { HeroBannerWithRoundCategories } from "@/components/cards/HeroBannerWithRoundCategories";
 import { ModernDealsGridSection } from "@/components/cards/ModernDealsGridSection";
-import { TopPicksSection } from "@/components/cards/TopPicksSection";
-import { PreOwnedMobilesSection } from "@/components/cards/PreOwnedMobilesSection";
-import { WatchesSection } from "@/components/cards/WatchesSection";
-import { CookwareSection } from "@/components/cards/CookwareSection";
-import { PromotionalBannerCarousel } from "@/components/cards/PromotionalBannerCarousel";
-import { SkincareSection } from "@/components/cards/SkincareSection";
-import { OutdoorRecreationSection } from "@/components/cards/OutdoorRecreationSection";
-import { OutdoorPromoBannerCarousel } from "@/components/cards/OutdoorPromoBannerCarousel";
-import { PerfumesSection } from "@/components/cards/PerfumesSection";
-import { FeedingSection } from "@/components/cards/FeedingSection";
-import { BabyGearTravelSection } from "@/components/cards/BabyGearTravelSection";
-import { LifestylePromoBannerCarousel } from "@/components/cards/LifestylePromoBannerCarousel";
-import { EyewearSection } from "@/components/cards/EyewearSection";
-import { MobilePhonesSection } from "@/components/cards/MobilePhonesSection";
-import { CategoryRowSections } from "@/components/cards/CategoryRowSections";
+
+// Dynamically import lower sections so initial page load renders instantly (<500ms)
+const TopPicksSection = dynamic(
+  () => import("@/components/cards/TopPicksSection").then((m) => m.TopPicksSection),
+  { ssr: true }
+);
+
+const PreOwnedMobilesSection = dynamic(
+  () => import("@/components/cards/PreOwnedMobilesSection").then((m) => m.PreOwnedMobilesSection),
+  { ssr: true }
+);
+
+const WatchesSection = dynamic(
+  () => import("@/components/cards/WatchesSection").then((m) => m.WatchesSection),
+  { ssr: true }
+);
+
+const CookwareSection = dynamic(
+  () => import("@/components/cards/CookwareSection").then((m) => m.CookwareSection),
+  { ssr: true }
+);
+
+const SpecialtyStoreGridSection = dynamic(
+  () => import("@/components/cards/SpecialtyStoreGridSection").then((m) => m.SpecialtyStoreGridSection),
+  { ssr: true }
+);
+
+const PromotionalBannerCarousel = dynamic(
+  () => import("@/components/cards/PromotionalBannerCarousel").then((m) => m.PromotionalBannerCarousel),
+  { ssr: true }
+);
+
+const SkincareSection = dynamic(
+  () => import("@/components/cards/SkincareSection").then((m) => m.SkincareSection),
+  { ssr: true }
+);
+
+const OutdoorRecreationSection = dynamic(
+  () => import("@/components/cards/OutdoorRecreationSection").then((m) => m.OutdoorRecreationSection),
+  { ssr: true }
+);
+
+const OutdoorPromoBannerCarousel = dynamic(
+  () => import("@/components/cards/OutdoorPromoBannerCarousel").then((m) => m.OutdoorPromoBannerCarousel),
+  { ssr: true }
+);
+
+const PerfumesSection = dynamic(
+  () => import("@/components/cards/PerfumesSection").then((m) => m.PerfumesSection),
+  { ssr: true }
+);
+
+const FeedingSection = dynamic(
+  () => import("@/components/cards/FeedingSection").then((m) => m.FeedingSection),
+  { ssr: true }
+);
+
+const BabyGearTravelSection = dynamic(
+  () => import("@/components/cards/BabyGearTravelSection").then((m) => m.BabyGearTravelSection),
+  { ssr: true }
+);
+
+const LifestylePromoBannerCarousel = dynamic(
+  () => import("@/components/cards/LifestylePromoBannerCarousel").then((m) => m.LifestylePromoBannerCarousel),
+  { ssr: true }
+);
+
+const EyewearSection = dynamic(
+  () => import("@/components/cards/EyewearSection").then((m) => m.EyewearSection),
+  { ssr: true }
+);
+
+const TrendingBrandsSection = dynamic(
+  () => import("@/components/cards/TrendingBrandsSection").then((m) => m.TrendingBrandsSection),
+  { ssr: true }
+);
+
+const MobilePhonesSection = dynamic(
+  () => import("@/components/cards/MobilePhonesSection").then((m) => m.MobilePhonesSection),
+  { ssr: true }
+);
+
+const CategoryRowSections = dynamic(
+  () => import("@/components/cards/CategoryRowSections").then((m) => m.CategoryRowSections),
+  { ssr: true }
+);
 
 export default function Home() {
   return (
     <div className="w-full relative pb-8 select-none">
-      {/* 1. Full-Screen Edge-to-Edge Hero Banner & Round Subcategories (No container box) */}
+      {/* 1. Full-Screen Edge-to-Edge Hero Banner & Round Subcategories - Renders instantly */}
       <HeroBannerWithRoundCategories />
 
       {/* 2. Main Page Grid Sections wrapped in standard responsive container */}
       <div className="w-full px-2 sm:px-3.5 max-w-[1500px] mx-auto space-y-4 mt-2">
-        {/* Modern 3-Column Deals Grid (Matches user reference image) */}
+        {/* Modern 3-Column Deals Grid */}
         <ModernDealsGridSection />
 
-        {/* Top Picks Section based on 2nd image: Left Fissman Poster + Right Slide Carousel with Indian Rupee Prices */}
+        {/* Top Picks Section */}
         <TopPicksSection />
 
-        {/* Pre-Owned Mobiles Section based on 2nd image: Left Showcase Poster + Right Slide Carousel with Indian Rupee Prices */}
+        {/* Pre-Owned Mobiles Section */}
         <PreOwnedMobilesSection />
 
-        {/* Watches Section based on 2nd image: Left Luxury Watches Poster + Right Slide Carousel with Indian Rupee Prices */}
+        {/* Watches Section */}
         <WatchesSection />
 
-        {/* Cookware Section based on 2nd image: Left Granite Cookware Poster + Right Slide Carousel with Indian Rupee Prices */}
+        {/* Cookware Section */}
         <CookwareSection />
 
-        {/* Promotional Wide Banner Carousel (Chillax Baby Monitors, Elevate Cooking, Casio Timeless Collection) */}
+        {/* 7 Specialty Store Arched Categories (The Noice Store, Sports & Fitness, Gourmet Store, Travel, Puja, Pet, Book Store) */}
+        <SpecialtyStoreGridSection />
+
+        {/* Promotional Wide Banner Carousel */}
         <PromotionalBannerCarousel />
 
-        {/* Skin Care Section based on reference image: Left Pink Glow Poster + Right 8-Product Slider */}
+        {/* Skin Care Section */}
         <SkincareSection />
 
-        {/* Outdoor Recreation Section based on reference image: Left Bicycles Showcase Poster + Right 8-Product Slider */}
+        {/* Outdoor Recreation Section */}
         <OutdoorRecreationSection />
 
-        {/* Outdoor & Gaming Promotional Carousel (PlayStation, iPads, Outdoor Camping, Samsung Mobiles) */}
+        {/* Outdoor & Gaming Promotional Carousel */}
         <OutdoorPromoBannerCarousel />
 
-        {/* Perfumes Section based on reference image: Left Showcase Poster + Right 8-Product Slider */}
+        {/* Perfumes Section */}
         <PerfumesSection />
 
-        {/* Feeding Section based on reference image: Left Showcase Poster + Right 8-Product Slider */}
+        {/* Feeding Section */}
         <FeedingSection />
 
-        {/* Baby Gear & Travel Section based on reference image: Left Showcase Poster + Right 8-Product Slider */}
+        {/* Baby Gear & Travel Section */}
         <BabyGearTravelSection />
 
-        {/* Lifestyle, Sunscreen & Baby Transit Promo Carousel (Sunscreen, Perfumes Him & Her, Baby Transit Lifestyle) */}
+        {/* Lifestyle, Sunscreen & Baby Transit Promo Carousel */}
         <LifestylePromoBannerCarousel />
 
-        {/* Eyewear & Sun Glasses Section based on reference image: Left Luxury Eyewear Poster + Right 8-Product Slider */}
+        {/* Eyewear & Sun Glasses Section */}
         <EyewearSection />
 
-        {/* Mobile Phones Section based on reference image: Left Flagship Mobiles Poster + Right 8-Product Slider */}
+        {/* Trending Brands Circular Slider (OnePlus, Samsung, Oppo, Nothing, Pixel, etc.) */}
+        <TrendingBrandsSection />
+
+        {/* Mobile Phones Section */}
         <MobilePhonesSection />
 
-        {/* Categories Sections One Below Another (Men's fashion -> Women's fashion -> Beauty -> Health & Nutrition -> Grocery) */}
+        {/* Categories Sections One Below Another */}
         <CategoryRowSections />
       </div>
     </div>
   );
 }
-
-

@@ -39,7 +39,7 @@ export const SkincareSection: React.FC = () => {
           href="/categories"
           className="lg:w-[230px] xl:w-[250px] shrink-0 rounded-2xl overflow-hidden group shadow-xs hover:shadow-md transition-all duration-300 border border-pink-100 bg-[#fdeaf2] flex items-center justify-center cursor-pointer min-h-[220px] lg:min-h-full"
         >
-          <img
+          <img loading="lazy" decoding="async"
             src="/banners/skincare-poster.png"
             alt="Skin Care Showcase"
             className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300"
@@ -84,7 +84,7 @@ export const SkincareSection: React.FC = () => {
 
                 {/* Product Image Area - Compact Height */}
                 <div className="w-full h-[95px] sm:h-[105px] flex items-center justify-center p-1 mb-1.5 bg-transparent">
-                  <img
+                  <img loading="lazy" decoding="async"
                     src={product.image}
                     alt={product.name}
                     className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-300"

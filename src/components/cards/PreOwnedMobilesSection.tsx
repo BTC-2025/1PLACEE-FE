@@ -93,7 +93,7 @@ export const PreOwnedMobilesSection: React.FC = () => {
           href="/categories"
           className="lg:w-[260px] xl:w-[290px] shrink-0 rounded-2xl overflow-hidden group shadow-xs hover:shadow-md transition-all duration-300 border border-purple-100 bg-[#efe9fb] flex items-center justify-center cursor-pointer min-h-[260px] lg:min-h-full"
         >
-          <img
+          <img loading="lazy" decoding="async"
             key={currentPoster}
             src={currentPoster}
             alt={currentPosterAlt}
@@ -146,7 +146,7 @@ export const PreOwnedMobilesSection: React.FC = () => {
 
                 {/* Product Device Image Area: 100% full uncropped device body */}
                 <div className="w-full h-36 sm:h-40 flex items-center justify-center my-1 pt-1 px-1 relative">
-                  <img
+                  <img loading="lazy" decoding="async"
                     src={product.image}
                     alt={product.name}
                     className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-xs"

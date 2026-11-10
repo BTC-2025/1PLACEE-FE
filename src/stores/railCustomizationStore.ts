@@ -6,8 +6,7 @@ export type RailWidgetId =
   | "calculator"
   | "users"
   | "notes"
-  | "shortcuts"
-  | "weather";
+  | "shortcuts";
 
 export interface RailCustomizationState {
   // Theme Background Color for QuickSideRail
@@ -34,7 +33,6 @@ const DEFAULT_ORDER: RailWidgetId[] = [
   "users",
   "notes",
   "shortcuts",
-  "weather",
 ];
 
 export const useRailCustomizationStore = create<RailCustomizationState>()(
@@ -86,7 +84,7 @@ export const useRailCustomizationStore = create<RailCustomizationState>()(
         }),
     }),
     {
-      name: "1place-rail-customization-storage",
+      name: "1place-rail-customization-storage-v2",
     }
   )
 );

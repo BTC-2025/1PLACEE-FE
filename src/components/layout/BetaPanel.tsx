@@ -353,12 +353,12 @@ export const BetaPanel: React.FC = () => {
 
         {/* Section 3: BETA LABS RELEASE / COMING SOON CARD */}
         <div className="relative mt-2">
-          {/* Flying Bird Icon Floating in Top Center Circle */}
-          <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-9 h-9 rounded-full bg-white border border-[#dce7f5] shadow-xs flex items-center justify-center z-10">
+          {/* Blue 'B' Logo Floating in Top Center Circle */}
+          <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-9 h-9 rounded-full bg-white border border-[#dce7f5] shadow-xs flex items-center justify-center z-10 p-1.5">
             <img
-              src="/beta-icons/icon-pigeon-circle.png"
-              alt="Pigeon"
-              className="w-5 h-5 object-contain"
+              src="/beta-icons/beta-labs-b-logo.png"
+              alt="Beta Labs B Logo"
+              className="w-full h-full object-contain"
             />
           </div>
 

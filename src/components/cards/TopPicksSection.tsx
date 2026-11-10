@@ -30,7 +30,7 @@ export const TopPicksSection: React.FC = () => {
           href="/categories"
           className="lg:w-[260px] xl:w-[290px] shrink-0 rounded-2xl overflow-hidden group shadow-xs hover:shadow-md transition-all duration-300 border border-gray-100 bg-[#f8f5f0] flex items-center justify-center cursor-pointer min-h-[260px] lg:min-h-full"
         >
-          <img
+          <img loading="lazy" decoding="async"
             src="/banners/fissman-poster.png"
             alt="Fissman Cookware"
             className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300"
@@ -75,7 +75,7 @@ export const TopPicksSection: React.FC = () => {
 
                 {/* Product Image (Prism clean with no inner heart) */}
                 <div className="w-full h-28 sm:h-32 flex items-center justify-center my-1">
-                  <img
+                  <img loading="lazy" decoding="async"
                     src={product.image}
                     alt={product.name}
                     className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-xs"

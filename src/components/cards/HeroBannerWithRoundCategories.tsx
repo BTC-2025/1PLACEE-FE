@@ -76,7 +76,7 @@ export const HeroBannerWithRoundCategories: React.FC = () => {
         <div className="relative w-full overflow-hidden shadow-xs hover:shadow-md transition-shadow duration-300 rounded-2xl border border-gray-200/70 bg-white">
           <Link href={slide.href} className="block w-full cursor-pointer relative group">
             <div className="w-full relative flex items-center justify-center">
-              <img
+              <img loading="lazy" decoding="async"
                 src={slide.image}
                 alt={slide.alt}
                 className="w-full h-auto block object-contain transition-all duration-300"
@@ -145,7 +145,7 @@ export const HeroBannerWithRoundCategories: React.FC = () => {
               >
                 {/* Circular Avatar Container: Filled #73A5CA circle disk */}
                 <div className="w-16 h-16 sm:w-[72px] sm:h-[72px] rounded-full bg-[#C0BFE3] p-2.5 shadow-sm border border-[#5d94bc] flex items-center justify-center group-hover:scale-105 group-hover:shadow-md transition-all duration-300 relative">
-                  <img
+                  <img loading="lazy" decoding="async"
                     src={cat.image}
                     alt={cat.name}
                     className="w-full h-full object-contain drop-shadow-xs"

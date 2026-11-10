@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import { Product, CartItem } from "@/types";
 
 interface CartStore {
@@ -13,56 +14,83 @@ interface CartStore {
   totalPrice: () => number;
 }
 
-export const useCartStore = create<CartStore>((set, get) => ({
-  items: [],
-  isCartOpen: false,
+export const useCartStore = create<CartStore>()(
+  persist(
+    (set, get) => ({
+      items: [
+        {
+          product: {
+            id: "cart-default-1",
+            title: "Kotty Men's Relaxed Fit Light Blue Jeans",
+            name: "Kotty Men's Relaxed Fit Light Blue Jeans",
+            description: "Premium breathable stretch denim with classic 5-pocket styling",
+            price: 799,
+            originalPrice: 1999,
+            discount: 60,
+            rating: 4.2,
+            reviewsCount: 1420,
+            imageUrl: "https://images.unsplash.com/photo-1542272604-780c96856592?auto=format&fit=crop&w=600&q=80",
+            image: "https://images.unsplash.com/photo-1542272604-780c96856592?auto=format&fit=crop&w=600&q=80",
+            category: "fashion",
+            inStock: true,
+          },
+          quantity: 1,
+        },
+      ],
+      isCartOpen: false,
 
-  addToCart: (product: Product, quantity = 1) => {
-    set((state) => {
-      const existing = state.items.find((item) => item.product.id === product.id);
-      if (existing) {
-        return {
+      addToCart: (product: Product, quantity = 1) => {
+        set((state) => {
+          const existing = state.items.find((item) => item.product.id === product.id);
+          if (existing) {
+            return {
+              items: state.items.map((item) =>
+                item.product.id === product.id
+                  ? { ...item, quantity: item.quantity + quantity }
+                  : item
+              ),
+            };
+          }
+          return {
+            items: [...state.items, { product, quantity }],
+          };
+        });
+      },
+
+      removeFromCart: (productId: string) => {
+        set((state) => ({
+          items: state.items.filter((item) => item.product.id !== productId),
+        }));
+      },
+
+      updateQuantity: (productId: string, quantity: number) => {
+        if (quantity <= 0) {
+          get().removeFromCart(productId);
+          return;
+        }
+        set((state) => ({
           items: state.items.map((item) =>
-            item.product.id === product.id
-              ? { ...item, quantity: item.quantity + quantity }
-              : item
+            item.product.id === productId ? { ...item, quantity } : item
           ),
-          isCartOpen: true,
-        };
-      }
-      return {
-        items: [...state.items, { product, quantity }],
-        isCartOpen: true,
-      };
-    });
-  },
+        }));
+      },
 
-  removeFromCart: (productId: string) => {
-    set((state) => ({
-      items: state.items.filter((item) => item.product.id !== productId),
-    }));
-  },
+      clearCart: () => set({ items: [] }),
+      toggleCart: () => set((state) => ({ isCartOpen: !state.isCartOpen })),
 
-  updateQuantity: (productId: string, quantity: number) => {
-    if (quantity <= 0) {
-      get().removeFromCart(productId);
-      return;
+      totalItems: () => {
+        return get().items.reduce((total, item) => total + item.quantity, 0);
+      },
+
+      totalPrice: () => {
+        return get().items.reduce(
+          (total, item) => total + item.product.price * item.quantity,
+          0
+        );
+      },
+    }),
+    {
+      name: "1place-cart-storage",
     }
-    set((state) => ({
-      items: state.items.map((item) =>
-        item.product.id === productId ? { ...item, quantity } : item
-      ),
-    }));
-  },
-
-  clearCart: () => set({ items: [] }),
-  toggleCart: () => set((state) => ({ isCartOpen: !state.isCartOpen })),
-
-  totalItems: () => {
-    return get().items.reduce((total, item) => total + item.quantity, 0);
-  },
-
-  totalPrice: () => {
-    return get().items.reduce((total, item) => total + item.product.price * item.quantity, 0);
-  },
-}));
+  )
+);

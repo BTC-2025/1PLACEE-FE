@@ -2,12 +2,12 @@ import { create } from "zustand";
 
 interface QuickSidebarStore {
   isSidebarOpen: boolean;
-  activePanel: "beta" | "calendar" | "calculator" | "users" | "notes" | "shortcuts" | "cloud" | "weather" | "customize" | null;
+  activePanel: "beta" | "calendar" | "calculator" | "users" | "notes" | "shortcuts" | "customize" | null;
   toggleSidebar: () => void;
   openSidebar: () => void;
   closeSidebar: () => void;
-  setActivePanel: (panel: "beta" | "calendar" | "calculator" | "users" | "notes" | "shortcuts" | "cloud" | "weather" | "customize" | null) => void;
-  togglePanel: (panel: "beta" | "calendar" | "calculator" | "users" | "notes" | "shortcuts" | "cloud" | "weather" | "customize") => void;
+  setActivePanel: (panel: "beta" | "calendar" | "calculator" | "users" | "notes" | "shortcuts" | "customize" | null) => void;
+  togglePanel: (panel: "beta" | "calendar" | "calculator" | "users" | "notes" | "shortcuts" | "customize") => void;
   closePanel: () => void;
 }
 

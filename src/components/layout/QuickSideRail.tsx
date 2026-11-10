@@ -91,17 +91,6 @@ const WIDGET_LOOKUP: Record<RailWidgetId, WidgetConfig> = {
     editActiveBg: "bg-[#f1edff]",
     iconColor: "text-[#6366f1]",
   },
-  weather: {
-    id: "weather",
-    label: "Cloud",
-    icon: <Cloud className="w-5 h-5 text-[#00bcd4] stroke-[2.2]" />,
-    activeBg: "bg-[#e8faff]",
-    activeBorder: "border-[#00bcd4]",
-    defaultBg: "bg-[#e8faff] hover:bg-[#cffafe]",
-    editBorder: "border-[#00bcd4]",
-    editActiveBg: "bg-[#e8faff]",
-    iconColor: "text-[#00bcd4]",
-  },
 };
 
 export const QuickSideRail: React.FC = () => {

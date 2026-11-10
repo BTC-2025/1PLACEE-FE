@@ -21,7 +21,7 @@ export const ModernDealsGridSection: React.FC = () => {
               href={deal.href}
               className="rounded-xl overflow-hidden group cursor-pointer hover:shadow-md transition-all duration-200 border border-gray-100/80 relative flex items-center justify-center bg-white"
             >
-              <img
+              <img loading="lazy" decoding="async"
                 src={deal.productImage}
                 alt={deal.brandName}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
@@ -46,7 +46,7 @@ export const ModernDealsGridSection: React.FC = () => {
               className="rounded-xl overflow-hidden group cursor-pointer hover:shadow-md transition-all duration-200 border border-gray-100/80 relative flex items-center justify-center bg-white"
             >
               {/* Product Card Image */}
-              <img
+              <img loading="lazy" decoding="async"
                 src={item.image}
                 alt={item.model}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
@@ -79,7 +79,7 @@ export const ModernDealsGridSection: React.FC = () => {
           href="/categories"
           className="relative rounded-2xl overflow-hidden shadow-xs hover:shadow-md transition-all duration-200 group border border-gray-100 flex-1 flex items-center justify-center bg-[#fdfcf9] cursor-pointer"
         >
-          <img
+          <img loading="lazy" decoding="async"
             src="/banners/banner-teknum.jpg"
             alt="Teknum Your Favorites, Now UP TO 50% off"
             className="w-full h-full object-cover object-center group-hover:scale-[1.02] transition-transform duration-300"
@@ -91,7 +91,7 @@ export const ModernDealsGridSection: React.FC = () => {
           href="/categories"
           className="relative rounded-2xl overflow-hidden shadow-xs hover:shadow-md transition-all duration-200 group border border-gray-100 flex-1 flex items-center justify-center bg-[#fdfcf9] cursor-pointer"
         >
-          <img
+          <img loading="lazy" decoding="async"
             src="/banners/banner-cookware.jpg"
             alt="COOKWARE Up To 30%/OFF"
             className="w-full h-full object-cover object-center group-hover:scale-[1.02] transition-transform duration-300"

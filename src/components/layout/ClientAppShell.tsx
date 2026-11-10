@@ -18,6 +18,11 @@ const CalendarPanel = dynamic(
   { ssr: false }
 );
 
+const CalculatorPanel = dynamic(
+  () => import("@/components/layout/CalculatorPanel").then((mod) => mod.CalculatorPanel),
+  { ssr: false }
+);
+
 const BetaPanel = dynamic(
   () => import("@/components/layout/BetaPanel").then((mod) => mod.BetaPanel),
   { ssr: false }
@@ -30,11 +35,6 @@ const ContactsPanel = dynamic(
 
 const NotesPanel = dynamic(
   () => import("@/components/layout/NotesPanel").then((mod) => mod.NotesPanel),
-  { ssr: false }
-);
-
-const WeatherPanel = dynamic(
-  () => import("@/components/layout/WeatherPanel").then((mod) => mod.WeatherPanel),
   { ssr: false }
 );
 
@@ -65,9 +65,9 @@ export const ClientAppShell: React.FC<{ children: React.ReactNode }> = ({
       </PageContentWrapper>
       <BetaPanel />
       <CalendarPanel />
+      <CalculatorPanel />
       <ContactsPanel />
       <NotesPanel />
-      <WeatherPanel />
       <CustomizeBarPanel />
       <VirtualKeyboardModal />
       <QuickSideRail />

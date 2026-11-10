@@ -8,6 +8,10 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  // Optimize package imports to drastically reduce bundle size and compile time
+  experimental: {
+    optimizePackageImports: ["lucide-react"],
+  },
   images: {
     unoptimized: true,
     remotePatterns: [

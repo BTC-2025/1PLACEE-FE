@@ -69,13 +69,6 @@ const WIDGETS_METADATA: Record<RailWidgetId, WidgetMeta> = {
     icon: <Keyboard className="w-5 h-5 text-[#6366f1] stroke-[2.2]" />,
     tagColor: "bg-purple-50 text-purple-700 border-purple-200",
   },
-  weather: {
-    id: "weather",
-    label: "Local Weather",
-    category: "Information",
-    icon: <Cloud className="w-5 h-5 text-[#00bcd4] stroke-[2.2]" />,
-    tagColor: "bg-cyan-50 text-cyan-700 border-cyan-200",
-  },
 };
 
 // Rail theme background color palette
