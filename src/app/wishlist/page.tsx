@@ -15,10 +15,23 @@ import { useWishlistStore } from "@/stores/wishlistStore";
 import { useCartStore } from "@/stores/cartStore";
 
 export default function WishlistPage() {
+  const [mounted, setMounted] = React.useState(false);
   const { items, removeFromWishlist, clearWishlist, totalWishlistItems } =
     useWishlistStore();
   const { addToCart } = useCartStore();
   const [addedItemIds, setAddedItemIds] = React.useState<string[]>([]);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <div className="w-full bg-[#f8fafc] min-h-[85vh] py-6 select-none flex items-center justify-center">
+        <div className="w-8 h-8 border-3 border-rose-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   const handleMoveToCart = (product: (typeof items)[0]) => {
     addToCart(product, 1);

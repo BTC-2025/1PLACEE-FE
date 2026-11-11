@@ -51,12 +51,17 @@ export const AmazonNavbar: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const totalItems = useCartStore((state) => state.totalItems());
   const toggleCart = useCartStore((state) => state.toggleCart);
   const totalWishlistCount = useWishlistStore((state) => state.totalWishlistItems());
   const { isSidebarOpen: isQuickBarOpen, toggleSidebar: toggleQuickSidebar, activePanel } = useQuickSidebarStore();
   const subnavScrollRef = useRef<HTMLDivElement>(null);
   const searchContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Click outside search container to automatically hide search bar
   useEffect(() => {
@@ -215,7 +220,7 @@ export const AmazonNavbar: React.FC = () => {
               className="group w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-white/90 hover:bg-[#1559ac] border border-[#b8dcfa] shadow-2xs text-[#1559ac] hover:text-white transition-all duration-200 cursor-pointer relative"
             >
               <Heart className="w-5 h-5 text-[#1559ac] group-hover:text-white stroke-[2] fill-transparent group-hover:fill-white transition-all" />
-              {totalWishlistCount > 0 && (
+              {mounted && totalWishlistCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-rose-500 text-white font-black text-[10px] w-4 h-4 rounded-full flex items-center justify-center shadow">
                   {totalWishlistCount}
                 </span>
@@ -245,7 +250,7 @@ export const AmazonNavbar: React.FC = () => {
                 <circle cx="8.5" cy="19.5" r="1.5" fill="currentColor" stroke="none" />
                 <circle cx="17.5" cy="19.5" r="1.5" fill="currentColor" stroke="none" />
               </svg>
-              {totalItems > 0 && (
+              {mounted && totalItems > 0 && (
                 <span className="absolute -top-1 -right-1 bg-[#ff9900] text-black font-black text-[10px] w-4 h-4 rounded-full flex items-center justify-center shadow">
                   {totalItems}
                 </span>

@@ -17,12 +17,17 @@ import { useCartStore } from "@/stores/cartStore";
 import { useWishlistStore } from "@/stores/wishlistStore";
 
 export default function CartPage() {
+  const [mounted, setMounted] = useState(false);
   const { items, updateQuantity, removeFromCart, clearCart, totalPrice, totalItems } =
     useCartStore();
   const { addToWishlist } = useWishlistStore();
   const [couponCode, setCouponCode] = useState("");
   const [appliedDiscount, setAppliedDiscount] = useState(0);
   const [isOrderPlaced, setIsOrderPlaced] = useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const subtotal = totalPrice();
   const deliveryCharge = subtotal > 499 || subtotal === 0 ? 0 : 40;
@@ -43,6 +48,14 @@ export default function CartPage() {
     addToWishlist(item.product);
     removeFromCart(item.product.id);
   };
+
+  if (!mounted) {
+    return (
+      <div className="w-full bg-[#f8fafc] min-h-[85vh] py-6 select-none flex items-center justify-center">
+        <div className="w-8 h-8 border-3 border-blue-600 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   if (isOrderPlaced) {
     return (
