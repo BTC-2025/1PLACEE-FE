@@ -186,43 +186,40 @@ export const ContactsPanel: React.FC = () => {
       aria-label="Connections & Contacts Panel"
       className="fixed right-[60px] sm:right-[62px] top-[60px] bottom-0 w-[350px] sm:w-[360px] bg-white border-l border-[#d0e5fb] shadow-[-6px_0_20px_rgba(0,0,0,0.06)] z-[60] flex flex-col select-none overflow-y-auto no-scrollbar animate-in slide-in-from-right duration-200"
     >
-      {/* Top Header Row: Connections + Close Button */}
-      <div className="h-[52px] px-5 flex items-center justify-between border-b border-[#e6edf6] bg-white shrink-0">
-        <h2 className="text-[15px] font-bold text-[#0f172a] tracking-tight">
-          Connections
-        </h2>
+      {/* Top Header Row: Contact Icon + Contacts Title + Add Contact Button + Close Button */}
+      <div className="h-[44px] px-4 flex items-center justify-between border-b border-[#e6edf6] bg-white shrink-0">
+        <div className="flex items-center gap-2">
+          <User className="w-5 h-5 text-[#2563eb] stroke-[2.2]" />
+          <h2 className="text-[16px] font-black text-[#0f172a] tracking-tight">
+            Contacts
+          </h2>
+        </div>
 
-        <button
-          type="button"
-          onClick={closePanel}
-          title="Close Panel"
-          aria-label="Close"
-          className="w-8 h-8 rounded-full bg-[#f1f5f9] text-[#64748b] hover:text-[#0f172a] hover:bg-[#e2e8f0] flex items-center justify-center transition cursor-pointer"
-        >
-          <X className="w-4 h-4 stroke-[2.2]" />
-        </button>
-      </div>
-
-      <div className="p-4 sm:p-5 flex flex-col gap-4 flex-1">
-        {/* Title Row: User Icon + Global Contacts + Plus Button */}
-        <div className="flex items-center justify-between pt-1">
-          <div className="flex items-center gap-2.5">
-            <User className="w-5 h-5 text-[#2563eb] stroke-[2.2]" />
-            <h3 className="text-lg font-black text-[#0f172a] tracking-tight">
-              Global Contacts
-            </h3>
-          </div>
-
-          {/* Plus Add Contact Button */}
+        <div className="flex items-center gap-1.5">
+          {/* Add Contact Button */}
           <button
             type="button"
             onClick={handleOpenAddModal}
             title="Add Contact"
-            className="w-8.5 h-8.5 rounded-full bg-[#eff6ff] text-[#2563eb] hover:bg-[#dbeafe] flex items-center justify-center transition cursor-pointer shadow-2xs"
+            className="w-8 h-8 rounded-full bg-[#eff6ff] text-[#2563eb] hover:bg-[#dbeafe] flex items-center justify-center transition cursor-pointer shadow-2xs"
           >
-            <Plus className="w-4.5 h-4.5 stroke-[2.5]" />
+            <Plus className="w-4 h-4 stroke-[2.5]" />
+          </button>
+
+          {/* Close Panel Button */}
+          <button
+            type="button"
+            onClick={closePanel}
+            title="Close Panel"
+            aria-label="Close"
+            className="w-8 h-8 rounded-full bg-[#f1f5f9] text-[#64748b] hover:text-[#0f172a] hover:bg-[#e2e8f0] flex items-center justify-center transition cursor-pointer"
+          >
+            <X className="w-4 h-4 stroke-[2.2]" />
           </button>
         </div>
+      </div>
+
+      <div className="p-4 sm:p-5 flex flex-col gap-4 flex-1">
 
         {/* Search Input Bar - Fixed overlapping placeholder with flex container */}
         <div className="w-full flex items-center gap-2.5 bg-white border border-[#e2e8f0] rounded-xl px-3.5 py-2 focus-within:border-[#2563eb] focus-within:ring-1 focus-within:ring-[#2563eb] transition shadow-2xs">

@@ -100,7 +100,7 @@ export const BetaPanel: React.FC = () => {
       className="fixed right-[60px] sm:right-[62px] top-[60px] bottom-0 w-[350px] sm:w-[360px] bg-white border-l border-[#d0e5fb] shadow-[-6px_0_20px_rgba(0,0,0,0.06)] z-[60] flex flex-col select-none overflow-y-auto no-scrollbar animate-in slide-in-from-right duration-200"
     >
       {/* Top Header Row: BETA Logo (blue) + EDIT / DONE Button + Close Button */}
-      <div className="h-[62px] px-5 flex items-center justify-between border-b border-[#e6edf6] bg-white shrink-0 relative z-20">
+      <div className="h-[44px] px-5 flex items-center justify-between border-b border-[#e6edf6] bg-white shrink-0 relative z-20">
         <div className="flex items-center">
           <img
             src="/beta-icons/beta-logo.png"

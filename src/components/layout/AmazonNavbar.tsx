@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import {
   Search,
   MapPin,
@@ -46,7 +46,7 @@ const SUB_NAV_LINKS = [
 
 export const AmazonNavbar: React.FC = () => {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<"Home" | "Categorys" | "Bookings">("Home");
+  const pathname = usePathname();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -136,38 +136,46 @@ export const AmazonNavbar: React.FC = () => {
               <ChevronDown className="w-4 h-4.5 text-[#1559ac] group-hover:text-white shrink-0 ml-0.5 transition-colors" />
             </button>
           </div>
-          {/* Center Group: Eclipse Container with Three Buttons: Home, Categorys, Bookings - font size & height increased */}
-          <div className="hidden md:flex items-center absolute left-1/2 -translate-x-1/2 bg-[#d7ebfc] p-1.5 rounded-full border border-[#b8dcfa] shadow-2xs z-10 pointer-events-auto">
-            <Link
-              href="/"
-              onClick={() => setActiveTab("Home")}
-              className={`px-4 sm:px-5 py-1.5 sm:py-2 rounded-full font-bold text-[13px] sm:text-sm transition duration-200 cursor-pointer ${activeTab === "Home"
-                ? "bg-[#1559ac] text-white shadow-sm"
-                : "text-[#1559ac] hover:text[#1559ac] hover:bg-white"
-                }`}
-            >
-              Home
-            </Link>
-            <Link
-              href="/categories"
-              onClick={() => setActiveTab("Categorys")}
-              className={`px-4 sm:px-5 py-1.5 sm:py-2 rounded-full font-bold text-[13px] sm:text-sm transition duration-200 cursor-pointer ${activeTab === "Categorys"
-                ? "bg-[#1559ac] text-white shadow-sm"
-                : "text-[#1559ac] hover:text-[#1559ac] hover:bg-white"
-                }`}
-            >
-              Categories
-            </Link>
-            <button
-              onClick={() => setActiveTab("Bookings")}
-              className={`px-4 sm:px-5 py-1.5 sm:py-2 rounded-full font-bold text-[13px] sm:text-sm transition duration-200 cursor-pointer ${activeTab === "Bookings"
-                ? "bg-[#1559ac] text-white shadow-sm"
-                : "text-[#1559ac] hover:text-[#1559ac] hover:bg-white"
-                }`}
-            >
-              Orders
-            </button>
-          </div>
+          {/* Center Group: Eclipse Container with Three Buttons: Home, Categories, Orders */}
+          {(() => {
+            const isCategoriesActive = pathname.startsWith("/categories");
+            const isHomeActive = pathname === "/" && !isCategoriesActive;
+
+            return (
+              <div className="hidden md:flex items-center absolute left-1/2 -translate-x-1/2 bg-[#d7ebfc] p-1.5 rounded-full border border-[#b8dcfa] shadow-2xs z-10 pointer-events-auto">
+                <Link
+                  href="/"
+                  className={`px-4 sm:px-5 py-1.5 sm:py-2 rounded-full font-bold text-[13px] sm:text-sm transition duration-200 cursor-pointer ${
+                    isHomeActive
+                      ? "bg-[#1559ac] text-white shadow-sm"
+                      : "text-[#1559ac] hover:bg-white"
+                  }`}
+                >
+                  Home
+                </Link>
+                <Link
+                  href="/categories"
+                  className={`px-4 sm:px-5 py-1.5 sm:py-2 rounded-full font-bold text-[13px] sm:text-sm transition duration-200 cursor-pointer ${
+                    isCategoriesActive
+                      ? "bg-[#1559ac] text-white shadow-sm"
+                      : "text-[#1559ac] hover:bg-white"
+                  }`}
+                >
+                  Categories
+                </Link>
+                <Link
+                  href="/orders"
+                  className={`px-4 sm:px-5 py-1.5 sm:py-2 rounded-full font-bold text-[13px] sm:text-sm transition duration-200 cursor-pointer ${
+                    pathname.startsWith("/orders")
+                      ? "bg-[#1559ac] text-white shadow-sm"
+                      : "text-[#1559ac] hover:bg-white"
+                  }`}
+                >
+                  Orders
+                </Link>
+              </div>
+            );
+          })()}
 
           {/* Right Group: Search Box + Bell Notification + Wishlist + Orders + Cart + Profile - compact width, icons intact */}
           <div className="flex items-center gap-1 sm:gap-1.5 shrink-0 z-20">
@@ -176,7 +184,7 @@ export const AmazonNavbar: React.FC = () => {
               {isSearchOpen ? (
                 <form
                   onSubmit={handleSearchSubmit}
-                  className="flex items-center bg-white rounded-full px-3.5 py-1.5 shadow-md w-44 sm:w-64 md:w-66 max-w-[250px] border border-[#b8dcfa] animate-in fade-in zoom-in-95 duration-200"
+                  className="flex items-center bg-white rounded-full px-3.5 py-1.5 shadow-md w-44 sm:w-64 md:w-66 max-w-[249px] border border-[#b8dcfa] animate-in fade-in zoom-in-95 duration-200"
                 >
                   <Search className="w-4.5 h-4.5 text-[#1559ac] mr-2 shrink-0 stroke-[2.2]" />
                   <input

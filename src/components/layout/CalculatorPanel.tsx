@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import {
   X,
   History,
-  Share2,
   Trash2,
   Percent,
   Tag,
@@ -36,6 +35,7 @@ import {
   Code,
   Calendar,
   Edit2,
+  HeartPulse,
 } from "lucide-react";
 import { useQuickSidebarStore } from "@/stores/quickSidebarStore";
 
@@ -84,7 +84,7 @@ export const CalculatorPanel: React.FC = () => {
   const { activePanel, closePanel } = useQuickSidebarStore();
 
   // Core Calculator State
-  const [currentInput, setCurrentInput] = useState<string>("0");
+  const [currentInput, setCurrentInput] = useState<string>("");
   const [baseValue, setBaseValue] = useState<number | null>(null);
   const [tapeSteps, setTapeSteps] = useState<TapeStep[]>([]);
   const [runningTotal, setRunningTotal] = useState<number>(0);
@@ -126,11 +126,23 @@ export const CalculatorPanel: React.FC = () => {
     "currency" |
     "compare" |
     "share" |
+    "bmi" |
     null
   >(null);
 
   const [copyFeedback, setCopyFeedback] = useState(false);
+  const [copiedHistoryId, setCopiedHistoryId] = useState<string | null>(null);
 
+  // BMI Calculator State (Direct Unit Selectors: Height cm / ft, Weight kg / lbs)
+  const [bmiGender, setBmiGender] = useState<"male" | "female">("male");
+  const [bmiAge, setBmiAge] = useState<string>("25");
+  const [bmiHeightUnit, setBmiHeightUnit] = useState<"cm" | "ft">("cm");
+  const [bmiWeightUnit, setBmiWeightUnit] = useState<"kg" | "lbs">("kg");
+  const [bmiHeightCm, setBmiHeightCm] = useState<string>("170");
+  const [bmiHeightFeet, setBmiHeightFeet] = useState<string>("5");
+  const [bmiHeightInches, setBmiHeightInches] = useState<string>("7");
+  const [bmiWeightKg, setBmiWeightKg] = useState<string>("68");
+  const [bmiWeightLbs, setBmiWeightLbs] = useState<string>("150");
   // GST State
   const [gstOriginalPrice, setGstOriginalPrice] = useState<string>("");
   const [gstRate, setGstRate] = useState<number>(18);
@@ -149,11 +161,12 @@ export const CalculatorPanel: React.FC = () => {
   const [editingHistoryId, setEditingHistoryId] = useState<string | null>(null);
   const [editingHistoryTitle, setEditingHistoryTitle] = useState<string>("");
 
-  // Compare & Multi-Person Split State (defaults to 2 persons with clean standard empty values)
+  // Compare & Multi-Person Split State (defaults to 2 items with clean standard empty values)
   const [compareTotalBill, setCompareTotalBill] = useState<string>("");
+  const [compareTab, setCompareTab] = useState<"product" | "split">("product");
   const [compareItems, setCompareItems] = useState<ComparePerson[]>([
-    { id: "p1", name: "Person 1", value: 0, description: "" },
-    { id: "p2", name: "Person 2", value: 0, description: "" },
+    { id: "p1", name: "", value: 0, description: "" },
+    { id: "p2", name: "", value: 0, description: "" },
   ]);
 
   // Expanded history item IDs
@@ -385,7 +398,18 @@ export const CalculatorPanel: React.FC = () => {
         console.error(e);
       }
     }
-  }, [historyList]);
+    // Close dropdowns when clicking outside
+    const handleOutsideClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest(".pill-dropdown-container")) {
+        setGstDropdownOpen(false);
+        setCurDropdownOpen(false);
+        setSciDropdownOpen(false);
+      }
+    };
+    window.addEventListener("click", handleOutsideClick);
+    return () => window.removeEventListener("click", handleOutsideClick);
+  }, []);
 
   if (activePanel !== "calculator") return null;
 
@@ -398,15 +422,107 @@ export const CalculatorPanel: React.FC = () => {
     }).format(val);
   };
 
-  // Direct Input / Paste handler
+  // Recalculate Tape Steps & Running Total directly when user edits formula with cursor
+  const handleFormulaChange = (newFormula: string) => {
+    // Only allow numbers, math operators and spaces
+    const clean = newFormula.replace(/[^0-9.+\-*/x\s]/gi, "");
+    setExpressionFormula(clean);
+    setIsCalculated(false);
+
+    // Tokens parsing: e.g. "8 + 2 + 5 +"
+    const tokens = clean.trim().split(/\s+/).filter(Boolean);
+    if (tokens.length === 0) {
+      setTapeSteps([]);
+      setRunningTotal(0);
+      setPendingOperator(null);
+      setBaseValue(null);
+      return;
+    }
+
+    let running = 0;
+    let pendingOp: string | null = null;
+    const newSteps: TapeStep[] = [];
+
+    tokens.forEach((token, idx) => {
+      const isOp = ["+", "-", "x", "*", "/"].includes(token);
+      if (isOp) {
+        pendingOp = token === "*" ? "x" : token;
+      } else {
+        const num = parseFloat(token);
+        if (!isNaN(num)) {
+          if (idx === 0 || newSteps.length === 0) {
+            running = num;
+            newSteps.push({
+              id: `step-0`,
+              label: `${num}`,
+              operand: num,
+              subtotal: num,
+            });
+          } else {
+            const op = pendingOp || "+";
+            if (op === "+") running += num;
+            else if (op === "-") running -= num;
+            else if (op === "x" || op === "*") running *= num;
+            else if (op === "/") running = num !== 0 ? running / num : running;
+
+            newSteps.push({
+              id: `step-${idx}`,
+              label: `${op} ${num}`,
+              operator: op,
+              operand: num,
+              subtotal: running,
+            });
+          }
+        }
+      }
+    });
+
+    setTapeSteps(newSteps);
+    setRunningTotal(running);
+    const lastToken = tokens[tokens.length - 1];
+    if (["+", "-", "x", "*", "/"].includes(lastToken)) {
+      setPendingOperator(lastToken === "*" ? "x" : lastToken);
+    } else {
+      setPendingOperator(null);
+    }
+  };
   const handleInputChange = (val: string) => {
     // Only allow numbers and basic math chars (., +, -, *, /)
-    const sanitized = val.replace(/[^0-9.+\-*/x]/gi, "");
-    if (sanitized === "") {
-      setCurrentInput("0");
-    } else {
-      setCurrentInput(sanitized);
+    let sanitized = val.replace(/[^0-9.+\-*/x]/gi, "");
+    // If user has a leading zero and types a digit (e.g. "05"), strip the leading zero -> "5"
+    if (/^0[0-9]/.test(sanitized)) {
+      sanitized = sanitized.replace(/^0+/, "");
     }
+
+    // Check if user manually typed an operator expression like "5+" or "5 + 3 +"
+    const opMatch = sanitized.match(/^(.*?)(\s*[+\-*/x]\s*)$/i);
+    if (opMatch) {
+      const exprBody = sanitized.trim();
+      setExpressionFormula(exprBody + " ");
+      const tokens = exprBody.split(/\s+/).filter(Boolean);
+      let running = 0;
+      let lastOp: string | null = null;
+      tokens.forEach((t) => {
+        if (["+", "-", "*", "x", "/"].includes(t)) {
+          lastOp = t === "*" ? "x" : t;
+        } else {
+          const n = parseFloat(t);
+          if (!isNaN(n)) {
+            if (lastOp === "+") running += n;
+            else if (lastOp === "-") running -= n;
+            else if (lastOp === "*" || lastOp === "x") running *= n;
+            else if (lastOp === "/") running = n !== 0 ? running / n : running;
+            else running = n;
+          }
+        }
+      });
+      setRunningTotal(running);
+      setPendingOperator(opMatch[2].trim() === "*" ? "x" : opMatch[2].trim());
+      setIsOperatorJustPressed(true);
+      return;
+    }
+
+    setCurrentInput(sanitized);
     setIsCalculated(false);
     setIsOperatorJustPressed(false);
   };
@@ -482,8 +598,8 @@ export const CalculatorPanel: React.FC = () => {
       handleClearAll();
       return;
     }
-    if (currentInput.length <= 1 || currentInput === "0") {
-      setCurrentInput("0");
+    if (currentInput.length <= 1) {
+      setCurrentInput("");
     } else {
       setCurrentInput((prev) => prev.slice(0, -1));
     }
@@ -491,7 +607,7 @@ export const CalculatorPanel: React.FC = () => {
 
   // Clear / Reset All
   const handleClearAll = () => {
-    setCurrentInput("0");
+    setCurrentInput("");
     setBaseValue(null);
     setTapeSteps([]);
     setRunningTotal(0);
@@ -546,7 +662,7 @@ export const CalculatorPanel: React.FC = () => {
       return;
     }
 
-    const inputNum = parseFloat(currentInput);
+    const inputNum = parseFloat(currentInput) || 0;
 
     // If continuing calculation immediately after pressing Equals (=)
     if (isCalculated) {
@@ -613,7 +729,7 @@ export const CalculatorPanel: React.FC = () => {
   // Equals (=)
   const handleEquals = () => {
     if (isCalculated) return; // Already at calculated result
-    const inputNum = parseFloat(currentInput);
+    const inputNum = parseFloat(currentInput) || 0;
 
     if (baseValue === null && tapeSteps.length === 0) {
       // Single number entered
@@ -682,8 +798,8 @@ export const CalculatorPanel: React.FC = () => {
 
   // Scientific Function Handler
   const handleScientificOp = (opName: string) => {
-    const val = parseFloat(currentInput);
-    if (isNaN(val) && opName !== "rand" && opName !== "pi" && opName !== "e") return;
+    // If input is empty, default to 0 (or 0 for trig, or special for constants)
+    const val = parseFloat(currentInput) || 0;
 
     let res = val;
     let label = `${opName}(${val})`;
@@ -850,12 +966,12 @@ export const CalculatorPanel: React.FC = () => {
         break;
     }
 
-    let formattedRes = Number(res.toFixed(8));
-    if (sciFeMode) {
-      formattedRes = res;
-    }
+    // Format precision cleanly avoiding floating point overflow
+    let formattedRes = parseFloat(res.toFixed(10));
     const displayStr = sciFeMode ? res.toExponential(4) : String(formattedRes);
     setCurrentInput(displayStr);
+    setRunningTotal(res);
+    setExpressionFormula(label);
     setTapeSteps((prev) => [
       ...prev,
       {
@@ -865,7 +981,6 @@ export const CalculatorPanel: React.FC = () => {
         subtotal: res,
       },
     ]);
-    setRunningTotal(res);
     setIsCalculated(false);
   };
 
@@ -928,13 +1043,12 @@ export const CalculatorPanel: React.FC = () => {
 
   // Apply GST
   const handleApplyGST = () => {
+    const calcVal = runningTotal > 0 ? runningTotal : parseFloat(currentInput) || 0;
     const parsedOriginal = parseFloat(gstOriginalPrice);
     const current =
-      !isNaN(parsedOriginal) && parsedOriginal > 0
+      !isNaN(parsedOriginal) && parsedOriginal >= 0
         ? parsedOriginal
-        : runningTotal > 0
-          ? runningTotal
-          : parseFloat(currentInput) || 100;
+        : calcVal;
 
     let gstVal = 0;
     let finalVal = current;
@@ -967,13 +1081,12 @@ export const CalculatorPanel: React.FC = () => {
 
   // Apply Discount
   const handleApplyDiscount = () => {
+    const calcVal = runningTotal > 0 ? runningTotal : parseFloat(currentInput) || 0;
     const parsedOriginal = parseFloat(discountOriginalPrice);
     const current =
-      !isNaN(parsedOriginal) && parsedOriginal > 0
+      !isNaN(parsedOriginal) && parsedOriginal >= 0
         ? parsedOriginal
-        : runningTotal > 0
-          ? runningTotal
-          : parseFloat(currentInput) || 100;
+        : calcVal;
 
     let discVal = 0;
     if (discountMode === "percent") {
@@ -998,8 +1111,8 @@ export const CalculatorPanel: React.FC = () => {
     setActiveModal(null);
   };
 
-  // Share Individual History Item
-  const handleShareHistoryItem = (item: CalculationHistoryItem) => {
+  // Copy Individual History Item
+  const handleCopyHistoryItem = (item: CalculationHistoryItem) => {
     const horizontalFormula = item.steps
       .map((s, idx) => (idx === 0 ? `${s.operand}` : `${s.operator || "+"} ${s.operand}`))
       .join(" ");
@@ -1008,8 +1121,8 @@ export const CalculatorPanel: React.FC = () => {
 
     if (navigator.clipboard) {
       navigator.clipboard.writeText(text);
-      setCopyFeedback(true);
-      setTimeout(() => setCopyFeedback(false), 2000);
+      setCopiedHistoryId(item.id);
+      setTimeout(() => setCopiedHistoryId(null), 2000);
     }
   };
 
@@ -1074,190 +1187,153 @@ export const CalculatorPanel: React.FC = () => {
       aria-label="Calculator Panel"
       className="fixed right-[60px] sm:right-[62px] top-[60px] bottom-0 w-[350px] sm:w-[360px] bg-[#f8fafc] border-l border-[#d0e5fb] shadow-[-6px_0_24px_rgba(0,0,0,0.08)] z-[60] flex flex-col select-none overflow-hidden animate-in slide-in-from-right duration-200"
     >
-      {/* 1. Header Bar: Calculator Title + Close Button */}
-      <div className="h-[52px] px-5 flex items-center justify-between border-b border-gray-100 bg-white shrink-0">
+      {/* 1. Header Bar: Calculator Title + Action Icons (History, Copy, Delete, Close) */}
+      <div className="h-[44px] px-4 flex items-center justify-between border-b border-gray-100 bg-white shrink-0">
         <h2 className="text-[17px] font-black text-[#111827] tracking-tight">
           Calculator
         </h2>
-        <button
-          onClick={closePanel}
-          title="Close Calculator"
-          className="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition cursor-pointer"
-        >
-          <X className="w-4 h-4 stroke-[2.2]" />
-        </button>
+        <div className="flex items-center gap-1 text-gray-500">
+          {/* History */}
+          <button
+            onClick={() => setActiveModal("history")}
+            title="Calculation History & Restore"
+            className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition cursor-pointer"
+          >
+            <History className="w-4 h-4 stroke-[2]" />
+          </button>
+
+          {/* Copy Calculation Tape Breakdown */}
+          <button
+            onClick={handleCopyBreakdown}
+            title={copyFeedback ? "Copied!" : "Copy Calculation Breakdown"}
+            className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition cursor-pointer relative"
+          >
+            {copyFeedback ? (
+              <Check className="w-4 h-4 stroke-[2.5] text-emerald-600" />
+            ) : (
+              <Copy className="w-4 h-4 stroke-[2]" />
+            )}
+          </button>
+
+          {/* Delete / Clear Tape */}
+          <button
+            onClick={handleClearAll}
+            title="Clear Current Calculation"
+            className="w-8 h-8 rounded-lg hover:bg-red-50 text-gray-500 hover:text-red-500 flex items-center justify-center transition cursor-pointer"
+          >
+            <Trash2 className="w-4 h-4 stroke-[2]" />
+          </button>
+
+          {/* Close Calculator */}
+          <button
+            onClick={closePanel}
+            title="Close Calculator"
+            className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-700 transition cursor-pointer ml-0.5"
+          >
+            <X className="w-4 h-4 stroke-[2.2]" />
+          </button>
+        </div>
       </div>
 
-      {/* 2. Sub-Header: # BETA CALC with Action Icons (History, Share, Delete/Reset) */}
-      <div className="px-4 py-2 border-b border-gray-200/60 bg-white shrink-0">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-[#10b981] font-black text-lg">#</span>
-            <h3 className="text-[15px] font-black text-[#0f172a] tracking-wide">
-              BETA CALC
-            </h3>
+      {/* 2. Live Expression & Numbers Count List (Note, Formula & Occurrences) */}
+      {expressionFormula && (
+        <div className="px-3 py-2 border-b border-gray-200/60 bg-white shrink-0 space-y-1.5">
+          {/* Optional Note / Purpose Input for Calculation (Saves to History) */}
+          <div className="flex items-center gap-1.5">
+            <input
+              type="text"
+              value={calcNote}
+              onChange={(e) => setCalcNote(e.target.value)}
+              placeholder="Add note for this calculation (e.g. Grocery, Tax, Bill)..."
+              className="w-full text-xs font-semibold text-gray-700 bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5 outline-none focus:border-emerald-500 focus:bg-white"
+            />
           </div>
 
-          <div className="flex items-center gap-1.5 text-gray-500">
-            {/* History */}
-            <button
-              onClick={() => setActiveModal("history")}
-              title="Calculation History & Restore"
-              className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition cursor-pointer"
-            >
-              <History className="w-4 h-4 stroke-[2]" />
-            </button>
-
-            {/* Share Breakdown */}
-            <button
-              onClick={() => setActiveModal("share")}
-              title="Share Calculation Breakdown"
-              className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition cursor-pointer"
-            >
-              <Share2 className="w-4 h-4 stroke-[2]" />
-            </button>
-
-            {/* Delete / Clear Tape */}
-            <button
-              onClick={handleClearAll}
-              title="Clear Current Calculation"
-              className="w-8 h-8 rounded-lg hover:bg-red-50 text-gray-500 hover:text-red-500 flex items-center justify-center transition cursor-pointer"
-            >
-              <Trash2 className="w-4 h-4 stroke-[2]" />
-            </button>
-          </div>
-        </div>
-
-        {/* Live Expression & Numbers Count List (Horizontal line-by-line without truncate) */}
-        {expressionFormula && (
-          <div className="mt-1.5 pt-1.5 border-t border-dashed border-gray-200 space-y-1">
-            {/* Optional Note / Purpose Input for Calculation (Saves to History) */}
-            <div className="flex items-center gap-1.5">
+          {/* Editable horizontal scrollable formula line with cursor erase support */}
+          <div className="flex items-center gap-1.5 py-0.5">
+            <div className="flex items-center w-full bg-blue-50/80 border border-blue-200 rounded-xl px-2.5 py-1.5 shadow-2xs group focus-within:border-blue-500 focus-within:bg-white transition">
               <input
                 type="text"
-                value={calcNote}
-                onChange={(e) => setCalcNote(e.target.value)}
-                placeholder="Add note for this calculation (e.g. Grocery, Tax, Bill)..."
-                className="w-full text-[11px] font-semibold text-gray-700 bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-0.5 outline-none focus:border-emerald-500 focus:bg-white"
+                value={expressionFormula}
+                onChange={(e) => handleFormulaChange(e.target.value)}
+                placeholder="Formula expression (e.g. 8 + 5 + 5 +)..."
+                title="Click anywhere with cursor to edit or erase numbers/operators"
+                className="w-full text-[13px] font-mono font-bold text-blue-800 bg-transparent outline-none cursor-text tracking-wide"
               />
-            </div>
-
-            {/* Horizontal scrollable full formula line (No truncate) */}
-            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
-              <span className="text-[11px] font-mono font-bold text-blue-700 bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-lg whitespace-nowrap">
-                {expressionFormula}
+              <span className="text-xs text-blue-500 font-bold shrink-0 ml-1 select-none pointer-events-none">
+                ✎ Edit
               </span>
-              {pendingOperator && (
-                <span className="text-[11px] font-black text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-lg uppercase tracking-wider shrink-0 whitespace-nowrap">
-                  {pendingOperator}
-                </span>
-              )}
             </div>
-
-            {/* Horizontal badges line for number counts (No truncate, wrap or smooth horizontal scroll) */}
-            {getNumbersCountList(expressionFormula).length > 0 && (
-              <div>
-                <span className="text-[9px] font-extrabold text-gray-400 uppercase tracking-wider block mb-0.5">
-                  OCCURRENCE COUNT:
-                </span>
-                <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5">
-                  {getNumbersCountList(expressionFormula).map((item, i) => (
-                    <span
-                      key={i}
-                      className="inline-flex items-center gap-1 text-[10px] font-bold bg-gray-50 border border-gray-200 text-gray-700 px-2 py-0.5 rounded-md whitespace-nowrap shrink-0 shadow-2xs"
-                    >
-                      <span className="text-blue-600 font-extrabold">{item.word}</span>
-                      <span className="w-4 h-4 rounded-full bg-blue-100 text-blue-800 text-[10px] font-black inline-flex items-center justify-center">
-                        {item.num}
-                      </span>
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
-        )}
-      </div>
 
-      {/* 3. Single Horizontal Running Formula & Tape List */}
-      <div className="flex-1 overflow-y-auto no-scrollbar px-4 py-2 flex flex-col justify-end bg-white">
-        {/* Main Display: Current Running Equation / Horizontal Sequence */}
-        <div className="space-y-1">
-          {/* Horizontal Equation Chain: e.g. 8 + 8 + 8 ... */}
-          <div className="overflow-x-auto no-scrollbar py-0.5">
-            {expressionFormula ? (
-              <div className="flex items-baseline justify-end gap-1.5 flex-wrap">
-                <span className="text-base font-mono font-bold text-gray-400">
-                  {expressionFormula}
-                </span>
-                {isCalculated && (
-                  <span className="text-base font-black text-emerald-600 ml-1">
-                    =
+          {/* Horizontal badges line for number counts (No truncate, wrap or smooth horizontal scroll) */}
+          {getNumbersCountList(expressionFormula).length > 0 && (
+            <div className="pt-0.5">
+              <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-wider block mb-1">
+                OCCURRENCE COUNT:
+              </span>
+              <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5">
+                {getNumbersCountList(expressionFormula).map((item, i) => (
+                  <span
+                    key={i}
+                    className="inline-flex items-center gap-1.5 text-xs font-bold bg-gray-50 border border-gray-200 text-gray-700 px-2.5 py-1 rounded-lg whitespace-nowrap shrink-0 shadow-2xs"
+                  >
+                    <span className="text-blue-600 font-extrabold">{item.word}</span>
+                    <span className="w-5 h-5 rounded-full bg-blue-100 text-blue-800 text-xs font-black inline-flex items-center justify-center">
+                      {item.num}
+                    </span>
                   </span>
-                )}
+                ))}
               </div>
-            ) : null}
-          </div>
-
-          {/* Current Active Input & Operator (Editable / Pastable Input) */}
-          <div className="pt-2 border-t border-dashed border-gray-200 flex items-center justify-between gap-2">
-            <span className="text-[11px] font-extrabold text-gray-400 uppercase tracking-wider shrink-0">
-              {isCalculated
-                ? "RESULT"
-                : isOperatorJustPressed && pendingOperator
-                ? `OPERATOR: ${pendingOperator}`
-                : pendingOperator
-                ? `NEXT: ${pendingOperator}`
-                : "CURRENT"}
-            </span>
-            <div className="flex items-center gap-1.5 flex-1 justify-end">
-              {isOperatorJustPressed && pendingOperator ? (
-                /* When operator is pressed: Show only the operator sign clearly */
-                <span className="text-4xl font-black text-emerald-600 select-none">
-                  {pendingOperator}
-                </span>
-              ) : (
-                /* When entering number or showing result */
-                <div className="flex items-center gap-1.5 w-full justify-end">
-                  {pendingOperator && !isCalculated && (
-                    <span className="text-xl font-black text-emerald-600 shrink-0 select-none">
-                      {pendingOperator}
-                    </span>
-                  )}
-                  <input
-                    type="text"
-                    value={currentInput}
-                    onChange={(e) => handleInputChange(e.target.value)}
-                    onPaste={handlePaste}
-                    onKeyDown={(e) => {
-                      if (e.key === "Backspace") {
-                        // Let native backspace work naturally inside the input field
-                        e.stopPropagation();
-                      } else if (e.key === "Enter" || e.key === "=") {
-                        e.preventDefault();
-                        handleEquals();
-                      }
-                    }}
-                    className={`text-3xl sm:text-4xl font-black tracking-tight text-right w-full bg-transparent outline-none border-none cursor-text ${
-                      isCalculated ? "text-emerald-600" : "text-gray-900"
-                    }`}
-                  />
-                </div>
-              )}
             </div>
-          </div>
+          )}
+        </div>
+      )}
+
+      {/* 3. Calculator Display & Input Area (flex-1 to automatically fill available height and push bottom bar to the very bottom) */}
+      <div className="flex-1 min-h-[44px] px-4 py-2 flex items-center justify-end bg-white border-b border-gray-100">
+        {/* Main Display: Current Active Input / Number & Operator */}
+        <div className="flex items-center gap-1.5 w-full justify-end">
+          {isOperatorJustPressed && pendingOperator ? (
+            /* When operator is pressed: Show only the operator sign clearly */
+            <span className="text-3xl font-black text-emerald-600 select-none">
+              {pendingOperator}
+            </span>
+          ) : (
+            /* When entering number or showing result */
+            <input
+              type="text"
+              value={currentInput}
+              placeholder="0"
+              onChange={(e) => handleInputChange(e.target.value)}
+              onPaste={handlePaste}
+              onKeyDown={(e) => {
+                if (e.key === "Backspace") {
+                  // Let native backspace work naturally inside the input field
+                  e.stopPropagation();
+                } else if (e.key === "Enter" || e.key === "=") {
+                  e.preventDefault();
+                  handleEquals();
+                }
+              }}
+              className={`text-3xl sm:text-4xl font-black tracking-tight text-right w-full bg-transparent outline-none border-none cursor-text leading-none placeholder:text-gray-300 ${
+                isCalculated ? "text-emerald-600" : "text-gray-900"
+              }`}
+            />
+          )}
         </div>
       </div>
 
-      {/* 4. Top Quick Feature Pill Buttons (GST with Discount Dropdown, SCI, CUR with All Currencies Dropdown, Compare) */}
-      <div className="relative px-3 py-2.5 bg-gray-50 border-t border-gray-200/80 grid grid-cols-4 gap-1.5 shrink-0 z-30">
+      {/* 4. Top Quick Feature Pill Buttons (GST with Discount Dropdown, CUR with All Currencies Dropdown, Compare) */}
+      <div className="relative px-3 py-1.5 bg-gray-50 border-t border-gray-200/80 grid grid-cols-3 gap-2 shrink-0 z-30">
         {/* Pill 1: GST with Right Corner Down Arrow for Discount Dropdown */}
-        <div className="relative">
-          <div className="h-8 rounded-full bg-[#e8fbf3] hover:bg-[#d0f5e5] border border-[#a7f3d0] text-[#059669] text-xs font-bold flex items-center justify-between px-1.5 transition shadow-2xs">
+        <div className="relative pill-dropdown-container">
+          <div className="h-8 rounded-full bg-[#e8fbf3] hover:bg-[#d0f5e5] border border-[#a7f3d0] text-[#059669] text-xs font-bold flex items-center justify-between px-2 transition shadow-2xs">
             <button
               onClick={() => {
                 setGstDropdownOpen(false);
                 setCurDropdownOpen(false);
+                setSciDropdownOpen(false);
                 setActiveModal("gst");
               }}
               title="GST Calculator"
@@ -1270,6 +1346,7 @@ export const CalculatorPanel: React.FC = () => {
               onClick={(e) => {
                 e.stopPropagation();
                 setCurDropdownOpen(false);
+                setSciDropdownOpen(false);
                 setGstDropdownOpen((prev) => !prev);
               }}
               title="Open Discount & GST Options"
@@ -1306,145 +1383,12 @@ export const CalculatorPanel: React.FC = () => {
           )}
         </div>
 
-        {/* Pill 2: Standard/Scientific Mode Pill (Default STD with Down Arrow) */}
-        <div className="relative">
-          <div className="h-8 rounded-full bg-[#fef7ee] hover:bg-[#fdeed9] border border-[#fed7aa] text-[#d97706] text-xs font-black flex items-center justify-between px-2 transition shadow-2xs">
-            <button
-              onClick={() => {
-                setGstDropdownOpen(false);
-                setCurDropdownOpen(false);
-                setSciDropdownOpen((prev) => !prev);
-              }}
-              title="Change Calculator Mode"
-              className="flex-1 flex items-center justify-center gap-1 cursor-pointer hover:opacity-85 py-1"
-            >
-              <CalcIcon className="w-3.5 h-3.5 text-[#d97706]" />
-              <span className="text-[11px] font-black uppercase">
-                {activeCalcMode === "standard"
-                  ? "STD"
-                  : activeCalcMode === "scientific"
-                    ? "SCI"
-                    : activeCalcMode === "programmer"
-                      ? "PROG"
-                      : "DATE"}
-              </span>
-            </button>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setGstDropdownOpen(false);
-                setCurDropdownOpen(false);
-                setSciDropdownOpen((prev) => !prev);
-              }}
-              title="Choose Calculator or Converter Type"
-              className="w-4 h-6 flex items-center justify-center hover:bg-amber-200/60 rounded-full cursor-pointer ml-0.5 transition"
-            >
-              <ChevronDown className={`w-3 h-3 transition-transform ${sciDropdownOpen ? "rotate-180" : ""}`} />
-            </button>
-          </div>
-
-          {/* Mode Dropdown Menu (Image 1 & 2 items) */}
-          {sciDropdownOpen && (
-            <div className="absolute left-[-40px] top-10 w-56 bg-white border border-gray-200 rounded-2xl shadow-2xl py-2 z-50 max-h-80 overflow-y-auto no-scrollbar animate-in fade-in slide-in-from-top-1 duration-150">
-              {/* SECTION 1: CALCULATOR */}
-              <div className="px-3 py-1 text-[11px] font-black text-gray-500 uppercase tracking-wider">
-                Calculator
-              </div>
-
-              {/* Standard */}
-              <button
-                onClick={() => {
-                  setActiveCalcMode("standard");
-                  setSciDropdownOpen(false);
-                }}
-                className={`w-full px-3 py-2 text-left text-xs font-bold flex items-center gap-3 hover:bg-gray-100 cursor-pointer transition ${activeCalcMode === "standard"
-                  ? "bg-purple-50 text-purple-900 border-l-4 border-purple-600"
-                  : "text-gray-700"
-                  }`}
-              >
-                <CalcIcon className="w-4 h-4 text-purple-600" />
-                <span>Standard</span>
-              </button>
-
-              {/* Scientific */}
-              <button
-                onClick={() => {
-                  setActiveCalcMode("scientific");
-                  setSciDropdownOpen(false);
-                }}
-                className={`w-full px-3 py-2 text-left text-xs font-bold flex items-center gap-3 hover:bg-gray-100 cursor-pointer transition ${activeCalcMode === "scientific"
-                  ? "bg-purple-50 text-purple-900 border-l-4 border-purple-600"
-                  : "text-gray-700"
-                  }`}
-              >
-                <FlaskConical className="w-4 h-4 text-purple-600" />
-                <span>Scientific</span>
-              </button>
-
-              {/* Programmer */}
-              <button
-                onClick={() => {
-                  setActiveCalcMode("programmer");
-                  setSciDropdownOpen(false);
-                }}
-                className={`w-full px-3 py-2 text-left text-xs font-bold flex items-center gap-3 hover:bg-gray-100 cursor-pointer transition ${activeCalcMode === "programmer"
-                  ? "bg-purple-50 text-purple-900 border-l-4 border-purple-600"
-                  : "text-gray-700"
-                  }`}
-              >
-                <Code className="w-4 h-4 text-purple-600" />
-                <span>Programmer</span>
-              </button>
-
-              {/* Date calculation */}
-              <button
-                onClick={() => {
-                  setActiveCalcMode("date");
-                  setSciDropdownOpen(false);
-                }}
-                className={`w-full px-3 py-2 text-left text-xs font-bold flex items-center gap-3 hover:bg-gray-100 cursor-pointer transition ${activeCalcMode === "date"
-                  ? "bg-purple-50 text-purple-900 border-l-4 border-purple-600"
-                  : "text-gray-700"
-                  }`}
-              >
-                <Calendar className="w-4 h-4 text-purple-600" />
-                <span>Date calculation</span>
-              </button>
-
-              {/* SECTION 2: CONVERTER */}
-              <div className="px-3 pt-2 pb-1 text-[11px] font-black text-gray-500 uppercase tracking-wider border-t border-gray-100 mt-1">
-                Converter
-              </div>
-
-              {CONVERTER_CATEGORIES.map((cat) => (
-                <button
-                  key={cat.id}
-                  onClick={() => {
-                    setSciDropdownOpen(false);
-                    setSelectedConverterId(cat.id);
-                    const cfg = CONVERTER_CONFIG[cat.id];
-                    if (cfg && cfg.units.length >= 2) {
-                      setConverterFromUnit(cfg.units[0].id);
-                      setConverterToUnit(cfg.units[1].id);
-                      setConverterInput(1);
-                    }
-                    setActiveModal("converter-detail");
-                  }}
-                  className="w-full px-3 py-1.5 text-left text-xs font-bold text-gray-700 hover:bg-gray-100 flex items-center gap-3 cursor-pointer transition"
-                >
-                  <span className="text-gray-600">{cat.icon}</span>
-                  <span className="truncate">{cat.label.split("(")[0].trim()}</span>
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Pill 3: CUR Button with Dropdown (All Country Currencies) */}
-        <div className="relative">
+        {/* Pill 2: CUR Button with Dropdown (All Country Currencies) */}
+        <div className="relative pill-dropdown-container">
           <button
             onClick={() => {
               setGstDropdownOpen(false);
+              setSciDropdownOpen(false);
               setCurDropdownOpen((prev) => !prev);
             }}
             title="Currencies of All Countries"
@@ -1493,14 +1437,15 @@ export const CalculatorPanel: React.FC = () => {
           )}
         </div>
 
-        {/* Pill 4: Compare Button (Person 1 & Person 2 Standard Empty Comparison) */}
+        {/* Pill 3: Compare Button */}
         <button
           onClick={() => {
             setGstDropdownOpen(false);
             setCurDropdownOpen(false);
+            setSciDropdownOpen(false);
             setActiveModal("compare");
           }}
-          title="Compare Person 1 and Person 2"
+          title="Compare Products & Split Bills"
           className="h-8 rounded-full bg-white hover:bg-gray-100 border border-gray-300 text-gray-700 text-xs font-bold flex items-center justify-center gap-1 transition cursor-pointer shadow-2xs hover:scale-105 active:scale-95"
         >
           <ArrowRightLeft className="w-3 h-3 text-gray-600" />
@@ -1510,7 +1455,7 @@ export const CalculatorPanel: React.FC = () => {
 
       {/* 5. Keypad Grid: Adaptive Based on Active Mode (Standard, Scientific, etc.) */}
       {activeCalcMode === "scientific" ? (
-        <div className="p-2.5 bg-[#fdfbfb] border-t border-gray-200/80 space-y-2 shrink-0">
+        <div className="p-2 bg-[#fdfbfb] border-t border-gray-200/80 space-y-1.5 shrink-0">
           {/* Top Bar 1: Mode Switches (DEG / RAD / GRAD, F-E) and Memory (MC, MR, M+, M-, MS, Mv) */}
           <div className="flex items-center justify-between text-xs font-bold text-gray-700 px-1">
             <div className="flex items-center gap-2">
@@ -1524,7 +1469,14 @@ export const CalculatorPanel: React.FC = () => {
                 {sciAngleMode}
               </button>
               <button
-                onClick={() => setSciFeMode((prev) => !prev)}
+                onClick={() => {
+                  const newFe = !sciFeMode;
+                  setSciFeMode(newFe);
+                  const val = parseFloat(currentInput);
+                  if (!isNaN(val)) {
+                    setCurrentInput(newFe ? val.toExponential(4) : String(parseFloat(val.toFixed(10))));
+                  }
+                }}
                 title="Toggle Fixed to Exponential Notation"
                 className={`px-2 py-0.5 rounded-md text-[11px] font-black cursor-pointer transition ${sciFeMode ? "bg-purple-100 text-purple-800" : "hover:bg-gray-200/80 text-gray-800"
                   }`}
@@ -1579,7 +1531,7 @@ export const CalculatorPanel: React.FC = () => {
                   setSciFuncOpen(false);
                   setSciTrigOpen((prev) => !prev);
                 }}
-                className={`flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-lg border transition cursor-pointer ${sciTrigOpen ? "bg-purple-100 border-purple-300 text-purple-900" : "bg-white hover:bg-gray-100 border-gray-200 text-gray-800"
+                className={`flex items-center gap-1.5 text-xs font-bold px-2 py-0.5 rounded-lg border transition cursor-pointer ${sciTrigOpen ? "bg-purple-100 border-purple-300 text-purple-900" : "bg-white hover:bg-gray-100 border-gray-200 text-gray-800"
                   }`}
               >
                 <span className="text-[11px]">⊿ Trigonometry</span>
@@ -1591,7 +1543,7 @@ export const CalculatorPanel: React.FC = () => {
                 <div className="absolute left-0 top-8 bg-white border border-gray-200 rounded-2xl shadow-2xl p-2 z-50 grid grid-cols-4 gap-1.5 w-64 animate-in fade-in duration-100">
                   <button
                     onClick={() => setSci2nd((prev) => !prev)}
-                    className={`h-9 rounded-xl font-bold text-xs border transition cursor-pointer ${sci2nd ? "bg-purple-600 text-white border-purple-600" : "bg-gray-50 text-gray-800 border-gray-200"
+                    className={`h-8 rounded-xl font-bold text-xs border transition cursor-pointer ${sci2nd ? "bg-purple-600 text-white border-purple-600" : "bg-gray-50 text-gray-800 border-gray-200"
                       }`}
                   >
                     2<sup>nd</sup>
@@ -1601,7 +1553,7 @@ export const CalculatorPanel: React.FC = () => {
                       handleScientificOp(sci2nd ? "asin" : "sin");
                       setSciTrigOpen(false);
                     }}
-                    className="h-9 rounded-xl bg-gray-50 hover:bg-purple-50 text-gray-800 font-bold text-xs border border-gray-200 cursor-pointer"
+                    className="h-8 rounded-xl bg-gray-50 hover:bg-purple-50 text-gray-800 font-bold text-xs border border-gray-200 cursor-pointer"
                   >
                     {sci2nd ? "sin⁻¹" : "sin"}
                   </button>
@@ -1610,7 +1562,7 @@ export const CalculatorPanel: React.FC = () => {
                       handleScientificOp(sci2nd ? "acos" : "cos");
                       setSciTrigOpen(false);
                     }}
-                    className="h-9 rounded-xl bg-gray-50 hover:bg-purple-50 text-gray-800 font-bold text-xs border border-gray-200 cursor-pointer"
+                    className="h-8 rounded-xl bg-gray-50 hover:bg-purple-50 text-gray-800 font-bold text-xs border border-gray-200 cursor-pointer"
                   >
                     {sci2nd ? "cos⁻¹" : "cos"}
                   </button>
@@ -1619,14 +1571,14 @@ export const CalculatorPanel: React.FC = () => {
                       handleScientificOp(sci2nd ? "atan" : "tan");
                       setSciTrigOpen(false);
                     }}
-                    className="h-9 rounded-xl bg-gray-50 hover:bg-purple-50 text-gray-800 font-bold text-xs border border-gray-200 cursor-pointer"
+                    className="h-8 rounded-xl bg-gray-50 hover:bg-purple-50 text-gray-800 font-bold text-xs border border-gray-200 cursor-pointer"
                   >
                     {sci2nd ? "tan⁻¹" : "tan"}
                   </button>
 
                   <button
                     onClick={() => setSciHyp((prev) => !prev)}
-                    className={`h-9 rounded-xl font-bold text-xs border transition cursor-pointer ${sciHyp ? "bg-purple-600 text-white border-purple-600" : "bg-gray-50 text-gray-800 border-gray-200"
+                    className={`h-8 rounded-xl font-bold text-xs border transition cursor-pointer ${sciHyp ? "bg-purple-600 text-white border-purple-600" : "bg-gray-50 text-gray-800 border-gray-200"
                       }`}
                   >
                     hyp
@@ -1636,7 +1588,7 @@ export const CalculatorPanel: React.FC = () => {
                       handleScientificOp("sec");
                       setSciTrigOpen(false);
                     }}
-                    className="h-9 rounded-xl bg-gray-50 hover:bg-purple-50 text-gray-800 font-bold text-xs border border-gray-200 cursor-pointer"
+                    className="h-8 rounded-xl bg-gray-50 hover:bg-purple-50 text-gray-800 font-bold text-xs border border-gray-200 cursor-pointer"
                   >
                     sec
                   </button>
@@ -1645,7 +1597,7 @@ export const CalculatorPanel: React.FC = () => {
                       handleScientificOp("csc");
                       setSciTrigOpen(false);
                     }}
-                    className="h-9 rounded-xl bg-gray-50 hover:bg-purple-50 text-gray-800 font-bold text-xs border border-gray-200 cursor-pointer"
+                    className="h-8 rounded-xl bg-gray-50 hover:bg-purple-50 text-gray-800 font-bold text-xs border border-gray-200 cursor-pointer"
                   >
                     csc
                   </button>
@@ -1654,7 +1606,7 @@ export const CalculatorPanel: React.FC = () => {
                       handleScientificOp("cot");
                       setSciTrigOpen(false);
                     }}
-                    className="h-9 rounded-xl bg-gray-50 hover:bg-purple-50 text-gray-800 font-bold text-xs border border-gray-200 cursor-pointer"
+                    className="h-8 rounded-xl bg-gray-50 hover:bg-purple-50 text-gray-800 font-bold text-xs border border-gray-200 cursor-pointer"
                   >
                     cot
                   </button>
@@ -1669,7 +1621,7 @@ export const CalculatorPanel: React.FC = () => {
                   setSciTrigOpen(false);
                   setSciFuncOpen((prev) => !prev);
                 }}
-                className={`flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-lg border transition cursor-pointer ${sciFuncOpen ? "bg-purple-100 border-purple-300 text-purple-900" : "bg-white hover:bg-gray-100 border-gray-200 text-gray-800"
+                className={`flex items-center gap-1.5 text-xs font-bold px-2 py-0.5 rounded-lg border transition cursor-pointer ${sciFuncOpen ? "bg-purple-100 border-purple-300 text-purple-900" : "bg-white hover:bg-gray-100 border-gray-200 text-gray-800"
                   }`}
               >
                 <span className="italic font-serif text-[11px]">ƒ Function</span>
@@ -1684,7 +1636,7 @@ export const CalculatorPanel: React.FC = () => {
                       handleScientificOp("|x|");
                       setSciFuncOpen(false);
                     }}
-                    className="h-9 rounded-xl bg-gray-50 hover:bg-purple-50 text-gray-800 font-bold text-xs border border-gray-200 cursor-pointer"
+                    className="h-8 rounded-xl bg-gray-50 hover:bg-purple-50 text-gray-800 font-bold text-xs border border-gray-200 cursor-pointer"
                   >
                     |x|
                   </button>
@@ -1693,7 +1645,7 @@ export const CalculatorPanel: React.FC = () => {
                       handleScientificOp("⌊x⌋");
                       setSciFuncOpen(false);
                     }}
-                    className="h-9 rounded-xl bg-gray-50 hover:bg-purple-50 text-gray-800 font-bold text-xs border border-gray-200 cursor-pointer"
+                    className="h-8 rounded-xl bg-gray-50 hover:bg-purple-50 text-gray-800 font-bold text-xs border border-gray-200 cursor-pointer"
                   >
                     ⌊x⌋
                   </button>
@@ -1702,7 +1654,7 @@ export const CalculatorPanel: React.FC = () => {
                       handleScientificOp("⌈x⌉");
                       setSciFuncOpen(false);
                     }}
-                    className="h-9 rounded-xl bg-gray-50 hover:bg-purple-50 text-gray-800 font-bold text-xs border border-gray-200 cursor-pointer"
+                    className="h-8 rounded-xl bg-gray-50 hover:bg-purple-50 text-gray-800 font-bold text-xs border border-gray-200 cursor-pointer"
                   >
                     ⌈x⌉
                   </button>
@@ -1711,7 +1663,7 @@ export const CalculatorPanel: React.FC = () => {
                       handleScientificOp("rand");
                       setSciFuncOpen(false);
                     }}
-                    className="h-9 rounded-xl bg-gray-50 hover:bg-purple-50 text-gray-800 font-bold text-xs border border-gray-200 cursor-pointer"
+                    className="h-8 rounded-xl bg-gray-50 hover:bg-purple-50 text-gray-800 font-bold text-xs border border-gray-200 cursor-pointer"
                   >
                     rand
                   </button>
@@ -1720,7 +1672,7 @@ export const CalculatorPanel: React.FC = () => {
                       handleScientificOp("->dms");
                       setSciFuncOpen(false);
                     }}
-                    className="h-9 rounded-xl bg-gray-50 hover:bg-purple-50 text-gray-800 font-bold text-xs border border-gray-200 cursor-pointer"
+                    className="h-8 rounded-xl bg-gray-50 hover:bg-purple-50 text-gray-800 font-bold text-xs border border-gray-200 cursor-pointer"
                   >
                     →dms
                   </button>
@@ -1729,7 +1681,7 @@ export const CalculatorPanel: React.FC = () => {
                       handleScientificOp("->deg");
                       setSciFuncOpen(false);
                     }}
-                    className="h-9 rounded-xl bg-gray-50 hover:bg-purple-50 text-gray-800 font-bold text-xs border border-gray-200 cursor-pointer"
+                    className="h-8 rounded-xl bg-gray-50 hover:bg-purple-50 text-gray-800 font-bold text-xs border border-gray-200 cursor-pointer"
                   >
                     →deg
                   </button>
@@ -1743,34 +1695,34 @@ export const CalculatorPanel: React.FC = () => {
             {/* Row 1: 2nd, pi, e, C, Backspace */}
             <button
               onClick={() => setSci2nd((prev) => !prev)}
-              className={`h-9 rounded-xl font-bold border transition cursor-pointer active:scale-95 ${sci2nd ? "bg-purple-600 text-white border-purple-600" : "bg-white hover:bg-gray-100 text-gray-800 border-gray-200"
+              className={`h-8 rounded-xl font-bold border transition cursor-pointer active:scale-95 ${sci2nd ? "bg-purple-600 text-white border-purple-600" : "bg-white hover:bg-gray-100 text-gray-800 border-gray-200"
                 }`}
             >
               2<sup>nd</sup>
             </button>
             <button
               onClick={() => handleScientificOp("pi")}
-              className="h-9 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-800 font-bold cursor-pointer active:scale-95"
+              className="h-8 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-800 font-bold cursor-pointer active:scale-95"
             >
               π
             </button>
             <button
               onClick={() => handleScientificOp("e")}
-              className="h-9 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-800 font-bold cursor-pointer active:scale-95"
+              className="h-8 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-800 font-bold cursor-pointer active:scale-95"
             >
               e
             </button>
             <button
               onClick={handleClearAll}
               title="Clear All"
-              className="h-9 rounded-xl bg-white hover:bg-red-50 border border-gray-200 text-red-600 font-bold cursor-pointer active:scale-95"
+              className="h-8 rounded-xl bg-white hover:bg-red-50 border border-gray-200 text-red-600 font-bold cursor-pointer active:scale-95"
             >
               C
             </button>
             <button
               onClick={handleBackspace}
               title="Backspace"
-              className="h-9 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-700 font-bold cursor-pointer active:scale-95"
+              className="h-8 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-700 font-bold cursor-pointer active:scale-95"
             >
               ⌫
             </button>
@@ -1778,7 +1730,7 @@ export const CalculatorPanel: React.FC = () => {
             {/* Row 2: x^2 (or x^3), 1/x, |x|, exp, mod */}
             <button
               onClick={() => handleScientificOp(sci2nd ? "x^3" : "x^2")}
-              className="h-9 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-800 font-bold cursor-pointer active:scale-95"
+              className="h-8 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-800 font-bold cursor-pointer active:scale-95"
             >
               {sci2nd ? (
                 <>x<sup>3</sup></>
@@ -1788,25 +1740,25 @@ export const CalculatorPanel: React.FC = () => {
             </button>
             <button
               onClick={() => handleScientificOp("1/x")}
-              className="h-9 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-800 font-bold cursor-pointer active:scale-95"
+              className="h-8 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-800 font-bold cursor-pointer active:scale-95"
             >
               1/x
             </button>
             <button
               onClick={() => handleScientificOp("|x|")}
-              className="h-9 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-800 font-bold cursor-pointer active:scale-95"
+              className="h-8 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-800 font-bold cursor-pointer active:scale-95"
             >
               |x|
             </button>
             <button
               onClick={() => handleOperator("exp")}
-              className="h-9 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-800 font-bold cursor-pointer active:scale-95"
+              className="h-8 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-800 font-bold cursor-pointer active:scale-95"
             >
               exp
             </button>
             <button
               onClick={() => handleOperator("MOD")}
-              className="h-9 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-800 font-bold cursor-pointer active:scale-95"
+              className="h-8 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-800 font-bold cursor-pointer active:scale-95"
             >
               mod
             </button>
@@ -1814,31 +1766,31 @@ export const CalculatorPanel: React.FC = () => {
             {/* Row 3: 2sqrt(x) (or 3sqrt), (, ), n!, / */}
             <button
               onClick={() => handleScientificOp(sci2nd ? "cbrt" : "sqrt")}
-              className="h-9 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-800 font-bold cursor-pointer active:scale-95"
+              className="h-8 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-800 font-bold cursor-pointer active:scale-95"
             >
               {sci2nd ? "∛x" : "²√x"}
             </button>
             <button
               onClick={() => handleDigit("(")}
-              className="h-9 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-800 font-bold cursor-pointer active:scale-95"
+              className="h-8 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-800 font-bold cursor-pointer active:scale-95"
             >
               (
             </button>
             <button
               onClick={() => handleDigit(")")}
-              className="h-9 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-800 font-bold cursor-pointer active:scale-95"
+              className="h-8 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-800 font-bold cursor-pointer active:scale-95"
             >
               )
             </button>
             <button
               onClick={() => handleScientificOp("n!")}
-              className="h-9 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-800 font-bold cursor-pointer active:scale-95"
+              className="h-8 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-800 font-bold cursor-pointer active:scale-95"
             >
               n!
             </button>
             <button
               onClick={() => handleOperator("/")}
-              className="h-9 rounded-xl bg-[#ecfdf5] hover:bg-[#d1fae5] text-[#059669] font-black text-base cursor-pointer active:scale-95"
+              className="h-8 rounded-xl bg-[#ecfdf5] hover:bg-[#d1fae5] text-[#059669] font-black text-base cursor-pointer active:scale-95"
             >
               ÷
             </button>
@@ -1846,31 +1798,31 @@ export const CalculatorPanel: React.FC = () => {
             {/* Row 4: x^y, 7, 8, 9, x */}
             <button
               onClick={() => handleOperator("x^y")}
-              className="h-9 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-800 font-bold cursor-pointer active:scale-95"
+              className="h-8 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-800 font-bold cursor-pointer active:scale-95"
             >
               x<sup>y</sup>
             </button>
             <button
               onClick={() => handleDigit("7")}
-              className="h-9 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-900 font-black text-sm cursor-pointer active:scale-95"
+              className="h-8 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-900 font-black text-sm cursor-pointer active:scale-95"
             >
               7
             </button>
             <button
               onClick={() => handleDigit("8")}
-              className="h-9 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-900 font-black text-sm cursor-pointer active:scale-95"
+              className="h-8 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-900 font-black text-sm cursor-pointer active:scale-95"
             >
               8
             </button>
             <button
               onClick={() => handleDigit("9")}
-              className="h-9 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-900 font-black text-sm cursor-pointer active:scale-95"
+              className="h-8 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-900 font-black text-sm cursor-pointer active:scale-95"
             >
               9
             </button>
             <button
               onClick={() => handleOperator("x")}
-              className="h-9 rounded-xl bg-[#ecfdf5] hover:bg-[#d1fae5] text-[#059669] font-black text-base cursor-pointer active:scale-95"
+              className="h-8 rounded-xl bg-[#ecfdf5] hover:bg-[#d1fae5] text-[#059669] font-black text-base cursor-pointer active:scale-95"
             >
               ×
             </button>
@@ -1878,63 +1830,63 @@ export const CalculatorPanel: React.FC = () => {
             {/* Row 5: 10^x (or 2^x), 4, 5, 6, - */}
             <button
               onClick={() => handleScientificOp(sci2nd ? "2^x" : "10^x")}
-              className="h-9 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-800 font-bold cursor-pointer active:scale-95"
+              className="h-8 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-800 font-bold cursor-pointer active:scale-95"
             >
               {sci2nd ? <>2<sup>x</sup></> : <>10<sup>x</sup></>}
             </button>
             <button
               onClick={() => handleDigit("4")}
-              className="h-9 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-900 font-black text-sm cursor-pointer active:scale-95"
+              className="h-8 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-900 font-black text-sm cursor-pointer active:scale-95"
             >
               4
             </button>
             <button
               onClick={() => handleDigit("5")}
-              className="h-9 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-900 font-black text-sm cursor-pointer active:scale-95"
+              className="h-8 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-900 font-black text-sm cursor-pointer active:scale-95"
             >
               5
             </button>
             <button
               onClick={() => handleDigit("6")}
-              className="h-9 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-900 font-black text-sm cursor-pointer active:scale-95"
+              className="h-8 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-900 font-black text-sm cursor-pointer active:scale-95"
             >
               6
             </button>
             <button
               onClick={() => handleOperator("-")}
-              className="h-9 rounded-xl bg-[#ecfdf5] hover:bg-[#d1fae5] text-[#059669] font-black text-lg cursor-pointer active:scale-95"
+              className="h-8 rounded-xl bg-[#ecfdf5] hover:bg-[#d1fae5] text-[#059669] font-black text-xl flex items-center justify-center cursor-pointer active:scale-95"
             >
-              —
+              -
             </button>
 
             {/* Row 6: log, 1, 2, 3, + */}
             <button
               onClick={() => handleScientificOp("log")}
-              className="h-9 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-800 font-bold cursor-pointer active:scale-95"
+              className="h-8 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-800 font-bold cursor-pointer active:scale-95"
             >
               log
             </button>
             <button
               onClick={() => handleDigit("1")}
-              className="h-9 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-900 font-black text-sm cursor-pointer active:scale-95"
+              className="h-8 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-900 font-black text-sm cursor-pointer active:scale-95"
             >
               1
             </button>
             <button
               onClick={() => handleDigit("2")}
-              className="h-9 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-900 font-black text-sm cursor-pointer active:scale-95"
+              className="h-8 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-900 font-black text-sm cursor-pointer active:scale-95"
             >
               2
             </button>
             <button
               onClick={() => handleDigit("3")}
-              className="h-9 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-900 font-black text-sm cursor-pointer active:scale-95"
+              className="h-8 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-900 font-black text-sm cursor-pointer active:scale-95"
             >
               3
             </button>
             <button
               onClick={() => handleOperator("+")}
-              className="h-9 rounded-xl bg-[#ecfdf5] hover:bg-[#d1fae5] text-[#059669] font-black text-lg cursor-pointer active:scale-95"
+              className="h-8 rounded-xl bg-[#ecfdf5] hover:bg-[#d1fae5] text-[#059669] font-black text-lg cursor-pointer active:scale-95"
             >
               +
             </button>
@@ -1942,31 +1894,31 @@ export const CalculatorPanel: React.FC = () => {
             {/* Row 7: ln (or e^x), +/-, 0, ., = */}
             <button
               onClick={() => handleScientificOp(sci2nd ? "e^x" : "ln")}
-              className="h-9 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-800 font-bold cursor-pointer active:scale-95"
+              className="h-8 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-800 font-bold cursor-pointer active:scale-95"
             >
               {sci2nd ? <>e<sup>x</sup></> : "ln"}
             </button>
             <button
               onClick={() => handleScientificOp("+/-")}
-              className="h-9 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-800 font-bold cursor-pointer active:scale-95"
+              className="h-8 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-800 font-bold cursor-pointer active:scale-95"
             >
               ⁺/₋
             </button>
             <button
               onClick={() => handleDigit("0")}
-              className="h-9 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-900 font-black text-sm cursor-pointer active:scale-95"
+              className="h-8 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-900 font-black text-sm cursor-pointer active:scale-95"
             >
               0
             </button>
             <button
               onClick={() => handleDigit(".")}
-              className="h-9 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-900 font-black text-lg cursor-pointer active:scale-95"
+              className="h-8 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-900 font-black text-lg cursor-pointer active:scale-95"
             >
               .
             </button>
             <button
               onClick={handleEquals}
-              className="h-9 rounded-xl bg-[#7c3aed] hover:bg-[#6d28d9] text-white font-black text-xl flex items-center justify-center shadow-md cursor-pointer active:scale-95"
+              className="h-8 rounded-xl bg-[#7c3aed] hover:bg-[#6d28d9] text-white font-black text-xl flex items-center justify-center shadow-md cursor-pointer active:scale-95"
             >
               =
             </button>
@@ -2475,34 +2427,167 @@ export const CalculatorPanel: React.FC = () => {
         </div>
       )}
 
-      {/* 6. Bottom Banner: TAPE RUNNING TOTAL in dark navbar matching Image 1 */}
-      <div className="bg-[#0f172a] px-5 py-3 flex items-center justify-between text-white shrink-0">
-        <div>
-          <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block">
+      {/* 6. Bottom Banner: TAPE RUNNING TOTAL & SCI Mode Dropdown Button */}
+      <div className="bg-[#0f172a] px-4 py-3 flex items-center justify-between text-white shrink-0 relative">
+        <div className="min-w-0 pr-2">
+          <span className="text-[9px] font-extrabold text-gray-400 uppercase tracking-widest block leading-none mb-0.5">
             TAPE RUNNING TOTAL
           </span>
-          <span className="text-2xl font-black text-[#10b981] tracking-tight">
+          <span className="text-xl sm:text-2xl font-black text-[#10b981] tracking-tight leading-none block">
             {formatINR(runningTotal)}
           </span>
         </div>
 
-        <button
-          onClick={handleCopyBreakdown}
-          title="Copy Total"
-          className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-bold text-gray-200 flex items-center gap-1 transition"
-        >
-          {copyFeedback ? (
-            <>
-              <Check className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Copied!</span>
-            </>
-          ) : (
-            <>
-              <Copy className="w-3.5 h-3.5" />
-              <span>Copy</span>
-            </>
+        {/* SCI / Standard Mode Switcher Button (Replaces Copy button in bottom bar) */}
+        <div className="relative pill-dropdown-container shrink-0">
+          <div className="h-9 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/40 text-amber-300 text-xs font-black flex items-center justify-between px-2 transition shadow-sm">
+            <button
+              onClick={() => {
+                setActiveCalcMode((prev) => (prev === "scientific" ? "standard" : "scientific"));
+              }}
+              title={`Switch Mode (Current: ${activeCalcMode.toUpperCase()})`}
+              className="flex items-center gap-1.5 cursor-pointer py-1"
+            >
+              <CalcIcon className="w-3.5 h-3.5 text-amber-400" />
+              <span className="text-xs font-black uppercase tracking-wider">
+                {activeCalcMode === "standard"
+                  ? "STD"
+                  : activeCalcMode === "scientific"
+                    ? "SCI"
+                    : activeCalcMode === "programmer"
+                      ? "PROG"
+                      : "DATE"}
+              </span>
+            </button>
+
+            {/* Down Arrow for Calculator & Converter Menu */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setGstDropdownOpen(false);
+                setCurDropdownOpen(false);
+                setSciDropdownOpen((prev) => !prev);
+              }}
+              title="Open Calculator & Converter Menu"
+              className="w-4 h-6 flex items-center justify-center hover:bg-amber-400/20 rounded-md cursor-pointer ml-1 transition"
+            >
+              <ChevronDown className={`w-3.5 h-3.5 transition-transform ${sciDropdownOpen ? "rotate-180" : ""}`} />
+            </button>
+          </div>
+
+          {/* Mode Dropdown Menu (pops up above the bottom bar) */}
+          {sciDropdownOpen && (
+            <div className="absolute right-0 bottom-12 w-56 bg-white border border-gray-200 rounded-2xl shadow-2xl py-2 z-50 max-h-80 overflow-y-auto no-scrollbar animate-in fade-in slide-in-from-bottom-2 duration-150 text-gray-800">
+              {/* SECTION 1: CALCULATOR */}
+              <div className="px-3 py-1 text-[11px] font-black text-gray-500 uppercase tracking-wider">
+                Calculator
+              </div>
+
+              {/* Standard */}
+              <button
+                onClick={() => {
+                  setActiveCalcMode("standard");
+                  setSciDropdownOpen(false);
+                }}
+                className={`w-full px-3 py-2 text-left text-xs font-bold flex items-center gap-3 hover:bg-gray-100 cursor-pointer transition ${activeCalcMode === "standard"
+                  ? "bg-purple-50 text-purple-900 border-l-4 border-purple-600"
+                  : "text-gray-700"
+                  }`}
+              >
+                <CalcIcon className="w-4 h-4 text-purple-600" />
+                <span>Standard</span>
+              </button>
+
+              {/* Scientific */}
+              <button
+                onClick={() => {
+                  setActiveCalcMode("scientific");
+                  setSciDropdownOpen(false);
+                }}
+                className={`w-full px-3 py-2 text-left text-xs font-bold flex items-center gap-3 hover:bg-gray-100 cursor-pointer transition ${activeCalcMode === "scientific"
+                  ? "bg-purple-50 text-purple-900 border-l-4 border-purple-600"
+                  : "text-gray-700"
+                  }`}
+              >
+                <FlaskConical className="w-4 h-4 text-purple-600" />
+                <span>Scientific</span>
+              </button>
+
+              {/* Programmer */}
+              <button
+                onClick={() => {
+                  setActiveCalcMode("programmer");
+                  setSciDropdownOpen(false);
+                }}
+                className={`w-full px-3 py-2 text-left text-xs font-bold flex items-center gap-3 hover:bg-gray-100 cursor-pointer transition ${activeCalcMode === "programmer"
+                  ? "bg-purple-50 text-purple-900 border-l-4 border-purple-600"
+                  : "text-gray-700"
+                  }`}
+              >
+                <Code className="w-4 h-4 text-purple-600" />
+                <span>Programmer</span>
+              </button>
+
+              {/* Date calculation */}
+              <button
+                onClick={() => {
+                  setActiveCalcMode("date");
+                  setSciDropdownOpen(false);
+                }}
+                className={`w-full px-3 py-2 text-left text-xs font-bold flex items-center gap-3 hover:bg-gray-100 cursor-pointer transition ${activeCalcMode === "date"
+                  ? "bg-purple-50 text-purple-900 border-l-4 border-purple-600"
+                  : "text-gray-700"
+                  }`}
+              >
+                <Calendar className="w-4 h-4 text-purple-600" />
+                <span>Date calculation</span>
+              </button>
+
+              {/* BMI Health Calculator */}
+              <button
+                onClick={() => {
+                  setSciDropdownOpen(false);
+                  setActiveModal("bmi");
+                }}
+                className="w-full px-3 py-2 text-left text-xs font-bold flex items-center gap-3 hover:bg-emerald-50 text-emerald-800 cursor-pointer transition border-t border-gray-100"
+              >
+                <HeartPulse className="w-4 h-4 text-emerald-600" />
+                <div className="flex items-center justify-between flex-1">
+                  <span>BMI Calculator</span>
+                  <span className="text-[10px] font-black bg-emerald-100 text-emerald-700 px-1.5 py-0.2 rounded-full">
+                    Health
+                  </span>
+                </div>
+              </button>
+
+              {/* SECTION 2: CONVERTER */}
+              <div className="px-3 pt-2 pb-1 text-[11px] font-black text-gray-500 uppercase tracking-wider border-t border-gray-100 mt-1">
+                Converter
+              </div>
+
+              {CONVERTER_CATEGORIES.map((cat) => (
+                <button
+                  key={cat.id}
+                  onClick={() => {
+                    setSciDropdownOpen(false);
+                    setSelectedConverterId(cat.id);
+                    const cfg = CONVERTER_CONFIG[cat.id];
+                    if (cfg && cfg.units.length >= 2) {
+                      setConverterFromUnit(cfg.units[0].id);
+                      setConverterToUnit(cfg.units[1].id);
+                      setConverterInput(1);
+                    }
+                    setActiveModal("converter-detail");
+                  }}
+                  className="w-full px-3 py-1.5 text-left text-xs font-bold text-gray-700 hover:bg-gray-100 flex items-center gap-3 cursor-pointer transition"
+                >
+                  <span className="text-gray-600">{cat.icon}</span>
+                  <span className="truncate">{cat.label.split("(")[0].trim()}</span>
+                </button>
+              ))}
+            </div>
           )}
-        </button>
+        </div>
       </div>
 
       {/* ================================================================= */}
@@ -2531,12 +2616,12 @@ export const CalculatorPanel: React.FC = () => {
                   type="button"
                   onClick={() =>
                     setGstOriginalPrice(
-                      String(runningTotal > 0 ? runningTotal : parseFloat(currentInput) || 100)
+                      String(runningTotal > 0 ? runningTotal : parseFloat(currentInput) || 0)
                     )
                   }
                   className="text-[10px] text-emerald-600 font-bold hover:underline cursor-pointer"
                 >
-                  Use Calc Amount ({formatINR(runningTotal || parseFloat(currentInput) || 100)})
+                  Use Calc Amount ({formatINR(runningTotal || parseFloat(currentInput) || 0)})
                 </button>
               </label>
               <div className="relative flex items-center">
@@ -2552,7 +2637,7 @@ export const CalculatorPanel: React.FC = () => {
                       setGstOriginalPrice(val);
                     }
                   }}
-                  placeholder={String(runningTotal || parseFloat(currentInput) || 100)}
+                  placeholder={String(runningTotal || parseFloat(currentInput) || 0)}
                   className="w-full pl-7 pr-3 py-2 border border-gray-300 rounded-xl text-sm font-black text-gray-900 outline-none focus:border-[#10b981] focus:ring-1 focus:ring-[#10b981] bg-white"
                 />
               </div>
@@ -2560,13 +2645,12 @@ export const CalculatorPanel: React.FC = () => {
 
             {/* Real-time GST Calculation Card */}
             {(() => {
+              const calcVal = runningTotal > 0 ? runningTotal : parseFloat(currentInput) || 0;
               const parsedVal = parseFloat(gstOriginalPrice);
               const current =
                 !isNaN(parsedVal) && parsedVal >= 0
                   ? parsedVal
-                  : runningTotal > 0
-                    ? runningTotal
-                    : parseFloat(currentInput) || 100;
+                  : calcVal;
 
               let gstVal = 0;
               let netVal = current;
@@ -2701,12 +2785,12 @@ export const CalculatorPanel: React.FC = () => {
                   type="button"
                   onClick={() =>
                     setDiscountOriginalPrice(
-                      String(runningTotal > 0 ? runningTotal : parseFloat(currentInput) || 100)
+                      String(runningTotal > 0 ? runningTotal : parseFloat(currentInput) || 0)
                     )
                   }
                   className="text-[10px] text-amber-600 font-bold hover:underline cursor-pointer"
                 >
-                  Use Calc Amount ({formatINR(runningTotal || parseFloat(currentInput) || 100)})
+                  Use Calc Amount ({formatINR(runningTotal || parseFloat(currentInput) || 0)})
                 </button>
               </label>
               <div className="relative flex items-center">
@@ -2722,7 +2806,7 @@ export const CalculatorPanel: React.FC = () => {
                       setDiscountOriginalPrice(val);
                     }
                   }}
-                  placeholder={String(runningTotal || parseFloat(currentInput) || 100)}
+                  placeholder={String(runningTotal || parseFloat(currentInput) || 0)}
                   className="w-full pl-7 pr-3 py-2 border border-gray-300 rounded-xl text-sm font-black text-gray-900 outline-none focus:border-[#d97706] focus:ring-1 focus:ring-[#d97706] bg-white"
                 />
               </div>
@@ -2730,13 +2814,12 @@ export const CalculatorPanel: React.FC = () => {
 
             {/* Price Preview & Real-time Calculation */}
             {(() => {
+              const calcVal = runningTotal > 0 ? runningTotal : parseFloat(currentInput) || 0;
               const parsedVal = parseFloat(discountOriginalPrice);
               const current =
                 !isNaN(parsedVal) && parsedVal >= 0
                   ? parsedVal
-                  : runningTotal > 0
-                    ? runningTotal
-                    : parseFloat(currentInput) || 100;
+                  : calcVal;
 
               let discVal = 0;
               if (discountMode === "percent") {
@@ -2982,7 +3065,7 @@ export const CalculatorPanel: React.FC = () => {
       )}
 
       {/* ================================================================= */}
-      {/* MODAL 4: COMPARE & MULTI-PERSON SPLIT (Add Person, Amounts, Split) */}
+      {/* MODAL 4: COMPARE & MULTI-PERSON SPLIT (Add Person / Items, Amounts) */}
       {/* ================================================================= */}
       {activeModal === "compare" && (
         <div className="absolute inset-0 z-50 bg-black/40 backdrop-blur-xs flex flex-col justify-end">
@@ -2990,10 +3073,12 @@ export const CalculatorPanel: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-base font-black text-gray-900 leading-none">
-                  Compare & Expense Split
+                  {compareTab === "product" ? "Product & Price Compare" : "Bill & Expense Split"}
                 </h3>
                 <span className="text-[11px] text-gray-500">
-                  Compare amounts, difference, split share & descriptions
+                  {compareTab === "product"
+                    ? "Compare prices of 2 or more products & see best value"
+                    : "Split bills among friends & calculate who pays whom"}
                 </span>
               </div>
               <button
@@ -3004,261 +3089,523 @@ export const CalculatorPanel: React.FC = () => {
               </button>
             </div>
 
-            {/* Total Bill / Group Expense Input (e.g. ₹2000 total bill to be split) */}
-            <div className="bg-blue-50/70 p-3 rounded-2xl border border-blue-200 space-y-1.5">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-black text-blue-900">Total Group Bill / Expense (₹):</span>
-                <button
-                  type="button"
-                  onClick={() =>
-                    setCompareTotalBill(
-                      String(runningTotal > 0 ? runningTotal : parseFloat(currentInput) || 0)
-                    )
-                  }
-                  className="text-[10px] text-blue-600 font-bold hover:underline cursor-pointer"
-                >
-                  Use Calc ({formatINR(runningTotal || parseFloat(currentInput) || 0)})
-                </button>
-              </div>
-              <div className="relative flex items-center">
-                <span className="absolute left-3 text-sm font-bold text-gray-400 pointer-events-none">₹</span>
-                <input
-                  type="text"
-                  inputMode="decimal"
-                  value={compareTotalBill}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    if (val === "" || /^\d*\.?\d*$/.test(val)) {
-                      setCompareTotalBill(val);
-                    }
-                  }}
-                  placeholder="Enter total bill (e.g. 2000)"
-                  className="w-full pl-7 pr-3 py-2 border border-blue-200 rounded-xl text-sm font-black text-gray-900 outline-none focus:border-blue-500 bg-white"
-                />
-              </div>
+            {/* Clear Mode Switcher Tabs */}
+            <div className="grid grid-cols-2 gap-1.5 p-1 bg-gray-100 rounded-xl">
+              <button
+                type="button"
+                onClick={() => setCompareTab("product")}
+                className={`py-2 text-xs font-bold rounded-lg transition cursor-pointer flex items-center justify-center gap-1.5 ${compareTab === "product"
+                  ? "bg-white text-blue-600 shadow-xs ring-1 ring-black/5"
+                  : "text-gray-600 hover:text-gray-900"
+                  }`}
+              >
+                <span className="text-sm">🏷️</span>
+                <span>Product Compare</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setCompareTab("split")}
+                className={`py-2 text-xs font-bold rounded-lg transition cursor-pointer flex items-center justify-center gap-1.5 ${compareTab === "split"
+                  ? "bg-white text-emerald-600 shadow-xs ring-1 ring-black/5"
+                  : "text-gray-600 hover:text-gray-900"
+                  }`}
+              >
+                <span className="text-sm">👥</span>
+                <span>Expense Split</span>
+              </button>
             </div>
 
-            {/* Total, Difference & Average Summary */}
-            {(() => {
-              const enteredBill = parseFloat(compareTotalBill);
-              const totalSumOfPaid = compareItems.reduce((acc, p) => acc + p.value, 0);
-              const effectiveTotal = !isNaN(enteredBill) && enteredBill > 0 ? enteredBill : totalSumOfPaid;
-              const perPersonShare = compareItems.length ? effectiveTotal / compareItems.length : 0;
-              const totalPaidSoFar = totalSumOfPaid;
-              const remainingToPay = Math.max(0, effectiveTotal - totalPaidSoFar);
+            {compareTab === "product" ? (
+              /* ========================================================= */
+              /* PRODUCT / PRICE COMPARISON TAB                            */
+              /* ========================================================= */
+              (() => {
+                const pricedItems = compareItems.filter((item) => item.value > 0);
+                const values = pricedItems.map((item) => item.value);
+                const minPrice = values.length ? Math.min(...values) : 0;
+                const maxPrice = values.length ? Math.max(...values) : 0;
+                const priceDiff = maxPrice - minPrice;
+                const avgPrice = values.length
+                  ? values.reduce((a, b) => a + b, 0) / values.length
+                  : 0;
+                const cheapestItem = pricedItems.find((item) => item.value === minPrice);
+                const priciestItem = pricedItems.find((item) => item.value === maxPrice);
+                const savingsPercent =
+                  maxPrice > 0 ? (((maxPrice - minPrice) / maxPrice) * 100).toFixed(1) : "0";
 
-              return (
-                <div className="space-y-2">
-                  <div className="grid grid-cols-3 gap-2 bg-[#f0fdf4] border border-[#bbf7d0] p-3 rounded-2xl text-xs">
-                    <div>
-                      <span className="text-gray-500 font-bold block text-[10px]">Total Bill:</span>
-                      <span className="text-sm font-black text-gray-900">
-                        {formatINR(effectiveTotal)}
-                      </span>
+                return (
+                  <div className="space-y-3">
+                    {/* Comparison Summary Card */}
+                    {values.length >= 2 ? (
+                      <div className="bg-gradient-to-br from-blue-50 via-indigo-50/50 to-emerald-50/60 p-3.5 rounded-2xl border border-blue-200/80 space-y-2.5">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[11px] font-black text-blue-900 uppercase tracking-wide">
+                            Price Comparison Summary
+                          </span>
+                          <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full">
+                            Save up to {savingsPercent}% ({formatINR(priceDiff)})
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-2 text-xs">
+                          <div className="bg-white/90 p-2 rounded-xl border border-emerald-200">
+                            <span className="text-[10px] font-bold text-emerald-600 block">
+                              🏆 Lowest / Best:
+                            </span>
+                            <span className="text-xs font-black text-emerald-800 truncate block">
+                              {cheapestItem?.name || `Product ${compareItems.findIndex((x) => x.id === cheapestItem?.id) + 1}`}
+                            </span>
+                            <span className="text-sm font-black text-emerald-700">
+                              {formatINR(minPrice)}
+                            </span>
+                          </div>
+
+                          <div className="bg-white/90 p-2 rounded-xl border border-rose-200">
+                            <span className="text-[10px] font-bold text-rose-600 block">
+                              Highest Price:
+                            </span>
+                            <span className="text-xs font-black text-rose-800 truncate block">
+                              {priciestItem?.name || `Product ${compareItems.findIndex((x) => x.id === priciestItem?.id) + 1}`}
+                            </span>
+                            <span className="text-sm font-black text-rose-700">
+                              {formatINR(maxPrice)}
+                            </span>
+                          </div>
+
+                          <div className="bg-white/90 p-2 rounded-xl border border-blue-200">
+                            <span className="text-[10px] font-bold text-blue-600 block">
+                              Difference:
+                            </span>
+                            <span className="text-xs font-bold text-gray-500 block">
+                              Max vs Min
+                            </span>
+                            <span className="text-sm font-black text-blue-700">
+                              {formatINR(priceDiff)}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="text-[11px] text-gray-600 flex justify-between items-center px-1">
+                          <span>
+                            Average Price ({pricedItems.length} products):{" "}
+                            <strong className="text-gray-900 font-extrabold">{formatINR(avgPrice)}</strong>
+                          </span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="bg-blue-50/60 border border-dashed border-blue-200 p-3 rounded-2xl text-xs text-blue-800">
+                        💡 Enter prices for <strong>Product 1</strong> and <strong>Product 2</strong> below to see lowest price, difference, and savings.
+                      </div>
+                    )}
+
+                    {/* Product Items List */}
+                    <div className="space-y-2.5">
+                      {compareItems.map((item, index) => {
+                        const isCheapest = pricedItems.length >= 2 && item.value === minPrice && item.value > 0;
+                        const isHighest = pricedItems.length >= 2 && item.value === maxPrice && item.value > 0 && maxPrice !== minPrice;
+                        const diffFromCheapest = item.value > 0 && minPrice > 0 ? item.value - minPrice : 0;
+
+                        return (
+                          <div
+                            key={item.id}
+                            className={`p-3 bg-white border rounded-2xl shadow-xs space-y-2 transition ${isCheapest
+                              ? "border-emerald-300 ring-1 ring-emerald-200 bg-emerald-50/20"
+                              : "border-gray-200"
+                              }`}
+                          >
+                            <div className="flex items-center justify-between gap-2">
+                              {/* Left: Number badge + Product name input */}
+                              <div className="flex items-center gap-1.5 flex-1 min-w-0">
+                                <span
+                                  className={`w-5 h-5 rounded-full text-[10px] font-black flex items-center justify-center shrink-0 ${isCheapest
+                                    ? "bg-emerald-600 text-white"
+                                    : "bg-blue-100 text-blue-700"
+                                    }`}
+                                >
+                                  {index + 1}
+                                </span>
+                                <input
+                                  type="text"
+                                  value={item.name}
+                                  placeholder={`Product ${index + 1}`}
+                                  onChange={(e) => {
+                                    const val = e.target.value;
+                                    setCompareItems((prev) =>
+                                      prev.map((p) => (p.id === item.id ? { ...p, name: val } : p))
+                                    );
+                                  }}
+                                  className="text-xs font-bold text-gray-900 flex-1 outline-none border-b border-transparent focus:border-blue-400 bg-transparent min-w-[80px]"
+                                />
+                                {isCheapest && (
+                                  <span className="text-[10px] font-black text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded-md shrink-0">
+                                    ★ Lowest
+                                  </span>
+                                )}
+                                {isHighest && (
+                                  <span className="text-[10px] font-bold text-rose-700 bg-rose-100 px-1.5 py-0.5 rounded-md shrink-0">
+                                    Highest
+                                  </span>
+                                )}
+                              </div>
+
+                              {/* Right: Price input with ₹ inside the box */}
+                              <div className="flex items-center gap-1">
+                                <div className="relative flex items-center">
+                                  <span className="absolute left-2 text-xs font-bold text-gray-400 pointer-events-none">₹</span>
+                                  <input
+                                    type="number"
+                                    value={item.value === 0 ? "" : item.value}
+                                    placeholder="0"
+                                    onChange={(e) => {
+                                      const val = e.target.value === "" ? 0 : Number(e.target.value);
+                                      setCompareItems((prev) =>
+                                        prev.map((p) => (p.id === item.id ? { ...p, value: val } : p))
+                                      );
+                                    }}
+                                    className="w-24 text-right text-xs font-black text-gray-900 outline-none border border-gray-200 focus:border-blue-400 rounded-lg pl-5 pr-2 py-1.5 bg-gray-50/50"
+                                  />
+                                </div>
+                                {compareItems.length > 2 && (
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setCompareItems((prev) => prev.filter((p) => p.id !== item.id))
+                                    }
+                                    title="Remove item"
+                                    className="p-1 text-gray-300 hover:text-red-500 rounded transition cursor-pointer"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+
+                            <div className="flex items-center justify-between text-[11px] text-gray-500 gap-2">
+                              <input
+                                type="text"
+                                placeholder="Specifications / notes (optional)"
+                                value={item.description}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setCompareItems((prev) =>
+                                    prev.map((p) => (p.id === item.id ? { ...p, description: val } : p))
+                                  );
+                                }}
+                                className="flex-1 outline-none text-gray-600 text-[11px] placeholder:text-gray-300 border-b border-dashed border-gray-200 pb-0.5 focus:border-blue-300"
+                              />
+                              {diffFromCheapest > 0 ? (
+                                <span className="font-bold text-rose-600 shrink-0 text-[10px]">
+                                  + {formatINR(diffFromCheapest)} more
+                                </span>
+                              ) : isCheapest ? (
+                                <span className="font-bold text-emerald-600 shrink-0 text-[10px]">
+                                  Base (Cheapest)
+                                </span>
+                              ) : null}
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
-                    <div>
-                      <span className="text-gray-500 font-bold block text-[10px]">
-                        Per Person Share ({compareItems.length}):
-                      </span>
-                      <span className="text-sm font-black text-[#059669]">
-                        {formatINR(perPersonShare)}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-gray-500 font-bold block text-[10px]">
-                        {remainingToPay > 0 ? "Remaining Bill:" : "Paid Status:"}
-                      </span>
-                      <span
-                        className={`text-sm font-black ${
-                          remainingToPay > 0 ? "text-amber-600" : "text-emerald-700"
-                        }`}
-                      >
-                        {remainingToPay > 0 ? formatINR(remainingToPay) : "Fully Settled"}
-                      </span>
-                    </div>
+
+                    {/* Add Product Button */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const nextNum = compareItems.length + 1;
+                        setCompareItems((prev) => [
+                          ...prev,
+                          {
+                            id: `item-${Date.now()}`,
+                            name: "",
+                            value: 0,
+                            description: "",
+                          },
+                        ]);
+                      }}
+                      className="w-full py-2.5 rounded-xl border border-dashed border-blue-300 text-blue-600 hover:bg-blue-50/80 text-xs font-black transition flex items-center justify-center gap-1.5 cursor-pointer"
+                    >
+                      <Plus className="w-4 h-4" />
+                      <span>Add Another Product</span>
+                    </button>
                   </div>
+                );
+              })()
+            ) : (
+              /* ========================================================= */
+              /* BILL & EXPENSE SPLIT TAB                                  */
+              /* ========================================================= */
+              <>
+                {/* Total Bill / Group Expense Input */}
+                <div className="bg-blue-50/70 p-3 rounded-2xl border border-blue-200 space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-black text-blue-900">Total Group Bill / Expense (₹):</span>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setCompareTotalBill(
+                          String(runningTotal > 0 ? runningTotal : parseFloat(currentInput) || 0)
+                        )
+                      }
+                      className="text-[10px] text-blue-600 font-bold hover:underline cursor-pointer"
+                    >
+                      Use Calc ({formatINR(runningTotal || parseFloat(currentInput) || 0)})
+                    </button>
+                  </div>
+                  <div className="relative flex items-center">
+                    <span className="absolute left-3 text-sm font-bold text-gray-400 pointer-events-none">₹</span>
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      value={compareTotalBill}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (val === "" || /^\d*\.?\d*$/.test(val)) {
+                          setCompareTotalBill(val);
+                        }
+                      }}
+                      placeholder="Enter total bill (e.g. 2000)"
+                      className="w-full pl-7 pr-3 py-2 border border-blue-200 rounded-xl text-sm font-black text-gray-900 outline-none focus:border-blue-500 bg-white"
+                    />
+                  </div>
+                </div>
 
-                  {/* Smart Who-Pays-Whom Settlement Plan */}
-                  {(() => {
-                    // Calculate balances: positive means overpaid (gets back), negative means underpaid (owes)
-                    const balances = compareItems.map((p) => ({
-                      name: p.name || "Person",
-                      balance: p.value - perPersonShare,
-                    }));
+                {/* Total, Difference & Average Summary */}
+                {(() => {
+                  const enteredBill = parseFloat(compareTotalBill);
+                  const totalSumOfPaid = compareItems.reduce((acc, p) => acc + p.value, 0);
+                  const effectiveTotal = !isNaN(enteredBill) && enteredBill > 0 ? enteredBill : totalSumOfPaid;
+                  const perPersonShare = compareItems.length ? effectiveTotal / compareItems.length : 0;
+                  const totalPaidSoFar = totalSumOfPaid;
+                  const remainingToPay = Math.max(0, effectiveTotal - totalPaidSoFar);
 
-                    const debtors = balances.filter((b) => b.balance < -0.01);
-                    const creditors = balances.filter((b) => b.balance > 0.01);
+                  return (
+                    <div className="space-y-2">
+                      <div className="grid grid-cols-3 gap-2 bg-[#f0fdf4] border border-[#bbf7d0] p-3 rounded-2xl text-xs">
+                        <div>
+                          <span className="text-gray-500 font-bold block text-[10px]">Total Bill:</span>
+                          <span className="text-sm font-black text-gray-900">
+                            {formatINR(effectiveTotal)}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-gray-500 font-bold block text-[10px]">
+                            Per Person Share ({compareItems.length}):
+                          </span>
+                          <span className="text-sm font-black text-[#059669]">
+                            {formatINR(perPersonShare)}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-gray-500 font-bold block text-[10px]">
+                            {remainingToPay > 0 ? "Remaining Bill:" : "Paid Status:"}
+                          </span>
+                          <span
+                            className={`text-sm font-black ${remainingToPay > 0 ? "text-amber-600" : "text-emerald-700"
+                              }`}
+                          >
+                            {remainingToPay > 0 ? formatINR(remainingToPay) : "Fully Settled"}
+                          </span>
+                        </div>
+                      </div>
 
-                    if (creditors.length === 0 || debtors.length === 0) return null;
+                      {/* Smart Who-Pays-Whom Settlement Plan */}
+                      {(() => {
+                        const balances = compareItems.map((p) => ({
+                          name: p.name || "Person",
+                          balance: p.value - perPersonShare,
+                        }));
+
+                        const debtors = balances.filter((b) => b.balance < -0.01);
+                        const creditors = balances.filter((b) => b.balance > 0.01);
+
+                        if (creditors.length === 0 || debtors.length === 0) return null;
+
+                        return (
+                          <div className="p-3 bg-purple-50/80 border border-purple-200 rounded-2xl space-y-1 text-xs">
+                            <span className="text-[11px] font-black text-purple-900 flex items-center gap-1">
+                              <span>🤝 Settlement Plan (Who Pays Whom):</span>
+                            </span>
+                            <div className="space-y-1 pt-1">
+                              {debtors.map((d, dIdx) => {
+                                const c = creditors[dIdx % creditors.length];
+                                const payAmount = Math.min(
+                                  Math.abs(d.balance),
+                                  c ? c.balance : Math.abs(d.balance)
+                                );
+                                return (
+                                  <div
+                                    key={dIdx}
+                                    className="flex justify-between items-center text-xs font-bold text-gray-800 bg-white/80 p-2 rounded-xl border border-purple-100"
+                                  >
+                                    <span className="text-red-600">{d.name}</span>
+                                    <span className="text-gray-400 font-mono text-[11px]">pays</span>
+                                    <span className="text-purple-700 font-black">{formatINR(payAmount)}</span>
+                                    <span className="text-gray-400 font-mono text-[11px]">to</span>
+                                    <span className="text-emerald-700">{c ? c.name : "Overpaid Person"}</span>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        );
+                      })()}
+                    </div>
+                  );
+                })()}
+
+                {/* Persons Inputs List */}
+                <div className="space-y-2.5">
+                  {compareItems.map((item, index) => {
+                    const enteredBill = parseFloat(compareTotalBill);
+                    const totalSumOfPaid = compareItems.reduce((acc, p) => acc + p.value, 0);
+                    const effectiveTotal = !isNaN(enteredBill) && enteredBill > 0 ? enteredBill : totalSumOfPaid;
+                    const perPersonShare = compareItems.length ? effectiveTotal / compareItems.length : 0;
+                    const diffFromShare = item.value - perPersonShare;
+                    const percentage =
+                      effectiveTotal > 0
+                        ? ((item.value / effectiveTotal) * 100).toFixed(1)
+                        : "0";
 
                     return (
-                      <div className="p-3 bg-purple-50/80 border border-purple-200 rounded-2xl space-y-1 text-xs">
-                        <span className="text-[11px] font-black text-purple-900 flex items-center gap-1">
-                          <span>🤝 Settlement Plan (Who Pays Whom):</span>
-                        </span>
-                        <div className="space-y-1 pt-1">
-                          {debtors.map((d, dIdx) => {
-                            const c = creditors[dIdx % creditors.length];
-                            const payAmount = Math.min(Math.abs(d.balance), c ? c.balance : Math.abs(d.balance));
-                            return (
-                              <div
-                                key={dIdx}
-                                className="flex justify-between items-center text-xs font-bold text-gray-800 bg-white/80 p-2 rounded-xl border border-purple-100"
+                      <div
+                        key={item.id}
+                        className="p-3 bg-white border border-gray-200 rounded-2xl shadow-xs space-y-2"
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-1.5 flex-1 min-w-0">
+                            <span className="w-5 h-5 rounded-full bg-blue-100 text-blue-700 text-[10px] font-black flex items-center justify-center shrink-0">
+                              {index + 1}
+                            </span>
+                            <input
+                              type="text"
+                              value={item.name}
+                              placeholder={`Person ${index + 1}`}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                setCompareItems((prev) =>
+                                  prev.map((p) => (p.id === item.id ? { ...p, name: val } : p))
+                                );
+                              }}
+                              className="text-xs font-bold text-gray-900 flex-1 outline-none border-b border-transparent focus:border-blue-400 bg-transparent min-w-[80px]"
+                            />
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <div className="relative flex items-center">
+                              <span className="absolute left-2 text-xs font-bold text-gray-400 pointer-events-none">₹</span>
+                              <input
+                                type="number"
+                                value={item.value === 0 ? "" : item.value}
+                                placeholder="0"
+                                onChange={(e) => {
+                                  const val = e.target.value === "" ? 0 : Number(e.target.value);
+                                  setCompareItems((prev) =>
+                                    prev.map((p) => (p.id === item.id ? { ...p, value: val } : p))
+                                  );
+                                }}
+                                className="w-24 text-right text-xs font-black text-gray-900 outline-none border border-gray-200 focus:border-blue-400 rounded-lg pl-5 pr-2 py-1.5 bg-gray-50/50"
+                              />
+                            </div>
+                            {compareItems.length > 2 && (
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setCompareItems((prev) => prev.filter((p) => p.id !== item.id))
+                                }
+                                title="Remove person"
+                                className="p-1 text-gray-300 hover:text-red-500 rounded transition cursor-pointer"
                               >
-                                <span className="text-red-600">{d.name}</span>
-                                <span className="text-gray-400 font-mono text-[11px]">pays</span>
-                                <span className="text-purple-700 font-black">{formatINR(payAmount)}</span>
-                                <span className="text-gray-400 font-mono text-[11px]">to</span>
-                                <span className="text-emerald-700">{c ? c.name : "Overpaid Person"}</span>
-                              </div>
-                            );
-                          })}
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-between text-[11px] text-gray-500 gap-2">
+                          <input
+                            type="text"
+                            placeholder="Enter description (e.g. Dinner, Drinks, Cab)"
+                            value={item.description}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              setCompareItems((prev) =>
+                                prev.map((p) => (p.id === item.id ? { ...p, description: val } : p))
+                              );
+                            }}
+                            className="flex-1 outline-none text-gray-600 text-[11px] placeholder:text-gray-300 border-b border-dashed border-gray-200 pb-0.5 focus:border-blue-300"
+                          />
+                          <span className="font-extrabold text-blue-600 shrink-0">Paid {percentage}%</span>
+                        </div>
+
+                        {/* Accurate Per-Person Split Status */}
+                        <div className="text-[11px] font-bold text-gray-600 flex justify-between items-center pt-1 border-t border-gray-100">
+                          <span>
+                            Should Pay:{" "}
+                            <span className="text-gray-900 font-extrabold">
+                              {formatINR(perPersonShare)}
+                            </span>
+                          </span>
+                          <span>
+                            {diffFromShare > 0.01 ? (
+                              <span className="text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
+                                Gets back {formatINR(diffFromShare)}
+                              </span>
+                            ) : diffFromShare < -0.01 ? (
+                              <span className="text-red-600 bg-red-50 px-2 py-0.5 rounded-md">
+                                Needs to pay {formatINR(Math.abs(diffFromShare))}
+                              </span>
+                            ) : (
+                              <span className="text-gray-500 bg-gray-100 px-2 py-0.5 rounded-md">
+                                Settled (₹0.00)
+                              </span>
+                            )}
+                          </span>
                         </div>
                       </div>
                     );
-                  })()}
+                  })}
                 </div>
-              );
-            })()}
 
-            {/* Persons Inputs List */}
-            <div className="space-y-2.5">
-              {compareItems.map((item, index) => {
-                const enteredBill = parseFloat(compareTotalBill);
-                const totalSumOfPaid = compareItems.reduce((acc, p) => acc + p.value, 0);
-                const effectiveTotal = !isNaN(enteredBill) && enteredBill > 0 ? enteredBill : totalSumOfPaid;
-                const perPersonShare = compareItems.length ? effectiveTotal / compareItems.length : 0;
-                const diffFromShare = item.value - perPersonShare;
-                const percentage =
-                  effectiveTotal > 0
-                    ? ((item.value / effectiveTotal) * 100).toFixed(1)
-                    : "0";
-
-                return (
-                  <div
-                    key={item.id}
-                    className="p-3 bg-white border border-gray-200 rounded-2xl shadow-xs space-y-2"
-                  >
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-1.5 flex-1 min-w-0">
-                        <span className="w-5 h-5 rounded-full bg-blue-100 text-blue-700 text-[10px] font-black flex items-center justify-center shrink-0">
-                          {index + 1}
-                        </span>
-                        <input
-                          type="text"
-                          value={item.name}
-                          placeholder={`Person ${index + 1}`}
-                          onChange={(e) => {
-                            const val = e.target.value;
-                            setCompareItems((prev) =>
-                              prev.map((p) => (p.id === item.id ? { ...p, name: val } : p))
-                            );
-                          }}
-                          className="text-xs font-bold text-gray-900 flex-1 outline-none border-b border-transparent focus:border-blue-400 bg-transparent min-w-[80px]"
-                        />
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <span className="text-xs font-bold text-gray-400">Paid: ₹</span>
-                        <input
-                          type="number"
-                          value={item.value === 0 ? "" : item.value}
-                          placeholder="0"
-                          onChange={(e) => {
-                            const val = e.target.value === "" ? 0 : Number(e.target.value);
-                            setCompareItems((prev) =>
-                              prev.map((p) => (p.id === item.id ? { ...p, value: val } : p))
-                            );
-                          }}
-                          className="w-24 text-right text-xs font-black text-gray-900 outline-none border border-gray-200 focus:border-blue-400 rounded-lg px-2 py-1 bg-gray-50/50"
-                        />
-                        {compareItems.length > 2 && (
-                          <button
-                            type="button"
-                            onClick={() =>
-                              setCompareItems((prev) => prev.filter((p) => p.id !== item.id))
-                            }
-                            title="Remove person"
-                            className="p-1 text-gray-300 hover:text-red-500 rounded transition cursor-pointer"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between text-[11px] text-gray-500 gap-2">
-                      <input
-                        type="text"
-                        placeholder="Enter description (e.g. Dinner, Drinks, Cab)"
-                        value={item.description}
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          setCompareItems((prev) =>
-                            prev.map((p) => (p.id === item.id ? { ...p, description: val } : p))
-                          );
-                        }}
-                        className="flex-1 outline-none text-gray-600 text-[11px] placeholder:text-gray-300 border-b border-dashed border-gray-200 pb-0.5 focus:border-blue-300"
-                      />
-                      <span className="font-extrabold text-blue-600 shrink-0">Paid {percentage}%</span>
-                    </div>
-
-                    {/* Accurate Per-Person Split Status */}
-                    <div className="text-[11px] font-bold text-gray-600 flex justify-between items-center pt-1 border-t border-gray-100">
-                      <span>
-                        Should Pay:{" "}
-                        <span className="text-gray-900 font-extrabold">
-                          {formatINR(perPersonShare)}
-                        </span>
-                      </span>
-                      <span>
-                        {diffFromShare > 0.01 ? (
-                          <span className="text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
-                            Gets back {formatINR(diffFromShare)}
-                          </span>
-                        ) : diffFromShare < -0.01 ? (
-                          <span className="text-red-600 bg-red-50 px-2 py-0.5 rounded-md">
-                            Needs to pay {formatINR(Math.abs(diffFromShare))}
-                          </span>
-                        ) : (
-                          <span className="text-gray-500 bg-gray-100 px-2 py-0.5 rounded-md">
-                            Settled (₹0.00)
-                          </span>
-                        )}
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Add Person Button */}
-            <button
-              type="button"
-              onClick={() => {
-                const nextNum = compareItems.length + 1;
-                setCompareItems((prev) => [
-                  ...prev,
-                  {
-                    id: `p-${Date.now()}`,
-                    name: `Person ${nextNum}`,
-                    value: 0,
-                    description: "",
-                  },
-                ]);
-              }}
-              className="w-full py-2.5 rounded-xl border border-dashed border-blue-300 text-blue-600 hover:bg-blue-50/80 text-xs font-black transition flex items-center justify-center gap-1.5 cursor-pointer"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Add Person</span>
-            </button>
+                {/* Add Person Button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const nextNum = compareItems.length + 1;
+                    setCompareItems((prev) => [
+                      ...prev,
+                      {
+                        id: `p-${Date.now()}`,
+                        name: "",
+                        value: 0,
+                        description: "",
+                      },
+                    ]);
+                  }}
+                  className="w-full py-2.5 rounded-xl border border-dashed border-blue-300 text-blue-600 hover:bg-blue-50/80 text-xs font-black transition flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add Person</span>
+                </button>
+              </>
+            )}
 
             {/* Bottom Actions: Reset to standard empty values and Use in Calc */}
             <div className="flex items-center gap-2 pt-1">
               <button
                 onClick={() => {
                   setCompareItems([
-                    { id: "p1", name: "Person 1", value: 0, description: "" },
-                    { id: "p2", name: "Person 2", value: 0, description: "" },
+                    {
+                      id: "p1",
+                      name: "",
+                      value: 0,
+                      description: "",
+                    },
+                    {
+                      id: "p2",
+                      name: "",
+                      value: 0,
+                      description: "",
+                    },
                   ]);
                 }}
                 className="flex-1 py-2 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 text-xs font-bold transition cursor-pointer"
@@ -3267,15 +3614,19 @@ export const CalculatorPanel: React.FC = () => {
               </button>
               <button
                 onClick={() => {
-                  const maxVal = Math.max(...compareItems.map((p) => p.value));
-                  const minVal = Math.min(...compareItems.map((p) => p.value));
+                  const values = compareItems.map((p) => p.value).filter((v) => v > 0);
+                  const maxVal = values.length ? Math.max(...values) : 0;
+                  const minVal = values.length ? Math.min(...values) : 0;
                   const diffVal = maxVal - minVal;
 
                   setTapeSteps((prev) => [
                     ...prev,
                     {
                       id: `cmp-${Date.now()}`,
-                      label: `Compare Diff (Max - Min)`,
+                      label:
+                        compareTab === "product"
+                          ? `Price Diff (Max - Min)`
+                          : `Split Compare Diff`,
                       operand: diffVal,
                       subtotal: diffVal,
                     },
@@ -3425,6 +3776,356 @@ export const CalculatorPanel: React.FC = () => {
               >
                 Use {convertedResult} in Calculator
               </button>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* ================================================================= */}
+      {/* MODAL 5.8: BMI HEALTH CALCULATOR */}
+      {/* ================================================================= */}
+      {activeModal === "bmi" && (() => {
+        // Calculate Height in meters & Weight in kg
+        let heightM = 1.7;
+        let weightKg = 68;
+
+        if (bmiHeightUnit === "cm") {
+          const cm = parseFloat(bmiHeightCm) || 0;
+          heightM = cm > 0 ? cm / 100 : 0;
+        } else {
+          const ft = parseFloat(bmiHeightFeet) || 0;
+          const inch = parseFloat(bmiHeightInches) || 0;
+          const totalInches = ft * 12 + inch;
+          heightM = totalInches * 0.0254;
+        }
+
+        if (bmiWeightUnit === "kg") {
+          weightKg = parseFloat(bmiWeightKg) || 0;
+        } else {
+          const lbs = parseFloat(bmiWeightLbs) || 0;
+          weightKg = lbs * 0.45359237;
+        }
+
+        const bmiValue = heightM > 0 ? Number((weightKg / (heightM * heightM)).toFixed(1)) : 0;
+
+        // Healthy weight range for this height (BMI 18.5 - 24.9)
+        const healthyMinKg = heightM > 0 ? (18.5 * heightM * heightM).toFixed(1) : "0";
+        const healthyMaxKg = heightM > 0 ? (24.9 * heightM * heightM).toFixed(1) : "0";
+
+        // Category determination
+        let category = "Normal";
+        let categoryColor = "text-emerald-700 bg-emerald-100 border-emerald-300";
+        let recommendation = "Maintain healthy diet and regular physical activity.";
+
+        if (bmiValue < 18.5) {
+          category = "Underweight";
+          categoryColor = "text-sky-700 bg-sky-100 border-sky-300";
+          recommendation = "Consider nutrient-dense foods & consult a physician.";
+        } else if (bmiValue >= 18.5 && bmiValue <= 24.9) {
+          category = "Normal (Healthy)";
+          categoryColor = "text-emerald-700 bg-emerald-100 border-emerald-300";
+          recommendation = "Great job! Keep up balanced nutrition & daily workouts.";
+        } else if (bmiValue >= 25 && bmiValue <= 29.9) {
+          category = "Overweight";
+          categoryColor = "text-amber-700 bg-amber-100 border-amber-300";
+          recommendation = "Incorporate regular cardio exercise & mindful portion control.";
+        } else if (bmiValue >= 30) {
+          category = "Obese";
+          categoryColor = "text-rose-700 bg-rose-100 border-rose-300";
+          recommendation = "Consult a healthcare provider for personalized guidance.";
+        }
+
+        return (
+          <div className="absolute inset-0 z-50 bg-black/40 backdrop-blur-xs flex flex-col justify-end">
+            <div className="bg-white rounded-t-3xl p-5 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto no-scrollbar animate-in slide-in-from-bottom duration-200">
+              {/* Header */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                    <HeartPulse className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-black text-gray-900 leading-none">
+                      BMI Calculator
+                    </h3>
+                    <span className="text-[11px] text-gray-500">
+                      Body Mass Index, Healthy Range & Health Status
+                    </span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setActiveModal(null)}
+                  className="w-7 h-7 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-700 cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Gender & Age Selection */}
+              <div className="grid grid-cols-2 gap-2">
+                <div className="space-y-1">
+                  <label className="text-[11px] font-bold text-gray-600">Gender:</label>
+                  <div className="grid grid-cols-2 gap-1 bg-gray-50 p-1 rounded-xl border border-gray-200">
+                    <button
+                      type="button"
+                      onClick={() => setBmiGender("male")}
+                      className={`py-1 text-xs font-bold rounded-lg transition cursor-pointer ${bmiGender === "male"
+                        ? "bg-blue-600 text-white shadow-2xs"
+                        : "text-gray-600 hover:bg-gray-200/60"
+                        }`}
+                    >
+                      ♂ Male
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setBmiGender("female")}
+                      className={`py-1 text-xs font-bold rounded-lg transition cursor-pointer ${bmiGender === "female"
+                        ? "bg-pink-600 text-white shadow-2xs"
+                        : "text-gray-600 hover:bg-gray-200/60"
+                        }`}
+                    >
+                      ♀ Female
+                    </button>
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[11px] font-bold text-gray-600">Age (years):</label>
+                  <input
+                    type="number"
+                    value={bmiAge}
+                    onChange={(e) => setBmiAge(e.target.value)}
+                    placeholder="25"
+                    className="w-full text-xs font-bold px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-emerald-500 focus:bg-white text-gray-900"
+                  />
+                </div>
+              </div>
+
+              {/* Height & Weight Inputs with inline unit toggle (cm vs ft, kg vs lbs) */}
+              <div className="grid grid-cols-2 gap-2">
+                {/* Height */}
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[11px] font-bold text-gray-600">Height:</label>
+                    {/* Inline unit toggle */}
+                    <div className="flex items-center bg-gray-100 p-0.5 rounded-md border border-gray-200 text-[10px] font-black">
+                      <button
+                        type="button"
+                        onClick={() => setBmiHeightUnit("cm")}
+                        className={`px-1.5 py-0.5 rounded transition cursor-pointer ${bmiHeightUnit === "cm"
+                          ? "bg-white text-emerald-700 shadow-2xs"
+                          : "text-gray-500 hover:text-gray-800"
+                          }`}
+                      >
+                        cm
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setBmiHeightUnit("ft")}
+                        className={`px-1.5 py-0.5 rounded transition cursor-pointer ${bmiHeightUnit === "ft"
+                          ? "bg-white text-emerald-700 shadow-2xs"
+                          : "text-gray-500 hover:text-gray-800"
+                          }`}
+                      >
+                        ft/in
+                      </button>
+                    </div>
+                  </div>
+
+                  {bmiHeightUnit === "cm" ? (
+                    <div className="relative flex items-center">
+                      <input
+                        type="number"
+                        value={bmiHeightCm}
+                        onChange={(e) => setBmiHeightCm(e.target.value)}
+                        placeholder="170"
+                        className="w-full text-xs font-bold pl-3 pr-8 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-emerald-500 focus:bg-white text-gray-900"
+                      />
+                      <span className="absolute right-2.5 text-[11px] font-bold text-gray-400 pointer-events-none">
+                        cm
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-1">
+                      <div className="relative flex items-center">
+                        <input
+                          type="number"
+                          value={bmiHeightFeet}
+                          onChange={(e) => setBmiHeightFeet(e.target.value)}
+                          placeholder="5"
+                          className="w-full text-xs font-bold pl-2 pr-6 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-emerald-500 focus:bg-white text-gray-900"
+                        />
+                        <span className="absolute right-2 text-[10px] font-bold text-gray-400 pointer-events-none">
+                          ft
+                        </span>
+                      </div>
+                      <div className="relative flex items-center">
+                        <input
+                          type="number"
+                          value={bmiHeightInches}
+                          onChange={(e) => setBmiHeightInches(e.target.value)}
+                          placeholder="7"
+                          className="w-full text-xs font-bold pl-2 pr-6 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-emerald-500 focus:bg-white text-gray-900"
+                        />
+                        <span className="absolute right-2 text-[10px] font-bold text-gray-400 pointer-events-none">
+                          in
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Weight */}
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[11px] font-bold text-gray-600">Weight:</label>
+                    {/* Inline unit toggle */}
+                    <div className="flex items-center bg-gray-100 p-0.5 rounded-md border border-gray-200 text-[10px] font-black">
+                      <button
+                        type="button"
+                        onClick={() => setBmiWeightUnit("kg")}
+                        className={`px-1.5 py-0.5 rounded transition cursor-pointer ${bmiWeightUnit === "kg"
+                          ? "bg-white text-emerald-700 shadow-2xs"
+                          : "text-gray-500 hover:text-gray-800"
+                          }`}
+                      >
+                        kg
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setBmiWeightUnit("lbs")}
+                        className={`px-1.5 py-0.5 rounded transition cursor-pointer ${bmiWeightUnit === "lbs"
+                          ? "bg-white text-emerald-700 shadow-2xs"
+                          : "text-gray-500 hover:text-gray-800"
+                          }`}
+                      >
+                        lbs
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="relative flex items-center">
+                    {bmiWeightUnit === "kg" ? (
+                      <input
+                        type="number"
+                        value={bmiWeightKg}
+                        onChange={(e) => setBmiWeightKg(e.target.value)}
+                        placeholder="68"
+                        className="w-full text-xs font-bold pl-3 pr-8 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-emerald-500 focus:bg-white text-gray-900"
+                      />
+                    ) : (
+                      <input
+                        type="number"
+                        value={bmiWeightLbs}
+                        onChange={(e) => setBmiWeightLbs(e.target.value)}
+                        placeholder="150"
+                        className="w-full text-xs font-bold pl-3 pr-8 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-emerald-500 focus:bg-white text-gray-900"
+                      />
+                    )}
+                    <span className="absolute right-2.5 text-[11px] font-bold text-gray-400 pointer-events-none">
+                      {bmiWeightUnit}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* BMI Result Showcase Card */}
+              <div className="p-4 bg-gradient-to-br from-emerald-50/70 via-teal-50/40 to-blue-50/60 rounded-2xl border border-emerald-200/90 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="text-[10px] font-extrabold text-emerald-800 uppercase tracking-widest block">
+                      Your Body Mass Index (BMI)
+                    </span>
+                    <span className="text-3xl font-black text-gray-900">
+                      {bmiValue > 0 ? bmiValue : "--"}
+                    </span>
+                    <span className="text-xs text-gray-500 font-bold ml-1.5">
+                      kg/m²
+                    </span>
+                  </div>
+
+                  <div className="text-right">
+                    <span
+                      className={`text-xs font-black px-3 py-1 rounded-full border shadow-2xs inline-block ${categoryColor}`}
+                    >
+                      {category}
+                    </span>
+                    <span className="text-[10px] text-gray-500 font-bold block mt-1">
+                      Target: 18.5 - 24.9
+                    </span>
+                  </div>
+                </div>
+
+                {/* Multi-color Spectrum Progress Bar */}
+                <div className="space-y-1">
+                  <div className="relative h-3 w-full bg-gray-200 rounded-full overflow-hidden flex shadow-inner">
+                    <div title="Underweight (< 18.5)" className="h-full bg-sky-400 w-[28%]" />
+                    <div title="Normal (18.5 - 24.9)" className="h-full bg-emerald-500 w-[22%]" />
+                    <div title="Overweight (25 - 29.9)" className="h-full bg-amber-400 w-[17%]" />
+                    <div title="Obese (>= 30)" className="h-full bg-rose-500 flex-1" />
+                  </div>
+
+                  {/* Range Labels */}
+                  <div className="flex justify-between text-[9px] font-bold text-gray-400 px-0.5">
+                    <span>10 (Under)</span>
+                    <span className="text-emerald-700">18.5 (Normal)</span>
+                    <span className="text-amber-700">25 (Over)</span>
+                    <span className="text-rose-700">30+ (Obese)</span>
+                  </div>
+                </div>
+
+                {/* Additional Health Metrics */}
+                <div className="grid grid-cols-2 gap-2 pt-2 border-t border-emerald-200/60 text-xs">
+                  <div className="bg-white/80 p-2 rounded-xl border border-emerald-100">
+                    <span className="text-[10px] font-bold text-gray-500 block">
+                      Healthy Weight Range:
+                    </span>
+                    <span className="text-xs font-black text-emerald-800">
+                      {healthyMinKg} kg - {healthyMaxKg} kg
+                    </span>
+                  </div>
+                  <div className="bg-white/80 p-2 rounded-xl border border-emerald-100">
+                    <span className="text-[10px] font-bold text-gray-500 block">
+                      Ponderal Index:
+                    </span>
+                    <span className="text-xs font-black text-gray-800">
+                      {heightM > 0 ? (weightKg / (heightM * heightM * heightM)).toFixed(1) : "--"} kg/m³
+                    </span>
+                  </div>
+                </div>
+
+                {/* Recommendation Note */}
+                <div className="text-[11px] text-gray-600 bg-white/70 p-2 rounded-xl border border-emerald-100">
+                  💡 <strong>Advice:</strong> {recommendation}
+                </div>
+              </div>
+
+              {/* Action: Use in Calculator */}
+              <div className="flex items-center gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setBmiHeightCm("170");
+                    setBmiWeightKg("68");
+                    setBmiHeightFeet("5");
+                    setBmiHeightInches("7");
+                    setBmiWeightLbs("150");
+                  }}
+                  className="flex-1 py-2 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 text-xs font-bold transition cursor-pointer"
+                >
+                  Reset
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCurrentInput(String(bmiValue));
+                    setActiveModal(null);
+                  }}
+                  className="flex-1 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition cursor-pointer shadow-xs"
+                >
+                  Use BMI ({bmiValue}) in Calc
+                </button>
+              </div>
             </div>
           </div>
         );
@@ -3594,15 +4295,24 @@ export const CalculatorPanel: React.FC = () => {
                       </div>
                     )}
 
-                    {/* Footer Actions: Share, Restore to Calc & Delete */}
+                    {/* Footer Actions: Copy, Restore to Calc & Delete */}
                     <div className="flex items-center justify-between pt-1 border-t border-gray-100">
                       <button
-                        onClick={() => handleShareHistoryItem(hist)}
-                        title="Share this calculation"
-                        className="px-2.5 py-1.5 rounded-lg text-gray-500 hover:text-emerald-700 hover:bg-emerald-50 text-xs font-bold transition flex items-center gap-1 cursor-pointer"
+                        onClick={() => handleCopyHistoryItem(hist)}
+                        title="Copy this calculation"
+                        className="px-2.5 py-1.5 rounded-lg text-gray-500 hover:text-emerald-700 hover:bg-emerald-50 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
                       >
-                        <Share2 className="w-3.5 h-3.5" />
-                        <span>Share</span>
+                        {copiedHistoryId === hist.id ? (
+                          <>
+                            <Check className="w-3.5 h-3.5 text-emerald-600 stroke-[2.5]" />
+                            <span className="text-emerald-600 font-black">Copied!</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-3.5 h-3.5" />
+                            <span>Copy</span>
+                          </>
+                        )}
                       </button>
 
                       <div className="flex items-center gap-1.5">

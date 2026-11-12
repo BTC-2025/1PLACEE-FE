@@ -137,26 +137,23 @@ export const QuickSideRail: React.FC = () => {
     <aside
       aria-label="Quick Tools Sidebar"
       style={{ backgroundColor: backgroundColor || "#ffffff" }}
-      className={`fixed right-0 top-[60px] bottom-0 w-[60px] sm:w-[62px] border-l ${
-        isDarkRail ? "border-slate-800" : "border-[#d0e5fb]"
-      } shadow-[-4px_0_15px_rgba(0,0,0,0.08)] z-50 flex flex-col items-center select-none transition-transform duration-300 ease-in-out ${
-        isSidebarOpen ? "translate-x-0" : "translate-x-full pointer-events-none"
-      }`}
+      className={`fixed right-0 top-[60px] bottom-0 w-[60px] sm:w-[62px] border-l ${isDarkRail ? "border-slate-800" : "border-[#d0e5fb]"
+        } shadow-[-4px_0_15px_rgba(0,0,0,0.08)] z-50 flex flex-col items-center select-none transition-transform duration-300 ease-in-out ${isSidebarOpen ? "translate-x-0" : "translate-x-full pointer-events-none"
+        }`}
     >
       {/* Top Section */}
       {!isEditPinsMode ? (
-        <div className="h-[44px] w-full flex flex-col items-center justify-between pt-1.5 shrink-0">
+        <div className="h-[44px] w-full flex items-center justify-center border-b border-gray-200/90 shrink-0">
           <button
             onClick={() => togglePanel("beta")}
             title="Beta Ecosystem Applications"
             aria-label="Beta Applications"
-            className={`w-10 h-10 rounded-xl border flex items-center justify-center p-1.5 shadow-2xs hover:scale-105 transition-all cursor-pointer ${
-              activePanel === "beta"
-                ? "border-[#1d4ed8] bg-[#eff6ff] ring-2 ring-[#93c5fd]"
-                : isDarkRail
+            className={`w-10 h-10 rounded-full border flex items-center justify-center p-0.5 shadow-2xs hover:scale-105 transition-all cursor-pointer ${activePanel === "beta"
+              ? "border-[#1d4ed8] bg-[#eff6ff] ring-2 ring-[#93c5fd]"
+              : isDarkRail
                 ? "border-slate-700 bg-slate-800/80"
                 : "border-[#cbe1f7] bg-[#f8fbff]"
-            }`}
+              }`}
           >
             <img
               src="/side-b-logo.png"
@@ -164,35 +161,17 @@ export const QuickSideRail: React.FC = () => {
               className="w-full h-full object-contain"
             />
           </button>
-          <div
-            className={`w-10 h-[1px] mb-[-9px] ${
-              isDarkRail ? "bg-slate-700" : "bg-gray-200/90"
-            }`}
-          />
         </div>
       ) : (
-        <div className="w-full flex flex-col items-center pt-3 pb-1 shrink-0">
-          <div className="flex flex-col items-center leading-none text-center">
+        <div className="h-[44px] w-full flex flex-col items-center justify-center border-b border-gray-200/90 shrink-0">
+          <div className="flex items-center gap-1 leading-none text-center">
             <span
-              className={`text-[11px] font-black tracking-wider ${
-                isDarkRail ? "text-slate-200" : "text-[#1e293b]"
-              }`}
+              className={`text-[10px] font-black tracking-wider ${isDarkRail ? "text-slate-200" : "text-[#1e293b]"
+                }`}
             >
-              EDIT
-            </span>
-            <span
-              className={`text-[11px] font-black tracking-wider mt-0.5 ${
-                isDarkRail ? "text-slate-200" : "text-[#1e293b]"
-              }`}
-            >
-              PINS
+              EDIT PINS
             </span>
           </div>
-          <div
-            className={`w-8 h-[1.5px] mt-2.5 ${
-              isDarkRail ? "bg-slate-700" : "bg-gray-200"
-            }`}
-          />
         </div>
       )}
 
@@ -215,11 +194,10 @@ export const QuickSideRail: React.FC = () => {
                       onClick={() => togglePanel(w.id)}
                       title={w.label}
                       aria-label={w.label}
-                      className={`relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer shadow-2xs ${
-                        isActive
-                          ? `${w.activeBg} border-2 ${w.activeBorder}`
-                          : `${w.defaultBg} border-2 border-transparent`
-                      }`}
+                      className={`relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer shadow-2xs ${isActive
+                        ? `${w.activeBg} border-2 ${w.activeBorder}`
+                        : `${w.defaultBg} border-2 border-transparent`
+                        }`}
                     >
                       {w.icon}
 
@@ -246,22 +224,20 @@ export const QuickSideRail: React.FC = () => {
                 onMouseLeave={() => setHoveredWidget(null)}
                 title="Edit Pins"
                 aria-label="Edit Pins"
-                className={`w-10 h-10 rounded-full border-2 border-dashed flex items-center justify-center transition-all duration-200 cursor-pointer hover:scale-105 ${
-                  isDarkRail
-                    ? "border-slate-600 text-slate-300 hover:border-blue-400 hover:text-blue-400 hover:bg-slate-800"
-                    : "border-[#52525b] hover:border-[#1559ac] text-[#52525b] hover:text-[#1559ac] hover:bg-[#f0f7ff]"
-                }`}
+                className={`w-10 h-10 rounded-full border-2 border-dashed flex items-center justify-center transition-all duration-200 cursor-pointer hover:scale-105 ${isDarkRail
+                  ? "border-slate-600 text-slate-300 hover:border-blue-400 hover:text-blue-400 hover:bg-slate-800"
+                  : "border-[#52525b] hover:border-[#1559ac] text-[#52525b] hover:text-[#1559ac] hover:bg-[#f0f7ff]"
+                  }`}
               >
                 <Plus className="w-5 h-5 stroke-[2.2]" />
               </button>
 
               {/* Tooltip 'Edit' */}
               <div
-                className={`absolute top-11.5 z-50 pointer-events-none transition-all duration-150 ${
-                  hoveredWidget === "edit"
-                    ? "opacity-100 translate-y-0"
-                    : "opacity-0 -translate-y-1"
-                }`}
+                className={`absolute top-11.5 z-50 pointer-events-none transition-all duration-150 ${hoveredWidget === "edit"
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 -translate-y-1"
+                  }`}
               >
                 <div className="relative bg-[#181d27] text-white text-[12px] font-bold px-3 py-1 rounded-xl shadow-lg flex items-center justify-center whitespace-nowrap">
                   <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#181d27] rotate-45" />
@@ -291,11 +267,10 @@ export const QuickSideRail: React.FC = () => {
                     type="button"
                     onClick={() => handleToggleWidgetPin(w.id)}
                     aria-label={`Toggle pin ${w.label}`}
-                    className={`relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-150 cursor-pointer ${
-                      isPinned
-                        ? `${w.editActiveBg} border-2 ${w.editBorder} shadow-2xs hover:scale-105`
-                        : "bg-transparent border-2 border-dashed border-[#cbd5e1] text-[#94a3b8] hover:border-gray-400 opacity-60 hover:opacity-100"
-                    }`}
+                    className={`relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-150 cursor-pointer ${isPinned
+                      ? `${w.editActiveBg} border-2 ${w.editBorder} shadow-2xs hover:scale-105`
+                      : "bg-transparent border-2 border-dashed border-[#cbd5e1] text-[#94a3b8] hover:border-gray-400 opacity-60 hover:opacity-100"
+                      }`}
                   >
                     {isPinned ? (
                       w.icon
@@ -308,11 +283,10 @@ export const QuickSideRail: React.FC = () => {
                     {/* Small Badge on Top-Right Corner */}
                     <span
                       title={isPinned ? "Click to Unpin" : "Click to Pin"}
-                      className={`absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center shadow-xs transition-transform duration-150 ${
-                        isPinned
-                          ? "bg-red-500 text-white ring-1 ring-white"
-                          : "bg-blue-500 text-white ring-1 ring-white"
-                      }`}
+                      className={`absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center shadow-xs transition-transform duration-150 ${isPinned
+                        ? "bg-red-500 text-white ring-1 ring-white"
+                        : "bg-blue-500 text-white ring-1 ring-white"
+                        }`}
                     >
                       {isPinned ? (
                         <PinOff className="w-2.5 h-2.5 stroke-[2.8]" />
@@ -350,11 +324,10 @@ export const QuickSideRail: React.FC = () => {
               </button>
 
               <div
-                className={`absolute top-11.5 z-50 pointer-events-none transition-all duration-150 ${
-                  hoveredWidget === "save"
-                    ? "opacity-100 translate-y-0"
-                    : "opacity-0 -translate-y-1"
-                }`}
+                className={`absolute top-11.5 z-50 pointer-events-none transition-all duration-150 ${hoveredWidget === "save"
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 -translate-y-1"
+                  }`}
               >
                 <div className="relative bg-[#181d27] text-white text-[12px] font-bold px-3 py-1 rounded-xl shadow-lg flex items-center justify-center whitespace-nowrap">
                   <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#181d27] rotate-45" />
@@ -368,9 +341,8 @@ export const QuickSideRail: React.FC = () => {
 
       {/* Bottom Section Divider */}
       <div
-        className={`w-8 h-[1px] my-2.5 ${
-          isDarkRail ? "bg-slate-700" : "bg-gray-200"
-        }`}
+        className={`w-8 h-[1px] my-2.5 ${isDarkRail ? "bg-slate-700" : "bg-gray-200"
+          }`}
       />
 
       {/* Bottom Utility Icons */}
@@ -380,13 +352,12 @@ export const QuickSideRail: React.FC = () => {
           onClick={() => togglePanel("customize")}
           title="Customize Bar (Colors, Order, Favorites)"
           aria-label="Customize"
-          className={`w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-200 cursor-pointer shadow-2xs hover:scale-105 ${
-            activePanel === "customize"
-              ? "border-[#1559ac] bg-blue-50 text-[#1559ac] ring-2 ring-blue-300"
-              : isDarkRail
+          className={`w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-200 cursor-pointer shadow-2xs hover:scale-105 ${activePanel === "customize"
+            ? "border-[#1559ac] bg-blue-50 text-[#1559ac] ring-2 ring-blue-300"
+            : isDarkRail
               ? "border-slate-700 text-slate-300 bg-slate-800/80 hover:bg-slate-700"
               : "border-gray-200 hover:border-[#1559ac] text-gray-500 hover:text-[#1559ac] bg-white hover:bg-gray-50"
-          }`}
+            }`}
         >
           <Pen className="w-4 h-4 stroke-[2]" />
         </button>
@@ -395,11 +366,10 @@ export const QuickSideRail: React.FC = () => {
         <button
           title="Filter Preferences"
           aria-label="Filter Preferences"
-          className={`w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-200 cursor-pointer shadow-2xs hover:scale-105 ${
-            isDarkRail
-              ? "border-slate-700 text-slate-300 bg-slate-800/80 hover:bg-slate-700"
-              : "border-gray-200 hover:border-[#1559ac] text-gray-500 hover:text-[#1559ac] bg-white hover:bg-gray-50"
-          }`}
+          className={`w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-200 cursor-pointer shadow-2xs hover:scale-105 ${isDarkRail
+            ? "border-slate-700 text-slate-300 bg-slate-800/80 hover:bg-slate-700"
+            : "border-gray-200 hover:border-[#1559ac] text-gray-500 hover:text-[#1559ac] bg-white hover:bg-gray-50"
+            }`}
         >
           <SlidersHorizontal className="w-4 h-4 stroke-[2]" />
         </button>
@@ -409,11 +379,10 @@ export const QuickSideRail: React.FC = () => {
           onClick={closeSidebar}
           title="Close Sidebar"
           aria-label="Close Sidebar"
-          className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors cursor-pointer mt-1 ${
-            isDarkRail
-              ? "text-slate-400 hover:text-white hover:bg-slate-800"
-              : "text-gray-400 hover:text-gray-700 hover:bg-gray-100"
-          }`}
+          className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors cursor-pointer mt-1 ${isDarkRail
+            ? "text-slate-400 hover:text-white hover:bg-slate-800"
+            : "text-gray-400 hover:text-gray-700 hover:bg-gray-100"
+            }`}
         >
           <X className="w-4 h-4 stroke-[2]" />
         </button>

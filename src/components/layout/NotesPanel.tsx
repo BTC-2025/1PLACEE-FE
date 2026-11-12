@@ -180,7 +180,7 @@ export const NotesPanel: React.FC = () => {
       className="fixed right-[60px] sm:right-[62px] top-[60px] bottom-0 w-[350px] sm:w-[360px] bg-white border-l border-[#d0e5fb] shadow-[-6px_0_20px_rgba(0,0,0,0.06)] z-[60] flex flex-col select-none overflow-hidden animate-in slide-in-from-right duration-200"
     >
       {/* 1. Header Bar: Notes title with Close Button */}
-      <div className="h-[54px] px-5 flex items-center justify-between border-b border-gray-100/90 shrink-0 bg-white">
+      <div className="h-[44px] px-5 flex items-center justify-between border-b border-gray-100/90 shrink-0 bg-white">
         <h2 className="text-[17px] font-black text-[#111827] tracking-tight">
           Notes
         </h2>
@@ -395,8 +395,8 @@ export const NotesPanel: React.FC = () => {
                   onClick={() => setFormPinned(!formPinned)}
                   title={formPinned ? "Pinned" : "Pin Note"}
                   className={`w-7 h-7 rounded-full flex items-center justify-center transition ${formPinned
-                      ? "text-blue-600 bg-blue-50"
-                      : "text-gray-400 hover:text-gray-700 hover:bg-gray-100"
+                    ? "text-blue-600 bg-blue-50"
+                    : "text-gray-400 hover:text-gray-700 hover:bg-gray-100"
                     }`}
                 >
                   <Pin
