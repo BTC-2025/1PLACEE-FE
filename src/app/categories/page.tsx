@@ -35,6 +35,7 @@ import { CATEGORY_SEO_ARTICLES } from "@/data/blinkitSeoData";
 import { GROCERY_SECTIONS } from "@/data/grocerySectionsData";
 import { FASHION_SECTIONS } from "@/data/fashionSectionsData";
 import { useCartStore } from "@/stores/cartStore";
+import { ALL_PRODUCTS } from "@/data/allProductsData";
 
 // Lucide icon helper mapping for left vertical rail matching Image 1 exactly
 const CATEGORY_ICONS: Record<string, React.ReactNode> = {
@@ -409,13 +410,20 @@ export default function CategoryMasterPage() {
                           </button>
 
                           {/* Product Image Box */}
-                          <div className="w-full aspect-square rounded-xl bg-white flex items-center justify-center p-1 overflow-hidden relative mb-2">
+                          <Link
+                            href={
+                              ALL_PRODUCTS[item.id]
+                                ? `/products/${item.id}`
+                                : `/products/${item.id}`
+                            }
+                            className="w-full aspect-square rounded-xl bg-white flex items-center justify-center p-1 overflow-hidden relative mb-2 cursor-pointer"
+                          >
                             <img
                               src={item.image}
                               alt={item.name}
                               className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300"
                             />
-                          </div>
+                          </Link>
 
                           {/* Weight + Veg Symbol + Add Button Row */}
                           <div className="flex items-center justify-between gap-1 mb-1.5">
@@ -456,9 +464,16 @@ export default function CategoryMasterPage() {
                           </div>
 
                           {/* Product Title */}
-                          <h3 className="text-xs text-gray-700 font-medium line-clamp-2 leading-tight mt-1">
+                          <Link
+                            href={
+                              ALL_PRODUCTS[item.id]
+                                ? `/products/${item.id}`
+                                : `/products/${item.id}`
+                            }
+                            className="text-xs text-gray-700 font-medium line-clamp-2 leading-tight mt-1 hover:text-[#0284c7] cursor-pointer"
+                          >
                             {item.name}
-                          </h3>
+                          </Link>
 
                           {/* Optional delivery tag if applicable */}
                           {item.deliveryTime && (

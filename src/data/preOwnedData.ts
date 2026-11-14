@@ -25,7 +25,7 @@ export const PRE_OWNED_MOBILES: PreOwnedProduct[] = [
     discount: "40.12% OFF",
     savedText: "You saved ₹ 891.03",
     image: "/banners/preowned-iphone13-white.png",
-    href: "/products/samsung-galaxy-s24",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "samsung-s22-ultra",
@@ -51,7 +51,7 @@ export const PRE_OWNED_MOBILES: PreOwnedProduct[] = [
     discount: "40.12% OFF",
     savedText: "You saved ₹ 1293.44",
     image: "/banners/preowned-iphone13-pro-gold.png",
-    href: "/products/oneplus-ce6-lite",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "iphone-13-pro-graphite",
@@ -64,7 +64,7 @@ export const PRE_OWNED_MOBILES: PreOwnedProduct[] = [
     discount: "40.12% OFF",
     savedText: "You saved ₹ 1293.44",
     image: "/banners/preowned-iphone13-pro-graphite.png",
-    href: "/products/oneplus-ce6-lite",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "iphone-15-pro-max",
@@ -77,7 +77,7 @@ export const PRE_OWNED_MOBILES: PreOwnedProduct[] = [
     discount: "40.12% OFF",
     savedText: "You saved ₹ 2347.35",
     image: "/banners/preowned-iphone15-pro-max.png",
-    href: "/products/oneplus-ce6-lite",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "iphone-12-64",
@@ -89,7 +89,7 @@ export const PRE_OWNED_MOBILES: PreOwnedProduct[] = [
     discount: "39.44% OFF",
     savedText: "You saved ₹ 749.00",
     image: "/banners/mob-iphone-12.jpg",
-    href: "/products/samsung-galaxy-s24",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "samsung-s21-plus",

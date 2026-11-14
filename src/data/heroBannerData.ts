@@ -17,7 +17,7 @@ export const HERO_BANNER_SLIDES: HeroBannerSlide[] = [
     id: "iphone-duo",
     image: "/banners/hero-iphone-duo.png",
     alt: "Apple iPhone Duo - A new way to iPhone",
-    href: "/products/oneplus-ce6-lite",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "star-babies",

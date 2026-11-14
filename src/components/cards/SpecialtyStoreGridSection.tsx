@@ -19,15 +19,20 @@ export const SpecialtyStoreGridSection: React.FC = () => {
             className="group flex flex-col items-center text-center cursor-pointer"
           >
             {/* Arched Top Image Tile matching Reference Screenshot */}
-            <div className="w-full aspect-[146/196] rounded-t-full rounded-b-3xl overflow-hidden shadow-2xs group-hover:shadow-md group-hover:scale-[1.03] transition-all duration-300 bg-gray-50 flex items-center justify-center">
+            <div className="w-full aspect-[130/156] flex items-center justify-center group-hover:scale-[1.05] transition-transform duration-300">
               <img
                 src={item.image}
                 alt={item.name}
                 loading="lazy"
                 decoding="async"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain"
               />
             </div>
+
+            {/* Store Name Below */}
+            <span className="mt-2 text-[13px] sm:text-[14px] font-bold text-gray-800 leading-tight group-hover:text-blue-600 transition-colors">
+              {item.name}
+            </span>
           </Link>
         ))}
       </div>

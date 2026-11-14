@@ -21,13 +21,8 @@ const WatchesSection = dynamic(
   { ssr: true }
 );
 
-const CookwareSection = dynamic(
-  () => import("@/components/cards/CookwareSection").then((m) => m.CookwareSection),
-  { ssr: true }
-);
-
-const SpecialtyStoreGridSection = dynamic(
-  () => import("@/components/cards/SpecialtyStoreGridSection").then((m) => m.SpecialtyStoreGridSection),
+const MaximizeSavingsSection = dynamic(
+  () => import("@/components/cards/MaximizeSavingsSection").then((m) => m.MaximizeSavingsSection),
   { ssr: true }
 );
 
@@ -53,16 +48,6 @@ const OutdoorPromoBannerCarousel = dynamic(
 
 const PerfumesSection = dynamic(
   () => import("@/components/cards/PerfumesSection").then((m) => m.PerfumesSection),
-  { ssr: true }
-);
-
-const FeedingSection = dynamic(
-  () => import("@/components/cards/FeedingSection").then((m) => m.FeedingSection),
-  { ssr: true }
-);
-
-const BabyGearTravelSection = dynamic(
-  () => import("@/components/cards/BabyGearTravelSection").then((m) => m.BabyGearTravelSection),
   { ssr: true }
 );
 
@@ -111,11 +96,8 @@ export default function Home() {
         {/* Watches Section */}
         <WatchesSection />
 
-        {/* Cookware Section */}
-        <CookwareSection />
-
-        {/* 7 Specialty Store Arched Categories (The Noice Store, Sports & Fitness, Gourmet Store, Travel, Puja, Pet, Book Store) */}
-        <SpecialtyStoreGridSection />
+        {/* Maximize Your Savings Scroll Carousel Section */}
+        <MaximizeSavingsSection />
 
         {/* Promotional Wide Banner Carousel */}
         <PromotionalBannerCarousel />
@@ -131,12 +113,6 @@ export default function Home() {
 
         {/* Perfumes Section */}
         <PerfumesSection />
-
-        {/* Feeding Section */}
-        <FeedingSection />
-
-        {/* Baby Gear & Travel Section */}
-        <BabyGearTravelSection />
 
         {/* Lifestyle, Sunscreen & Baby Transit Promo Carousel */}
         <LifestylePromoBannerCarousel />

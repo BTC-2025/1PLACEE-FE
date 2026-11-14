@@ -21,7 +21,7 @@ export const MOBILES_PRODUCTS: MobileProduct[] = [
     discount: "23.08% OFF",
     savedAmount: "You saved ₹2077",
     image: "/banners/mobiles-iphone18-pro-burgundy.png",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "iphone18-pro-glacier",
@@ -31,7 +31,7 @@ export const MOBILES_PRODUCTS: MobileProduct[] = [
     discount: "23.08% OFF",
     savedAmount: "You saved ₹1800",
     image: "/banners/mobiles-iphone18-pro-glacier.png",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "iphone18-promax-burgundy",
@@ -41,7 +41,7 @@ export const MOBILES_PRODUCTS: MobileProduct[] = [
     discount: "23.07% OFF",
     savedAmount: "You saved ₹2222",
     image: "/banners/mobiles-iphone18-promax-burgundy.png",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "iphone16-promax-titanium",
@@ -54,7 +54,7 @@ export const MOBILES_PRODUCTS: MobileProduct[] = [
     savedAmount: "You saved ₹1450",
     badge: "Best Seller",
     image: "/banners/mobiles-iphone16-promax-titanium.png",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "iphone17-promax-orange",
@@ -67,7 +67,7 @@ export const MOBILES_PRODUCTS: MobileProduct[] = [
     savedAmount: "You saved ₹1470",
     badge: "Best Seller",
     image: "/banners/mobiles-iphone17-promax-orange.png",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "galaxy-s24-ultra",
@@ -79,7 +79,7 @@ export const MOBILES_PRODUCTS: MobileProduct[] = [
     discount: "23.19% OFF",
     savedAmount: "You saved ₹1600",
     image: "/banners/mobiles-s24-ultra.jpg",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/samsung-galaxy-s24",
   },
   {
     id: "iphone15-pro",
@@ -91,7 +91,7 @@ export const MOBILES_PRODUCTS: MobileProduct[] = [
     discount: "23.64% OFF",
     savedAmount: "You saved ₹1300",
     image: "/banners/mobiles-iphone15-pro.jpg",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "pixel-8-pro",
@@ -103,6 +103,6 @@ export const MOBILES_PRODUCTS: MobileProduct[] = [
     discount: "24% OFF",
     savedAmount: "You saved ₹1200",
     image: "/banners/mobiles-pixel-8-pro.jpg",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
 ];

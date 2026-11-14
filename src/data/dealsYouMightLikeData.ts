@@ -98,6 +98,6 @@ export const LOWEST_IN_THE_MARKET: TechDealItem[] = [
     originalPrice: "₹6,369",
     image: "/banners/lowest-iphone17.jpg",
     bgColor: "bg-[#f5e4d7]",
-    href: "/products/oneplus-ce6-lite",
+    href: "/products/apple-iphone-18-pro",
   },
 ];

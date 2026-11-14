@@ -36,7 +36,7 @@ export const MobilePhonesSection: React.FC = () => {
         
         {/* 1. Left Feature Banner: Flagship Mobile Phones Showcase (iPhone Burgundy & Galaxy S24) */}
         <Link
-          href="/categories"
+          href="/products/apple-iphone-18-pro"
           className="lg:w-[230px] xl:w-[250px] shrink-0 rounded-2xl overflow-hidden group shadow-xs hover:shadow-md transition-all duration-300 border border-purple-100 bg-[#f6f2fb] flex items-center justify-center cursor-pointer min-h-[220px] lg:min-h-full"
         >
           <img loading="lazy" decoding="async"

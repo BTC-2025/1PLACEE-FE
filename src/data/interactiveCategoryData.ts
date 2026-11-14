@@ -56,20 +56,6 @@ export const INTERACTIVE_CATEGORY_ROWS: InteractiveCategoryRow[] = [
     ],
   },
   {
-    id: "health-nutrition",
-    title: "Health & nutrition",
-    viewAllHref: "/categories?cat=health-nutrition",
-    items: [
-      { id: "hn-1", name: "Weighing Scales", image: "/categories/items/hn-1.png", href: "/categories?cat=weighing-scales" },
-      { id: "hn-2", name: "Massage & Relaxation", image: "/categories/items/hn-2.png", href: "/categories?cat=massage-relaxation" },
-      { id: "hn-3", name: "Family Planning", image: "/categories/items/hn-3.png", href: "/categories?cat=family-planning" },
-      { id: "hn-4", name: "Vitamins & Nutrition", image: "/categories/items/hn-4.png", href: "/categories?cat=vitamins-nutrition" },
-      { id: "hn-5", name: "Health Monitors", image: "/categories/items/hn-5.png", href: "/categories?cat=health-monitors" },
-      { id: "hn-6", name: "Mobility Aids", image: "/categories/items/hn-6.png", href: "/categories?cat=mobility-aids" },
-      { id: "hn-7", name: "Braces & Splints", image: "/categories/items/hn-7.png", href: "/categories?cat=braces-splints" },
-    ],
-  },
-  {
     id: "grocery",
     title: "Grocery",
     viewAllHref: "/categories?cat=grocery",
