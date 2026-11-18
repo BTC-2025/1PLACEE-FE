@@ -22,7 +22,7 @@ export const PERFUMES_PRODUCTS: PerfumeProduct[] = [
     savedAmount: "You saved ₹161",
     isGenuine: true,
     image: "/banners/perfumes-versace-eros.png",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "french-avenue",
@@ -35,7 +35,7 @@ export const PERFUMES_PRODUCTS: PerfumeProduct[] = [
     savedAmount: "You saved ₹72",
     isGenuine: true,
     image: "/banners/perfumes-french-avenue.png",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "armani-acqua",
@@ -46,7 +46,7 @@ export const PERFUMES_PRODUCTS: PerfumeProduct[] = [
     savedAmount: "You saved ₹131",
     isGenuine: true,
     image: "/banners/perfumes-armani-acqua.png",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "amouage-purpose",
@@ -57,7 +57,7 @@ export const PERFUMES_PRODUCTS: PerfumeProduct[] = [
     savedAmount: "You saved ₹770",
     isGenuine: true,
     image: "/banners/perfumes-amouage-purpose.png",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "givenchy-linterdit",
@@ -68,7 +68,7 @@ export const PERFUMES_PRODUCTS: PerfumeProduct[] = [
     savedAmount: "You saved ₹125",
     isGenuine: true,
     image: "/banners/perfumes-givenchy-linterdit.png",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "dior-sauvage",
@@ -81,7 +81,7 @@ export const PERFUMES_PRODUCTS: PerfumeProduct[] = [
     savedAmount: "You saved ₹400",
     isGenuine: true,
     image: "/banners/perfumes-dior-sauvage.jpg",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "chanel-coco",
@@ -94,7 +94,7 @@ export const PERFUMES_PRODUCTS: PerfumeProduct[] = [
     savedAmount: "You saved ₹400",
     isGenuine: true,
     image: "/banners/perfumes-chanel-coco.jpg",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "tom-ford-ombre",
@@ -107,6 +107,6 @@ export const PERFUMES_PRODUCTS: PerfumeProduct[] = [
     savedAmount: "You saved ₹400",
     isGenuine: true,
     image: "/banners/perfumes-tom-ford.jpg",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
 ];

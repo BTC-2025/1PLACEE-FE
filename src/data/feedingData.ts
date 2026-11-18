@@ -24,7 +24,7 @@ export const FEEDING_PRODUCTS: FeedingProduct[] = [
     savedAmount: "You saved ₹126",
     badge: "Best Seller",
     image: "/banners/feeding-doopser-wireless.png",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "doopser-wearable",
@@ -37,7 +37,7 @@ export const FEEDING_PRODUCTS: FeedingProduct[] = [
     savedAmount: "You saved ₹33",
     badge: "Best Seller",
     image: "/banners/feeding-doopser-wearable.png",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "starbabies-pads",
@@ -48,7 +48,7 @@ export const FEEDING_PRODUCTS: FeedingProduct[] = [
     savedAmount: "You saved ₹102",
     badge: "Exclusive Price",
     image: "/banners/feeding-starbabies-pads.png",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "feeding-paw-set",
@@ -58,7 +58,7 @@ export const FEEDING_PRODUCTS: FeedingProduct[] = [
     discount: "21.57% OFF",
     savedAmount: "You saved ₹22",
     image: "/banners/feeding-paw-set.png",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "silicone-plate",
@@ -68,7 +68,7 @@ export const FEEDING_PRODUCTS: FeedingProduct[] = [
     discount: "22.02% OFF",
     savedAmount: "You saved ₹24",
     image: "/banners/feeding-silicone-plate.png",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "baby-bottle",
@@ -81,7 +81,7 @@ export const FEEDING_PRODUCTS: FeedingProduct[] = [
     savedAmount: "You saved ₹150",
     badge: "Best Seller",
     image: "/banners/feeding-baby-bottle.jpg",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "baby-bowl",
@@ -93,7 +93,7 @@ export const FEEDING_PRODUCTS: FeedingProduct[] = [
     discount: "32.16% OFF",
     savedAmount: "You saved ₹64",
     image: "/banners/feeding-baby-bowl.jpg",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "baby-utensils",
@@ -105,6 +105,6 @@ export const FEEDING_PRODUCTS: FeedingProduct[] = [
     discount: "34% OFF",
     savedAmount: "You saved ₹51",
     image: "/banners/feeding-baby-utensils.jpg",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
 ];

@@ -22,7 +22,7 @@ export const WATCHES_PRODUCTS: WatchProduct[] = [
     discount: "20.63% OFF",
     savedText: "You saved ₹ 72",
     image: "/banners/watch-casio-diver.png",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "citizen-tsuyosa",
@@ -34,7 +34,7 @@ export const WATCHES_PRODUCTS: WatchProduct[] = [
     discount: "30.57% OFF",
     savedText: "You saved ₹ 550",
     image: "/banners/watch-citizen-tsuyosa.png",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "movado-museum-classic",
@@ -46,7 +46,7 @@ export const WATCHES_PRODUCTS: WatchProduct[] = [
     discount: "28.01% OFF",
     savedText: "You saved ₹ 1400",
     image: "/banners/watch-movado-museum.png",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "police-neist-chronograph",
@@ -58,7 +58,7 @@ export const WATCHES_PRODUCTS: WatchProduct[] = [
     discount: "34.81% OFF",
     savedText: "You saved ₹ 400",
     image: "/banners/watch-police-neist.png",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "fossil-everett-automatic",
@@ -70,7 +70,7 @@ export const WATCHES_PRODUCTS: WatchProduct[] = [
     discount: "34.58% OFF",
     savedText: "You saved ₹ 380",
     image: "/banners/watch-fossil-everett.png",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "seiko-chronograph-black",
@@ -82,7 +82,7 @@ export const WATCHES_PRODUCTS: WatchProduct[] = [
     discount: "29.97% OFF",
     savedText: "You saved ₹ 809",
     image: "/banners/watch-seiko-chrono.jpg",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "timex-expedition-scout",
@@ -94,7 +94,7 @@ export const WATCHES_PRODUCTS: WatchProduct[] = [
     discount: "30.76% OFF",
     savedText: "You saved ₹ 200",
     image: "/banners/watch-timex-expedition.jpg",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "tissot-prx-powermatic",
@@ -106,6 +106,6 @@ export const WATCHES_PRODUCTS: WatchProduct[] = [
     discount: "27.58% OFF",
     savedText: "You saved ₹ 1600",
     image: "/banners/watch-tissot-prx.jpg",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
 ];

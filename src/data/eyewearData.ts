@@ -22,7 +22,7 @@ export const EYEWEAR_PRODUCTS: EyewearProduct[] = [
     discount: "51.01% OFF",
     savedAmount: "You saved ₹806",
     image: "/banners/eyewear-tommy-women.png",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "prada-sps06y",
@@ -34,7 +34,7 @@ export const EYEWEAR_PRODUCTS: EyewearProduct[] = [
     discount: "50.98% OFF",
     savedAmount: "You saved ₹933",
     image: "/banners/eyewear-prada-sps06y.png",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "lacoste-l6071s",
@@ -46,7 +46,7 @@ export const EYEWEAR_PRODUCTS: EyewearProduct[] = [
     discount: "51.01% OFF",
     savedAmount: "You saved ₹704",
     image: "/banners/eyewear-lacoste-l6071s.png",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "prada-sps01z",
@@ -58,7 +58,7 @@ export const EYEWEAR_PRODUCTS: EyewearProduct[] = [
     discount: "50.98% OFF",
     savedAmount: "You saved ₹1,147",
     image: "/banners/eyewear-prada-sps01z.png",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "tommy-unisex",
@@ -70,7 +70,7 @@ export const EYEWEAR_PRODUCTS: EyewearProduct[] = [
     discount: "51% OFF",
     savedAmount: "You saved ₹510",
     image: "/banners/eyewear-tommy-unisex.png",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "rayban-aviator",
@@ -82,7 +82,7 @@ export const EYEWEAR_PRODUCTS: EyewearProduct[] = [
     discount: "50% OFF",
     savedAmount: "You saved ₹1,250",
     image: "/banners/eyewear-rayban-aviator.jpg",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "wayfarer-classic",
@@ -94,7 +94,7 @@ export const EYEWEAR_PRODUCTS: EyewearProduct[] = [
     discount: "50.04% OFF",
     savedAmount: "You saved ₹600",
     image: "/banners/eyewear-wayfarer-classic.jpg",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "luxury-polarized",
@@ -106,6 +106,6 @@ export const EYEWEAR_PRODUCTS: EyewearProduct[] = [
     discount: "50.03% OFF",
     savedAmount: "You saved ₹850",
     image: "/banners/eyewear-luxury-polarized.jpg",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
 ];

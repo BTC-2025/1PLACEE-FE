@@ -18,7 +18,7 @@ export const TOP_PICKS_PRODUCTS: TopPickProduct[] = [
     discount: "40.71% OFF",
     savedText: "You saved ₹ 171",
     image: "/banners/fissman-stockpot.png",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "fissman-pan",
@@ -28,7 +28,7 @@ export const TOP_PICKS_PRODUCTS: TopPickProduct[] = [
     discount: "47.73% OFF",
     savedText: "You saved ₹ 105",
     image: "/banners/fissman-pan.png",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "fissman-flask",
@@ -38,7 +38,7 @@ export const TOP_PICKS_PRODUCTS: TopPickProduct[] = [
     discount: "50.41% OFF",
     savedText: "You saved ₹ 61",
     image: "/banners/fissman-flask.png",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "fissman-kettle",
@@ -48,7 +48,7 @@ export const TOP_PICKS_PRODUCTS: TopPickProduct[] = [
     discount: "32.13% OFF",
     savedText: "You saved ₹ 71",
     image: "/banners/fissman-kettle.png",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "fissman-knives",
@@ -58,7 +58,7 @@ export const TOP_PICKS_PRODUCTS: TopPickProduct[] = [
     discount: "49.40% OFF",
     savedText: "You saved ₹ 205",
     image: "/banners/fissman-knives.png",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "fissman-casserole",
@@ -68,7 +68,7 @@ export const TOP_PICKS_PRODUCTS: TopPickProduct[] = [
     discount: "45.58% OFF",
     savedText: "You saved ₹ 155",
     image: "/banners/fissman-casserole.jpg",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "fissman-grill-pan",
@@ -78,7 +78,7 @@ export const TOP_PICKS_PRODUCTS: TopPickProduct[] = [
     discount: "46.93% OFF",
     savedText: "You saved ₹ 115",
     image: "/banners/fissman-grill.jpg",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "fissman-tea-pot",
@@ -88,6 +88,6 @@ export const TOP_PICKS_PRODUCTS: TopPickProduct[] = [
     discount: "46.87% OFF",
     savedText: "You saved ₹ 75",
     image: "/banners/fissman-teapot.jpg",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
 ];

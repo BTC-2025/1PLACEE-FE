@@ -23,7 +23,7 @@ export const OUTDOOR_PRODUCTS: OutdoorProduct[] = [
     discount: "32.70% OFF",
     savedAmount: "You saved ₹513",
     image: "/banners/outdoor-vaux-joggers.png",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "vaux-max16",
@@ -35,7 +35,7 @@ export const OUTDOOR_PRODUCTS: OutdoorProduct[] = [
     discount: "32.49% OFF",
     savedAmount: "You saved ₹129",
     image: "/banners/outdoor-vaux-max16.png",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "vaux-royal16",
@@ -47,7 +47,7 @@ export const OUTDOOR_PRODUCTS: OutdoorProduct[] = [
     discount: "32.41% OFF",
     savedAmount: "You saved ₹152",
     image: "/banners/outdoor-vaux-royal16.png",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "vaux-starlette",
@@ -59,7 +59,7 @@ export const OUTDOOR_PRODUCTS: OutdoorProduct[] = [
     discount: "32.41% OFF",
     savedAmount: "You saved ₹117",
     image: "/banners/outdoor-vaux-starlette.png",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "mogoo-florida",
@@ -71,7 +71,7 @@ export const OUTDOOR_PRODUCTS: OutdoorProduct[] = [
     discount: "32.62% OFF",
     savedAmount: "You saved ₹258",
     image: "/banners/outdoor-mogoo-florida.png",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "outdoor-road-bike",
@@ -83,7 +83,7 @@ export const OUTDOOR_PRODUCTS: OutdoorProduct[] = [
     discount: "34% OFF",
     isExpressDelivery: true,
     image: "/banners/outdoor-road-bike.jpg",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "outdoor-fixie-bike",
@@ -95,7 +95,7 @@ export const OUTDOOR_PRODUCTS: OutdoorProduct[] = [
     discount: "30.79% OFF",
     savedAmount: "You saved ₹400",
     image: "/banners/outdoor-fixie-bike.jpg",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
   {
     id: "outdoor-hybrid-bike",
@@ -107,6 +107,6 @@ export const OUTDOOR_PRODUCTS: OutdoorProduct[] = [
     discount: "29.43% OFF",
     isExpressDelivery: true,
     image: "/banners/outdoor-hybrid-bike.jpg",
-    href: "/products/kotty-mens-jeans",
+    href: "/products/apple-iphone-18-pro",
   },
 ];
