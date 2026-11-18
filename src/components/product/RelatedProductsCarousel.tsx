@@ -2,7 +2,7 @@
 
 import React, { useRef } from "react";
 import Link from "next/link";
-import { Star, ChevronLeft, ChevronRight } from "lucide-react";
+import { Star, ChevronLeft, ChevronRight, CheckCircle2 } from "lucide-react";
 
 interface SimilarItem {
   id: string;
@@ -13,147 +13,161 @@ interface SimilarItem {
   image: string;
   rating: number;
   reviewsCount: number;
+  specs: string;
 }
 
-const SIMILAR_PRODUCTS: SimilarItem[] = [
+const SIMILAR_FLAGSHIPS: SimilarItem[] = [
   {
-    id: "sp-1",
-    title: "Ben Martin Men's Relaxed Fit Light Blue Jeans",
-    price: 499,
-    originalPrice: 2499,
-    discount: "80% off",
-    image: "https://images.unsplash.com/photo-1542272604-780c96856592?auto=format&fit=crop&w=300&q=80",
-    rating: 3.8,
-    reviewsCount: 1420,
+    id: "iphone-18-pro-max",
+    title: "Apple iPhone 18 Pro Max 512GB Desert Titanium 5G",
+    price: 89999,
+    originalPrice: 104999,
+    discount: "14% off",
+    image: "/banners/noon-thumb-1.png",
+    rating: 4.9,
+    reviewsCount: 4210,
+    specs: "6.9-inch OLED · A18 Pro · 48MP Triple",
   },
   {
-    id: "sp-2",
-    title: "Symbol Premium Men's Casual Chinos Trousers",
-    price: 649,
-    originalPrice: 1999,
-    discount: "68% off",
-    image: "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&w=300&q=80",
-    rating: 4.1,
-    reviewsCount: 890,
+    id: "galaxy-s25-ultra",
+    title: "Samsung Galaxy S25 Ultra 5G AI Smartphone (512GB Titanium Grey)",
+    price: 84999,
+    originalPrice: 99999,
+    discount: "15% off",
+    image: "/banners/mobiles-pixel-8-pro.jpg",
+    rating: 4.8,
+    reviewsCount: 3120,
+    specs: "200MP Quad · Snapdragon 8 Elite · S-Pen",
   },
   {
-    id: "sp-3",
-    title: "Levi's Men's 511 Slim Fit Stretchable Jeans",
-    price: 1299,
-    originalPrice: 2999,
-    discount: "57% off",
-    image: "https://images.unsplash.com/photo-1552902865-b72c031ac5ea?auto=format&fit=crop&w=300&q=80",
-    rating: 4.3,
-    reviewsCount: 3200,
+    id: "iphone-18-pro-glacier",
+    title: "Apple iPhone 18 Pro 256GB Glacier Silver - 6.3-Inch Super Retina",
+    price: 76999,
+    originalPrice: 89999,
+    discount: "14% off",
+    image: "/banners/mobiles-iphone18-pro-glacier.png",
+    rating: 4.9,
+    reviewsCount: 2840,
+    specs: "6.3-inch OLED · 120Hz ProMotion · Titanium",
   },
   {
-    id: "sp-4",
-    title: "Flying Machine Men's Solid Cotton Trousers",
-    price: 599,
-    originalPrice: 1799,
-    discount: "67% off",
-    image: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=300&q=80",
-    rating: 3.9,
-    reviewsCount: 654,
+    id: "pixel-9-pro-xl",
+    title: "Google Pixel 9 Pro XL 5G AI Smartphone (256GB Porcelain)",
+    price: 72999,
+    originalPrice: 84999,
+    discount: "14% off",
+    image: "/banners/mobiles-iphone17-promax-orange.png",
+    rating: 4.7,
+    reviewsCount: 1950,
+    specs: "Google Tensor G4 · Gemini AI · 50MP Triple",
   },
   {
-    id: "sp-5",
-    title: "U.S. Polo Assn. Men's Straight Fit Denim Jeans",
-    price: 899,
-    originalPrice: 2599,
-    discount: "65% off",
-    image: "https://images.unsplash.com/photo-1542272604-780c96856592?auto=format&fit=crop&w=300&q=80",
-    rating: 4.2,
-    reviewsCount: 2150,
+    id: "iphone-18-burgundy",
+    title: "Apple iPhone 18 Pro 512GB Deep Burgundy 5G Edition",
+    price: 82999,
+    originalPrice: 96999,
+    discount: "14% off",
+    image: "/banners/mobiles-iphone18-pro-burgundy.png",
+    rating: 4.9,
+    reviewsCount: 1680,
+    specs: "Apple Intelligence · 4676mAh · 5G Dual SIM",
   },
   {
-    id: "sp-6",
-    title: "Wrangler Men's Regular Fit Casual Trousers",
-    price: 749,
-    originalPrice: 2199,
-    discount: "66% off",
-    image: "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&w=300&q=80",
-    rating: 4.0,
-    reviewsCount: 980,
+    id: "iphone-16-pro-max",
+    title: "Apple iPhone 16 Pro Max 256GB Natural Titanium 5G",
+    price: 71999,
+    originalPrice: 84999,
+    discount: "15% off",
+    image: "/banners/mobiles-iphone16-promax-titanium.png",
+    rating: 4.8,
+    reviewsCount: 6540,
+    specs: "6.9-inch OLED · A18 Pro · 48MP Triple",
   },
 ];
 
-export const RelatedProductsCarousel: React.FC<{ title: string }> = ({ title }) => {
+export const RelatedProductsCarousel: React.FC<{ title?: string }> = ({
+  title = "Similar Flagship Smartphones",
+}) => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const scroll = (dir: "left" | "right") => {
-    if (scrollRef.current) {
-      const offset = dir === "left" ? -400 : 400;
-      scrollRef.current.scrollBy({ left: offset, behavior: "smooth" });
-    }
+  const scroll = (direction: "left" | "right") => {
+    if (!scrollRef.current) return;
+    const scrollAmount = 320;
+    scrollRef.current.scrollBy({
+      left: direction === "left" ? -scrollAmount : scrollAmount,
+      behavior: "smooth",
+    });
   };
 
   return (
-    <div className="bg-white border border-[#e7e7e7] rounded-2xl p-4 sm:p-6 relative group shadow-xs">
-      <div className="flex items-center justify-between mb-3 px-1">
-        <h3 className="text-lg font-bold text-gray-900">{title}</h3>
-        <span className="text-xs text-[#007185] hover:underline cursor-pointer">Page 1 of 4</span>
+    <div className="w-full bg-white border border-[#e7e7e7] rounded-2xl p-5 sm:p-6 space-y-4 shadow-xs">
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="text-base sm:text-lg font-bold text-gray-900">{title}</h3>
+          <p className="text-xs text-slate-500">Compare with other high-performance flagship devices</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => scroll("left")}
+            aria-label="Previous"
+            className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-100 transition cursor-pointer"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => scroll("right")}
+            aria-label="Next"
+            className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-100 transition cursor-pointer"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
       </div>
-
-      <button
-        onClick={() => scroll("left")}
-        aria-label="Scroll left"
-        className="absolute left-1 top-1/2 -translate-y-1/2 z-10 w-9 h-20 bg-white/95 hover:bg-white border border-gray-300 shadow-md flex items-center justify-center rounded-r cursor-pointer text-gray-800"
-      >
-        <ChevronLeft className="w-6 h-6 stroke-[2.5]" />
-      </button>
 
       <div
         ref={scrollRef}
-        className="flex gap-4 overflow-x-auto scrollbar-none scroll-smooth pb-2 px-1"
+        className="flex items-stretch gap-4 overflow-x-auto scrollbar-none scroll-smooth pb-2"
+        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
-        {SIMILAR_PRODUCTS.map((prod) => (
-          <div
+        {SIMILAR_FLAGSHIPS.map((prod) => (
+          <Link
             key={prod.id}
-            className="w-48 shrink-0 bg-white border border-gray-200 rounded-xl p-3 flex flex-col justify-between hover:shadow-md transition cursor-pointer"
+            href="/products/apple-iphone-18-pro"
+            className="flex-shrink-0 w-[210px] sm:w-[230px] border border-gray-200 rounded-xl p-3 flex flex-col justify-between hover:border-blue-500 hover:shadow-md transition-all group cursor-pointer bg-white"
           >
             <div>
-              <div className="w-full h-44 bg-gray-50 rounded-lg overflow-hidden flex items-center justify-center p-2 mb-2">
+              <div className="w-full h-36 bg-slate-50 rounded-lg p-2 flex items-center justify-center overflow-hidden mb-2.5">
                 <img
                   src={prod.image}
                   alt={prod.title}
-                  className="max-h-full max-w-full object-contain"
+                  className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300"
+                  loading="lazy"
                 />
               </div>
 
-              <h4 className="text-xs font-semibold text-gray-900 line-clamp-2 hover:text-[#007185] leading-snug">
+              <div className="flex items-center gap-1.5 mb-1">
+                <span className="flex items-center bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded text-[10px] font-bold border border-emerald-200">
+                  {prod.rating} <Star className="w-2.5 h-2.5 fill-emerald-600 stroke-none ml-0.5" />
+                </span>
+                <span className="text-[10px] text-gray-400">({prod.reviewsCount})</span>
+              </div>
+
+              <h4 className="text-xs font-semibold text-gray-900 line-clamp-2 leading-tight group-hover:text-blue-600 transition-colors">
                 {prod.title}
               </h4>
-
-              <div className="flex items-center gap-1 mt-1 text-[11px]">
-                <div className="flex items-center text-amber-500">
-                  <Star className="w-3 h-3 fill-amber-400 stroke-amber-400" />
-                  <span className="ml-0.5 font-bold text-gray-800">{prod.rating}</span>
-                </div>
-                <span className="text-gray-400">({prod.reviewsCount})</span>
-              </div>
+              <p className="text-[10px] text-slate-500 line-clamp-1 mt-1 font-medium">{prod.specs}</p>
             </div>
 
-            <div className="mt-2 pt-1 border-t border-gray-100">
+            <div className="mt-3 pt-2 border-t border-gray-100">
               <div className="flex items-baseline gap-1.5">
-                <span className="text-sm font-black text-gray-950">₹{prod.price}</span>
-                <span className="text-[11px] text-gray-400 line-through">₹{prod.originalPrice}</span>
+                <span className="text-sm font-black text-gray-950">₹{prod.price.toLocaleString("en-IN")}</span>
+                <span className="text-[10px] text-gray-400 line-through">₹{prod.originalPrice.toLocaleString("en-IN")}</span>
               </div>
-              <span className="bg-[#cc0c39] text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded-xs mt-1 inline-block">
-                {prod.discount}
-              </span>
+              <span className="text-[10px] font-bold text-emerald-600">{prod.discount}</span>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
-
-      <button
-        onClick={() => scroll("right")}
-        aria-label="Scroll right"
-        className="absolute right-1 top-1/2 -translate-y-1/2 z-10 w-9 h-20 bg-white/95 hover:bg-white border border-gray-300 shadow-md flex items-center justify-center rounded-l cursor-pointer text-gray-800"
-      >
-        <ChevronRight className="w-6 h-6 stroke-[2.5]" />
-      </button>
     </div>
   );
 };
