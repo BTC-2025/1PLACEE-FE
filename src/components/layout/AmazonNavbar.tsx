@@ -52,12 +52,15 @@ export const AmazonNavbar: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const totalItems = useCartStore((state) => state.totalItems());
+  const items = useCartStore((state) => state.items);
   const toggleCart = useCartStore((state) => state.toggleCart);
-  const totalWishlistCount = useWishlistStore((state) => state.totalWishlistItems());
+  const wishlistItems = useWishlistStore((state) => state.items);
   const { isSidebarOpen: isQuickBarOpen, toggleSidebar: toggleQuickSidebar, activePanel } = useQuickSidebarStore();
   const subnavScrollRef = useRef<HTMLDivElement>(null);
   const searchContainerRef = useRef<HTMLDivElement>(null);
+
+  const totalItems = mounted ? items.reduce((total, item) => total + item.quantity, 0) : 0;
+  const totalWishlistCount = mounted ? wishlistItems.length : 0;
 
   useEffect(() => {
     setMounted(true);
