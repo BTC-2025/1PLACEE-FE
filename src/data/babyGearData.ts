@@ -20,7 +20,7 @@ export const BABYGEAR_PRODUCTS: BabyGearProduct[] = [
     discount: "43.14% OFF",
     savedAmount: "You saved ₹280",
     image: "/banners/babygear-neobreez-stroller.png",
-    href: "/products/apple-iphone-18-pro",
+    href: "/products/neobreez-stroller",
   },
   {
     id: "littleangel-walker",
@@ -30,7 +30,7 @@ export const BABYGEAR_PRODUCTS: BabyGearProduct[] = [
     discount: "20% OFF",
     savedAmount: "You saved ₹67.46",
     image: "/banners/babygear-littleangel-walker.png",
-    href: "/products/apple-iphone-18-pro",
+    href: "/products/littleangel-walker",
   },
   {
     id: "ingenuity-stroller",
@@ -42,7 +42,7 @@ export const BABYGEAR_PRODUCTS: BabyGearProduct[] = [
     discount: "34.82% OFF",
     savedAmount: "You saved ₹352",
     image: "/banners/babygear-ingenuity-stroller.png",
-    href: "/products/apple-iphone-18-pro",
+    href: "/products/ingenuity-stroller",
   },
   {
     id: "diaper-backpack",
@@ -52,7 +52,7 @@ export const BABYGEAR_PRODUCTS: BabyGearProduct[] = [
     discount: "26.46% OFF",
     savedAmount: "You saved ₹50",
     image: "/banners/babygear-diaper-backpack.png",
-    href: "/products/apple-iphone-18-pro",
+    href: "/products/diaper-backpack",
   },
   {
     id: "baby-carrier",
@@ -62,7 +62,7 @@ export const BABYGEAR_PRODUCTS: BabyGearProduct[] = [
     discount: "40.16% OFF",
     savedAmount: "You saved ₹100",
     image: "/banners/babygear-baby-carrier.png",
-    href: "/products/apple-iphone-18-pro",
+    href: "/products/baby-carrier",
   },
   {
     id: "baby-carseat",
@@ -74,7 +74,7 @@ export const BABYGEAR_PRODUCTS: BabyGearProduct[] = [
     discount: "30.79% OFF",
     savedAmount: "You saved ₹400",
     image: "/banners/babygear-baby-carseat.jpg",
-    href: "/products/apple-iphone-18-pro",
+    href: "/products/baby-carseat",
   },
   {
     id: "travel-crib",
@@ -86,7 +86,7 @@ export const BABYGEAR_PRODUCTS: BabyGearProduct[] = [
     discount: "33.38% OFF",
     savedAmount: "You saved ₹250",
     image: "/banners/babygear-travel-crib.jpg",
-    href: "/products/apple-iphone-18-pro",
+    href: "/products/travel-crib",
   },
   {
     id: "high-chair",
@@ -98,6 +98,6 @@ export const BABYGEAR_PRODUCTS: BabyGearProduct[] = [
     discount: "35.06% OFF",
     savedAmount: "You saved ₹210",
     image: "/banners/babygear-high-chair.jpg",
-    href: "/products/apple-iphone-18-pro",
+    href: "/products/high-chair",
   },
 ];

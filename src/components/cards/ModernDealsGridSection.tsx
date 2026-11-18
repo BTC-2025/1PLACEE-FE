@@ -76,7 +76,7 @@ export const ModernDealsGridSection: React.FC = () => {
       <div className="lg:col-span-4 flex flex-col gap-2.5 sm:gap-3 justify-between">
         {/* Banner 1: Teknum Baby Favorites UP TO 50% OFF */}
         <Link
-          href="/categories"
+          href="/products/ingenuity"
           className="relative rounded-2xl overflow-hidden shadow-xs hover:shadow-md transition-all duration-200 group border border-gray-100 flex-1 flex items-center justify-center bg-[#fdfcf9] cursor-pointer"
         >
           <img loading="lazy" decoding="async"
@@ -88,7 +88,7 @@ export const ModernDealsGridSection: React.FC = () => {
 
         {/* Banner 2: COOKWARE UP TO 30% OFF */}
         <Link
-          href="/categories"
+          href="/products/fissman-stockpot"
           className="relative rounded-2xl overflow-hidden shadow-xs hover:shadow-md transition-all duration-200 group border border-gray-100 flex-1 flex items-center justify-center bg-[#fdfcf9] cursor-pointer"
         >
           <img loading="lazy" decoding="async"

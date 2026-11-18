@@ -273,9 +273,7 @@ export function DynamicProductClient({ slug }: { slug: string }) {
               </div>
             </div>
 
-            {/* ========================================================================= */}
-            {/* VARIANTS SELECTOR (Color, Internal Memory, Version, Model)  */}
-            {/* ========================================================================= */}
+            {/* COLOR & STORAGE SELECTION */}
             <div className="space-y-3 pt-2 border-t border-gray-200">
               {/* Color Selector */}
               <div>
@@ -285,10 +283,10 @@ export function DynamicProductClient({ slug }: { slug: string }) {
 
                 <div className="grid grid-cols-4 gap-2">
                   {[
-                    { name: "Desert Titanium", img: "/banners/mobiles-iphone16-promax-titanium.png", price: "₹3799", discount: "25% OFF", inStock: true },
-                    { name: "Black Titanium", img: "/banners/mobiles-iphone18-pro-burgundy.png", price: "₹3899", discount: "Out of Stock", inStock: false },
-                    { name: "Natural Titanium", img: "/banners/mobiles-iphone18-pro-glacier.png", price: "₹3899", discount: "Out of Stock", inStock: false },
-                    { name: "White Titanium", img: "/banners/mobiles-iphone18-promax-burgundy.png", price: "₹3899", discount: "Out of Stock", inStock: false },
+                    { name: "Desert Titanium", img: "/banners/noon-thumb-1.png", price: "₹84,690", discount: "25% OFF", inStock: true },
+                    { name: "Black Titanium", img: "/banners/noon-thumb-2.png", price: "₹84,690", discount: "Out of Stock", inStock: false },
+                    { name: "Natural Titanium", img: "/banners/noon-thumb-3.png", price: "₹84,690", discount: "Out of Stock", inStock: false },
+                    { name: "White Titanium", img: "/banners/noon-thumb-4.png", price: "₹84,690", discount: "Out of Stock", inStock: false },
                   ].map((col) => (
                     <button
                       key={col.name}
@@ -312,13 +310,13 @@ export function DynamicProductClient({ slug }: { slug: string }) {
                 </div>
               </div>
 
-              {/* Internal Memory Selector */}
+              {/* Internal Memory / Storage Selector */}
               <div>
                 <span className="text-xs font-bold text-gray-700 block mb-1.5">
                   INTERNAL MEMORY: <strong className="text-gray-950">{selectedStorage}</strong>
                 </span>
                 <div className="flex gap-2">
-                  {["1 TB", "256 GB", "512 GB"].map((mem) => {
+                  {["128 GB", "256 GB", "512 GB", "1 TB"].map((mem) => {
                     const active = selectedStorage === mem;
                     return (
                       <button
@@ -336,84 +334,8 @@ export function DynamicProductClient({ slug }: { slug: string }) {
                   })}
                 </div>
               </div>
-
-              {/* Version Selector */}
-              <div>
-                <div className="flex items-center gap-1 text-xs font-bold text-gray-700 mb-1.5">
-                  <span>VERSION</span>
-                  <Info className="w-3 h-3 text-gray-400" />
-                  <strong className="text-gray-950 ml-1">{selectedVersion}</strong>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {["International Version", "Middle East Version", "Physical Dual SIM Version", "USA Version"].map(
-                    (ver) => {
-                      const active = selectedVersion === ver;
-                      const disabled = ver.includes("Dual SIM") || ver.includes("USA");
-                      return (
-                        <button
-                          key={ver}
-                          disabled={disabled}
-                          onClick={() => setSelectedVersion(ver)}
-                          className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition ${
-                            active
-                              ? "border-blue-600 bg-blue-50/40 text-blue-700 ring-1 ring-blue-600 cursor-pointer"
-                              : disabled
-                              ? "border-gray-200 bg-gray-50 text-gray-400 border-dashed cursor-not-allowed"
-                              : "border-gray-200 bg-white text-gray-800 hover:border-gray-300 cursor-pointer"
-                          }`}
-                        >
-                          {ver}
-                        </button>
-                      );
-                    }
-                  )}
-                </div>
-              </div>
-
-              {/* Model Name Selector */}
-              <div>
-                <span className="text-xs font-bold text-gray-700 block mb-1.5">
-                  MODEL NAME: <strong className="text-gray-950">{selectedModel}</strong>
-                </span>
-                <div className="flex gap-2">
-                  {["iPhone 16 Pro Max", "iPhone 16 Pro"].map((mod) => {
-                    const active = selectedModel === mod;
-                    return (
-                      <button
-                        key={mod}
-                        onClick={() => setSelectedModel(mod)}
-                        className={`px-4 py-2 rounded-xl text-xs font-extrabold border transition cursor-pointer ${
-                          active
-                            ? "border-blue-600 bg-blue-50/40 text-blue-700 ring-1 ring-blue-600"
-                            : "border-gray-200 bg-white text-gray-500 hover:border-gray-300"
-                        }`}
-                      >
-                        {mod}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Newer Model Available Callout (Image 2 bottom) */}
-              <div className="p-3 rounded-2xl bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200/80 flex items-center justify-between cursor-pointer hover:shadow-xs transition">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-white p-1 border border-purple-100 flex items-center justify-center">
-                    <img src="/banners/mobiles-iphone18-pro-glacier.png" alt="iPhone 17" className="max-h-full max-w-full object-contain" />
-                  </div>
-                  <div className="space-y-0.5">
-                    <span className="text-[10px] uppercase font-bold text-purple-700 bg-purple-100 px-1.5 py-0.2 rounded">
-                      Newer model available
-                    </span>
-                    <h4 className="text-xs font-bold text-gray-900 leading-tight">
-                      iPhone 17 Pro Max 256 GB (eSIM only) Silver 5G With FaceTime - International Version
-                    </h4>
-                    <span className="text-xs font-black text-gray-950">₹5099</span>
-                  </div>
-                </div>
-                <ChevronRight className="w-4 h-4 text-gray-400 shrink-0" />
-              </div>
             </div>
+
           </div>
 
           {/* Right Column: Sticky Seller & BuyBox (3 cols - Image 1 Right Box) */}
@@ -533,10 +455,136 @@ export function DynamicProductClient({ slug }: { slug: string }) {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
 
-            {/* 11.11 Deals Banner (Image 2 Top Right) */}
-            <div className="rounded-2xl overflow-hidden shadow-xs cursor-pointer hover:shadow-md transition">
-              <img src="/banners/iphone-sale-banner.jpg" alt="11.11 Deals Sale" className="w-full h-auto object-cover" />
+        {/* GET ADDITIONAL PROTECTION Section (Warranty Cards) */}
+        <div className="bg-white rounded-3xl p-5 sm:p-6 border border-gray-200/90 shadow-xs space-y-4">
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <div className="flex items-center gap-2">
+              <h3 className="text-sm sm:text-base font-black tracking-wide text-gray-900 uppercase">
+                GET ADDITIONAL PROTECTION
+              </h3>
+              <span className="bg-[#e11d48] text-white text-[10px] font-black px-1.5 py-0.5 rounded shadow-2xs">
+                NEW
+              </span>
+            </div>
+            <span className="text-xs text-gray-500 font-semibold cursor-pointer hover:text-gray-700">
+              Quick claim support
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* 1 Year Extended Warranty Plan */}
+            <div
+              onClick={() => setSelectedWarranty(selectedWarranty === "1yr" ? null : "1yr")}
+              className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-start justify-between gap-3 ${
+                selectedWarranty === "1yr"
+                  ? "border-blue-600 bg-blue-50/30 ring-1 ring-blue-600 shadow-xs"
+                  : "border-gray-200 hover:border-gray-300 bg-white"
+              }`}
+            >
+              <div className="space-y-2.5">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
+                    <ShieldCheck className="w-4 h-4 text-amber-600" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-black text-blue-600 uppercase block tracking-wider">
+                      1 YEAR
+                    </span>
+                    <span className="text-xs sm:text-sm font-extrabold text-gray-900 flex items-center gap-1">
+                      Extended Warranty Plan &gt;
+                    </span>
+                  </div>
+                </div>
+
+                <div className="space-y-1 text-[11px] text-gray-600 pl-1">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-emerald-600 font-bold">✓</span>
+                    <span>Active after brand warranty</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-emerald-600 font-bold">✓</span>
+                    <span>Covers electrical &amp; mechanical failures</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-gray-500 font-bold">∞</span >
+                    <span>Get unlimited claims</span>
+                  </div>
+                </div>
+
+                <div className="text-sm font-black text-gray-950 pt-1">
+                  ₹227.00
+                </div>
+              </div>
+
+              <button
+                type="button"
+                className={`px-4 py-1.5 text-xs font-black rounded-xl border transition-all cursor-pointer ${
+                  selectedWarranty === "1yr"
+                    ? "bg-blue-600 text-white border-blue-600 shadow-2xs"
+                    : "border-blue-600 text-blue-600 hover:bg-blue-50 bg-white"
+                }`}
+              >
+                {selectedWarranty === "1yr" ? "SELECTED" : "SELECT"}
+              </button>
+            </div>
+
+            {/* 2 Years Extended Warranty Plan */}
+            <div
+              onClick={() => setSelectedWarranty(selectedWarranty === "2yr" ? null : "2yr")}
+              className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-start justify-between gap-3 ${
+                selectedWarranty === "2yr"
+                  ? "border-blue-600 bg-blue-50/30 ring-1 ring-blue-600 shadow-xs"
+                  : "border-gray-200 hover:border-gray-300 bg-white"
+              }`}
+            >
+              <div className="space-y-2.5">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+                    <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-black text-blue-600 uppercase block tracking-wider">
+                      2 YEARS
+                    </span>
+                    <span className="text-xs sm:text-sm font-extrabold text-gray-900 flex items-center gap-1">
+                      Extended Warranty Plan &gt;
+                    </span>
+                  </div>
+                </div>
+
+                <div className="space-y-1 text-[11px] text-gray-600 pl-1">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-emerald-600 font-bold">✓</span>
+                    <span>Active after brand warranty</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-emerald-600 font-bold">✓</span>
+                    <span>Covers electrical &amp; mechanical failures</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-gray-500 font-bold">∞</span >
+                    <span>Get unlimited claims</span>
+                  </div>
+                </div>
+
+                <div className="text-sm font-black text-gray-950 pt-1">
+                  ₹374.00
+                </div>
+              </div>
+
+              <button
+                type="button"
+                className={`px-4 py-1.5 text-xs font-black rounded-xl border transition-all cursor-pointer ${
+                  selectedWarranty === "2yr"
+                    ? "bg-blue-600 text-white border-blue-600 shadow-2xs"
+                    : "border-blue-600 text-blue-600 hover:bg-blue-50 bg-white"
+                }`}
+              >
+                {selectedWarranty === "2yr" ? "SELECTED" : "SELECT"}
+              </button>
             </div>
           </div>
         </div>
@@ -561,12 +609,19 @@ export function DynamicProductClient({ slug }: { slug: string }) {
 
         {/* Related Products Carousel */}
         <div>
-          <RelatedProductsCarousel title="Similar Flagship Smartphones" />
+          <RelatedProductsCarousel
+            category={product.category}
+            title={`Similar ${product.category} Recommendations`}
+          />
         </div>
 
         {/* Reviews */}
         <div>
-          <CustomerReviewsSection />
+          <CustomerReviewsSection
+            category={product.category}
+            productImage={product.imageUrl}
+            productImages={product.galleryImages}
+          />
         </div>
 
       </div>

@@ -27,7 +27,7 @@ export const DEALS_YOU_MIGHT_LIKE: BrandDealItem[] = [
     discount: "up to 35% Off",
     productImage: "/banners/deal-ingenuity.png",
     bgColor: "from-[#f4f8f3] to-[#e6f1e5]",
-    href: "/categories",
+    href: "/products/ingenuity",
   },
   {
     id: "acm",
@@ -35,7 +35,7 @@ export const DEALS_YOU_MIGHT_LIKE: BrandDealItem[] = [
     discount: "up to 45% Off",
     productImage: "/banners/deal-acm.png",
     bgColor: "from-[#fdf6fa] to-[#f6e4f0]",
-    href: "/categories",
+    href: "/products/acm",
   },
   {
     id: "corelle",
@@ -43,7 +43,7 @@ export const DEALS_YOU_MIGHT_LIKE: BrandDealItem[] = [
     discount: "up to 20% Off",
     productImage: "/banners/deal-corelle.png",
     bgColor: "from-[#fdf8f2] to-[#f8ebe0]",
-    href: "/categories",
+    href: "/products/corelle",
   },
   {
     id: "seiko",
@@ -51,7 +51,7 @@ export const DEALS_YOU_MIGHT_LIKE: BrandDealItem[] = [
     discount: "up to 35% Off",
     productImage: "/banners/deal-seiko.png",
     bgColor: "from-[#f5f6fb] to-[#e7eaf7]",
-    href: "/categories",
+    href: "/products/seiko",
   },
 ];
 
@@ -65,7 +65,7 @@ export const LOWEST_IN_THE_MARKET: TechDealItem[] = [
     originalPrice: "₹4,749",
     image: "/banners/lowest-s26-ultra.jpg",
     bgColor: "bg-[#e2f0d9]",
-    href: "/products/samsung-galaxy-s24",
+    href: "/products/s26-ultra",
   },
   {
     id: "elitebook",
@@ -76,7 +76,7 @@ export const LOWEST_IN_THE_MARKET: TechDealItem[] = [
     originalPrice: "₹1,015",
     image: "/banners/lowest-elitebook.jpg",
     bgColor: "bg-[#e2e3f5]",
-    href: "/products/hp-victus-gaming-laptop",
+    href: "/products/elitebook",
   },
   {
     id: "a56-5g",
@@ -87,7 +87,7 @@ export const LOWEST_IN_THE_MARKET: TechDealItem[] = [
     originalPrice: "₹1,875",
     image: "/banners/lowest-a56.jpg",
     bgColor: "bg-[#daf2ea]",
-    href: "/products/samsung-galaxy-s24",
+    href: "/products/a56-5g",
   },
   {
     id: "iphone-17",
@@ -98,6 +98,6 @@ export const LOWEST_IN_THE_MARKET: TechDealItem[] = [
     originalPrice: "₹6,369",
     image: "/banners/lowest-iphone17.jpg",
     bgColor: "bg-[#f5e4d7]",
-    href: "/products/apple-iphone-18-pro",
+    href: "/products/iphone-17",
   },
 ];

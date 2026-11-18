@@ -22,7 +22,7 @@ export const COOKWARE_PRODUCTS: CookwareProduct[] = [
     discount: "45.57% OFF",
     isExpressDelivery: true,
     image: "/banners/cookware-oms-10piece.png",
-    href: "/products/apple-iphone-18-pro",
+    href: "/products/oms-10piece",
   },
   {
     id: "oms-9piece-black",
@@ -33,7 +33,7 @@ export const COOKWARE_PRODUCTS: CookwareProduct[] = [
     originalPrice: "₹614",
     discount: "48.05% OFF",
     image: "/banners/cookware-oms-9piece-black.png",
-    href: "/products/apple-iphone-18-pro",
+    href: "/products/oms-9piece-black",
   },
   {
     id: "oms-9piece-brown",
@@ -45,7 +45,7 @@ export const COOKWARE_PRODUCTS: CookwareProduct[] = [
     discount: "42.09% OFF",
     isExpressDelivery: true,
     image: "/banners/cookware-oms-9piece-brown.png",
-    href: "/products/apple-iphone-18-pro",
+    href: "/products/oms-9piece-brown",
   },
   {
     id: "oms-1045-6piece",
@@ -57,7 +57,7 @@ export const COOKWARE_PRODUCTS: CookwareProduct[] = [
     discount: "50.10% OFF",
     isExpressDelivery: true,
     image: "/banners/cookware-oms-1045-6piece.png",
-    href: "/products/apple-iphone-18-pro",
+    href: "/products/oms-1045-6piece",
   },
   {
     id: "ozo-1144-9piece",
@@ -69,7 +69,7 @@ export const COOKWARE_PRODUCTS: CookwareProduct[] = [
     discount: "56.60% OFF",
     isExpressDelivery: true,
     image: "/banners/cookware-ozo-1144-9piece.png",
-    href: "/products/apple-iphone-18-pro",
+    href: "/products/ozo-1144-9piece",
   },
   {
     id: "cookware-dutch-oven",
@@ -81,7 +81,7 @@ export const COOKWARE_PRODUCTS: CookwareProduct[] = [
     discount: "47.43% OFF",
     isExpressDelivery: true,
     image: "/banners/cookware-dutch-oven.jpg",
-    href: "/products/apple-iphone-18-pro",
+    href: "/products/cookware-dutch-oven",
   },
   {
     id: "cookware-saute-pan",
@@ -92,7 +92,7 @@ export const COOKWARE_PRODUCTS: CookwareProduct[] = [
     originalPrice: "₹399",
     discount: "47.36% OFF",
     image: "/banners/cookware-saute-pan.jpg",
-    href: "/products/apple-iphone-18-pro",
+    href: "/products/cookware-saute-pan",
   },
   {
     id: "cookware-copper-pan",
@@ -104,6 +104,6 @@ export const COOKWARE_PRODUCTS: CookwareProduct[] = [
     discount: "43.23% OFF",
     isExpressDelivery: true,
     image: "/banners/cookware-copper-pan.jpg",
-    href: "/products/apple-iphone-18-pro",
+    href: "/products/cookware-copper-pan",
   },
 ];

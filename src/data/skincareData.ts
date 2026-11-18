@@ -23,7 +23,7 @@ export const SKINCARE_PRODUCTS: SkincareProduct[] = [
     discount: "20% OFF",
     savedAmount: "You saved ₹13.50",
     image: "/banners/skincare-acm-gel.png",
-    href: "/products/apple-iphone-18-pro",
+    href: "/products/acm-gel",
   },
   {
     id: "anua-heartleaf",
@@ -35,7 +35,7 @@ export const SKINCARE_PRODUCTS: SkincareProduct[] = [
     discount: "26.97% OFF",
     savedAmount: "You saved ₹24",
     image: "/banners/skincare-anua-heartleaf.png",
-    href: "/products/apple-iphone-18-pro",
+    href: "/products/anua-heartleaf",
   },
   {
     id: "medicube-pdrn",
@@ -47,7 +47,7 @@ export const SKINCARE_PRODUCTS: SkincareProduct[] = [
     discount: "28.57% OFF",
     savedAmount: "You saved ₹16.80",
     image: "/banners/skincare-medicube-pdrn.png",
-    href: "/products/apple-iphone-18-pro",
+    href: "/products/medicube-pdrn",
   },
   {
     id: "anua-azelaic",
@@ -59,7 +59,7 @@ export const SKINCARE_PRODUCTS: SkincareProduct[] = [
     discount: "42.35% OFF",
     isExpressDelivery: true,
     image: "/banners/skincare-anua-azelaic.png",
-    href: "/products/apple-iphone-18-pro",
+    href: "/products/anua-azelaic",
   },
   {
     id: "sol-de-janeiro",
@@ -71,7 +71,7 @@ export const SKINCARE_PRODUCTS: SkincareProduct[] = [
     discount: "26.46% OFF",
     savedAmount: "You saved ₹50",
     image: "/banners/skincare-sol-de-janeiro.png",
-    href: "/products/apple-iphone-18-pro",
+    href: "/products/sol-de-janeiro",
   },
   {
     id: "cetaphil-cleanser",
@@ -83,7 +83,7 @@ export const SKINCARE_PRODUCTS: SkincareProduct[] = [
     discount: "14% OFF",
     isExpressDelivery: true,
     image: "/banners/skincare-cetaphil-cleanser.jpg",
-    href: "/products/apple-iphone-18-pro",
+    href: "/products/cetaphil-cleanser",
   },
   {
     id: "vitamin-c-serum",
@@ -95,7 +95,7 @@ export const SKINCARE_PRODUCTS: SkincareProduct[] = [
     discount: "5% OFF",
     savedAmount: "You saved ₹35",
     image: "/banners/skincare-vitamin-c-serum.jpg",
-    href: "/products/apple-iphone-18-pro",
+    href: "/products/vitamin-c-serum",
   },
   {
     id: "glow-moisturizer",
@@ -107,6 +107,6 @@ export const SKINCARE_PRODUCTS: SkincareProduct[] = [
     discount: "37% OFF",
     isExpressDelivery: true,
     image: "/banners/skincare-glow-moisturizer.jpg",
-    href: "/products/apple-iphone-18-pro",
+    href: "/products/glow-moisturizer",
   },
 ];

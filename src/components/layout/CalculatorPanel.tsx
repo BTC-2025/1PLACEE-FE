@@ -827,8 +827,6 @@ export const CalculatorPanel: React.FC = () => {
         closePanel={closePanel}
         setActiveModal={setActiveModal}
         copyFeedback={copyFeedback}
-        setCurrentInput={setCurrentInput}
-        tapeSteps={tapeSteps}
         handleCopyBreakdown={handleCopyBreakdown}
         handleClearAll={handleClearAll}
         calcNote={calcNote}
@@ -1105,6 +1103,8 @@ export const CalculatorPanel: React.FC = () => {
       <CalculatorModalsPart2
         activeModal={activeModal}
         setActiveModal={setActiveModal}
+        setCurrentInput={setCurrentInput}
+        tapeSteps={tapeSteps}
         selectedConverterId={selectedConverterId}
         converterInput={converterInput}
         setConverterInput={setConverterInput}

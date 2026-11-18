@@ -77,7 +77,7 @@ export const OutdoorRecreationSection: React.FC = () => {
           {OUTDOOR_PRODUCTS.map((product) => (
             <Link
               key={product.id}
-              href="/categories"
+              href={product.href || `/products/${product.id}`}
               className="w-[170px] sm:w-[185px] shrink-0 bg-white rounded-2xl p-3 flex flex-col justify-between group/card shadow-xs hover:shadow-md transition-all duration-300 relative border border-gray-100 cursor-pointer"
             >
               {/* Product Image Area */}
@@ -133,7 +133,7 @@ export const OutdoorRecreationSection: React.FC = () => {
       {/* Bottom Center "View All" Button matching Image 1 */}
       <div className="flex justify-center mt-5">
         <Link
-          href="/categories"
+          href="/products/vaux-joggers"
           className="px-8 py-2 rounded-xl bg-white hover:bg-gray-50 text-blue-600 font-bold text-xs sm:text-sm border border-blue-200 hover:border-blue-300 shadow-2xs hover:shadow-xs transition"
         >
           View All

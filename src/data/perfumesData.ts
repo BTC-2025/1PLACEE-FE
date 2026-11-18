@@ -22,7 +22,7 @@ export const PERFUMES_PRODUCTS: PerfumeProduct[] = [
     savedAmount: "You saved ₹161",
     isGenuine: true,
     image: "/banners/perfumes-versace-eros.png",
-    href: "/products/apple-iphone-18-pro",
+    href: "/products/versace-eros",
   },
   {
     id: "french-avenue",
@@ -35,7 +35,7 @@ export const PERFUMES_PRODUCTS: PerfumeProduct[] = [
     savedAmount: "You saved ₹72",
     isGenuine: true,
     image: "/banners/perfumes-french-avenue.png",
-    href: "/products/apple-iphone-18-pro",
+    href: "/products/french-avenue",
   },
   {
     id: "armani-acqua",
@@ -46,7 +46,7 @@ export const PERFUMES_PRODUCTS: PerfumeProduct[] = [
     savedAmount: "You saved ₹131",
     isGenuine: true,
     image: "/banners/perfumes-armani-acqua.png",
-    href: "/products/apple-iphone-18-pro",
+    href: "/products/armani-acqua",
   },
   {
     id: "amouage-purpose",
@@ -57,7 +57,7 @@ export const PERFUMES_PRODUCTS: PerfumeProduct[] = [
     savedAmount: "You saved ₹770",
     isGenuine: true,
     image: "/banners/perfumes-amouage-purpose.png",
-    href: "/products/apple-iphone-18-pro",
+    href: "/products/amouage-purpose",
   },
   {
     id: "givenchy-linterdit",
@@ -68,7 +68,7 @@ export const PERFUMES_PRODUCTS: PerfumeProduct[] = [
     savedAmount: "You saved ₹125",
     isGenuine: true,
     image: "/banners/perfumes-givenchy-linterdit.png",
-    href: "/products/apple-iphone-18-pro",
+    href: "/products/givenchy-linterdit",
   },
   {
     id: "dior-sauvage",
@@ -81,7 +81,7 @@ export const PERFUMES_PRODUCTS: PerfumeProduct[] = [
     savedAmount: "You saved ₹400",
     isGenuine: true,
     image: "/banners/perfumes-dior-sauvage.jpg",
-    href: "/products/apple-iphone-18-pro",
+    href: "/products/dior-sauvage",
   },
   {
     id: "chanel-coco",
@@ -94,7 +94,7 @@ export const PERFUMES_PRODUCTS: PerfumeProduct[] = [
     savedAmount: "You saved ₹400",
     isGenuine: true,
     image: "/banners/perfumes-chanel-coco.jpg",
-    href: "/products/apple-iphone-18-pro",
+    href: "/products/chanel-coco",
   },
   {
     id: "tom-ford-ombre",
@@ -107,6 +107,6 @@ export const PERFUMES_PRODUCTS: PerfumeProduct[] = [
     savedAmount: "You saved ₹400",
     isGenuine: true,
     image: "/banners/perfumes-tom-ford.jpg",
-    href: "/products/apple-iphone-18-pro",
+    href: "/products/tom-ford-ombre",
   },
 ];
