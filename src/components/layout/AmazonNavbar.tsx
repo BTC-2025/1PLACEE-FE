@@ -112,7 +112,7 @@ export const AmazonNavbar: React.FC = () => {
     <>
       <header className="sticky top-0 z-50 w-full select-none text-xs font-sans shadow-xs">
         {/* Tier 1: Top Navbar with requested #e9f4ff light background and increased height */}
-        <div className="bg-[#e9f4ff] pl-3 sm:pl-6 pr-1 sm:pr-2 py-2 flex items-center justify-between h-[60px] sm:h-[60px] border-b border-[#cde2f8] relative">
+        <div className="bg-[#e9f4ff] pl-3 sm:pl-6 pr-1 sm:pr-2 py-2 flex items-center justify-between h-[64px] sm:h-[64px] border-b border-[#cde2f8] relative">
           {/* Left Group: 1PLACEE Logo + Location with Name */}
           <div className="flex items-center gap-3.5 sm:gap-4 shrink-0 z-10">
             {/* 1PLACEE Logo - increased height */}
@@ -123,7 +123,7 @@ export const AmazonNavbar: React.FC = () => {
               <img
                 src="/logo.png?v=2"
                 alt="1Placee"
-                className="h-24 sm:h-26 w-auto object-contain drop-shadow-xs"
+                className="h-6 sm:h-8 w-auto object-contain drop-shadow-xs"
               />
             </Link>
 
@@ -148,31 +148,28 @@ export const AmazonNavbar: React.FC = () => {
               <div className="hidden md:flex items-center absolute left-1/2 -translate-x-1/2 bg-[#d7ebfc] p-1.5 rounded-full border border-[#b8dcfa] shadow-2xs z-10 pointer-events-auto">
                 <Link
                   href="/"
-                  className={`px-4 sm:px-5 py-1.5 sm:py-2 rounded-full font-bold text-[13px] sm:text-sm transition duration-200 cursor-pointer ${
-                    isHomeActive
-                      ? "bg-[#1559ac] text-white shadow-sm"
-                      : "text-[#1559ac] hover:bg-white"
-                  }`}
+                  className={`px-4 sm:px-5 py-1.5 sm:py-2 rounded-full font-bold text-[13px] sm:text-sm transition duration-200 cursor-pointer ${isHomeActive
+                    ? "bg-[#1559ac] text-white shadow-sm"
+                    : "text-[#1559ac] hover:bg-white"
+                    }`}
                 >
                   Home
                 </Link>
                 <Link
                   href="/categories"
-                  className={`px-4 sm:px-5 py-1.5 sm:py-2 rounded-full font-bold text-[13px] sm:text-sm transition duration-200 cursor-pointer ${
-                    isCategoriesActive
-                      ? "bg-[#1559ac] text-white shadow-sm"
-                      : "text-[#1559ac] hover:bg-white"
-                  }`}
+                  className={`px-4 sm:px-5 py-1.5 sm:py-2 rounded-full font-bold text-[13px] sm:text-sm transition duration-200 cursor-pointer ${isCategoriesActive
+                    ? "bg-[#1559ac] text-white shadow-sm"
+                    : "text-[#1559ac] hover:bg-white"
+                    }`}
                 >
                   Categories
                 </Link>
                 <Link
                   href="/orders"
-                  className={`px-4 sm:px-5 py-1.5 sm:py-2 rounded-full font-bold text-[13px] sm:text-sm transition duration-200 cursor-pointer ${
-                    pathname.startsWith("/orders")
-                      ? "bg-[#1559ac] text-white shadow-sm"
-                      : "text-[#1559ac] hover:bg-white"
-                  }`}
+                  className={`px-4 sm:px-5 py-1.5 sm:py-2 rounded-full font-bold text-[13px] sm:text-sm transition duration-200 cursor-pointer ${pathname.startsWith("/orders")
+                    ? "bg-[#1559ac] text-white shadow-sm"
+                    : "text-[#1559ac] hover:bg-white"
+                    }`}
                 >
                   Orders
                 </Link>
@@ -187,7 +184,7 @@ export const AmazonNavbar: React.FC = () => {
               {isSearchOpen ? (
                 <form
                   onSubmit={handleSearchSubmit}
-                  className="flex items-center bg-white rounded-full px-3.5 py-1.5 shadow-md w-44 sm:w-64 md:w-66 max-w-[249px] border border-[#b8dcfa] animate-in fade-in zoom-in-95 duration-200"
+                  className="flex items-center bg-white rounded-full px-3.5 py-1.5 shadow-md w-48 sm:w-64 md:w-66 max-w-[249px] border border-[#b8dcfa] animate-in fade-in zoom-in-95 duration-200"
                 >
                   <Search className="w-4.5 h-4.5 text-[#1559ac] mr-2 shrink-0 stroke-[2.2]" />
                   <input
@@ -331,7 +328,7 @@ export const AmazonNavbar: React.FC = () => {
             </div>
 
             {/* Vertical Divider Line with width align matching quick filter: moved 1px right */}
-            <div className="h-6 w-[1.5px] bg-[#b8dcfa] ml-0.5 mr-1" />
+            <div className="h-7 w-[1.5px] bg-[#b8dcfa] ml-0.5 mr-1" />
 
             {/* Equalizer / Control Sliders Icon Button with the exact uploaded image inside round container */}
             <button
@@ -357,7 +354,7 @@ export const AmazonNavbar: React.FC = () => {
 
         {/* Tier 2: Subnav Ribbon - White background, grey text, seamlessly meets the top nav with no vertical gap */}
         <div
-          className={`bg-white pl-2 sm:pl-4 py-1 flex items-center justify-between text-[13px] h-[44px] border-b border-gray-200/80 shadow-2xs relative select-none transition-all duration-300 ease-in-out ${!isQuickBarOpen
+          className={`bg-white pl-2 sm:pl-4 py-1 flex items-center justify-between text-[13px] h-[48px] border-b border-gray-200/80 shadow-2xs relative select-none transition-all duration-300 ease-in-out ${!isQuickBarOpen
             ? "mr-0"
             : activePanel === "calendar" || activePanel === "calculator" || activePanel === "beta" || activePanel === "users" || activePanel === "notes" || activePanel === "customize"
               ? "mr-[410px] sm:mr-[422px]"

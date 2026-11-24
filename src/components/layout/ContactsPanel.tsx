@@ -184,10 +184,10 @@ export const ContactsPanel: React.FC = () => {
   return (
     <aside
       aria-label="Connections & Contacts Panel"
-      className="fixed right-[60px] sm:right-[62px] top-[60px] bottom-0 w-[350px] sm:w-[360px] bg-white border-l border-[#d0e5fb] shadow-[-6px_0_20px_rgba(0,0,0,0.06)] z-[60] flex flex-col select-none overflow-y-auto no-scrollbar animate-in slide-in-from-right duration-200"
+      className="fixed right-[60px] sm:right-[62px] top-[64px] bottom-0 w-[350px] sm:w-[360px] bg-white border-l border-[#d0e5fb] shadow-[-6px_0_20px_rgba(0,0,0,0.06)] z-[60] flex flex-col select-none overflow-y-auto no-scrollbar animate-in slide-in-from-right duration-200"
     >
       {/* Top Header Row: Contact Icon + Contacts Title + Add Contact Button + Close Button */}
-      <div className="h-[44px] px-4 flex items-center justify-between border-b border-[#e6edf6] bg-white shrink-0">
+      <div className="h-[48px] px-4 flex items-center justify-between border-b border-[#e6edf6] bg-white shrink-0">
         <div className="flex items-center gap-2">
           <User className="w-5 h-5 text-[#2563eb] stroke-[2.2]" />
           <h2 className="text-[16px] font-black text-[#0f172a] tracking-tight">
@@ -259,9 +259,8 @@ export const ContactsPanel: React.FC = () => {
                   </div>
 
                   <span
-                    className={`text-[15px] font-bold truncate ${
-                      contact.id === "2" ? "text-[#2563eb]" : "text-[#0f172a]"
-                    }`}
+                    className={`text-[15px] font-bold truncate ${contact.id === "2" ? "text-[#2563eb]" : "text-[#0f172a]"
+                      }`}
                   >
                     {contact.name}
                   </span>
@@ -271,11 +270,10 @@ export const ContactsPanel: React.FC = () => {
                   {/* Badge */}
                   {contact.badge && (
                     <span
-                      className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider ${
-                        contact.badgeType === "bit-tool"
-                          ? "bg-[#fef3c7] text-[#b45309]"
-                          : "bg-[#dbeafe] text-[#1d4ed8]"
-                      }`}
+                      className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider ${contact.badgeType === "bit-tool"
+                        ? "bg-[#fef3c7] text-[#b45309]"
+                        : "bg-[#dbeafe] text-[#1d4ed8]"
+                        }`}
                     >
                       {contact.badge}
                     </span>
@@ -377,22 +375,20 @@ export const ContactsPanel: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setAddImageMode("local")}
-                      className={`px-2 py-0.5 rounded-md transition ${
-                        addImageMode === "local"
-                          ? "bg-[#2563eb] text-white"
-                          : "text-gray-600 hover:text-[#0f172a]"
-                      }`}
+                      className={`px-2 py-0.5 rounded-md transition ${addImageMode === "local"
+                        ? "bg-[#2563eb] text-white"
+                        : "text-gray-600 hover:text-[#0f172a]"
+                        }`}
                     >
                       File
                     </button>
                     <button
                       type="button"
                       onClick={() => setAddImageMode("url")}
-                      className={`px-2 py-0.5 rounded-md transition ${
-                        addImageMode === "url"
-                          ? "bg-[#2563eb] text-white"
-                          : "text-gray-600 hover:text-[#0f172a]"
-                      }`}
+                      className={`px-2 py-0.5 rounded-md transition ${addImageMode === "url"
+                        ? "bg-[#2563eb] text-white"
+                        : "text-gray-600 hover:text-[#0f172a]"
+                        }`}
                     >
                       URL
                     </button>
@@ -571,22 +567,20 @@ export const ContactsPanel: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setEditImageMode("local")}
-                      className={`px-2 py-0.5 rounded-md transition ${
-                        editImageMode === "local"
-                          ? "bg-[#2563eb] text-white"
-                          : "text-gray-600 hover:text-[#0f172a]"
-                      }`}
+                      className={`px-2 py-0.5 rounded-md transition ${editImageMode === "local"
+                        ? "bg-[#2563eb] text-white"
+                        : "text-gray-600 hover:text-[#0f172a]"
+                        }`}
                     >
                       File
                     </button>
                     <button
                       type="button"
                       onClick={() => setEditImageMode("url")}
-                      className={`px-2 py-0.5 rounded-md transition ${
-                        editImageMode === "url"
-                          ? "bg-[#2563eb] text-white"
-                          : "text-gray-600 hover:text-[#0f172a]"
-                      }`}
+                      className={`px-2 py-0.5 rounded-md transition ${editImageMode === "url"
+                        ? "bg-[#2563eb] text-white"
+                        : "text-gray-600 hover:text-[#0f172a]"
+                        }`}
                     >
                       URL
                     </button>

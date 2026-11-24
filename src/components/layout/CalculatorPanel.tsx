@@ -820,7 +820,7 @@ export const CalculatorPanel: React.FC = () => {
     <aside
       role="complementary"
       aria-label="Calculator"
-      className="fixed right-[60px] sm:right-[62px] top-[60px] bottom-0 w-[350px] sm:w-[360px] bg-[#f8fafc] border-l border-[#d0e5fb] shadow-[-6px_0_24px_rgba(0,0,0,0.08)] z-[60] flex flex-col select-none overflow-hidden animate-in slide-in-from-right duration-200"
+      className="fixed right-[60px] sm:right-[62px] top-[64px] bottom-0 w-[350px] sm:w-[360px] bg-[#f8fafc] border-l border-[#d0e5fb] shadow-[-6px_0_24px_rgba(0,0,0,0.08)] z-[60] flex flex-col select-none overflow-hidden animate-in slide-in-from-right duration-200"
     >
       {/* 1, 2, 3, 4: Header, Display, Live Counts, Quick Action Pills */}
       <CalculatorHeaderDisplay

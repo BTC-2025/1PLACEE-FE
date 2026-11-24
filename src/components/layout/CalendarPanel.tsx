@@ -278,14 +278,14 @@ export const CalendarPanel: React.FC = () => {
       title: newTitle.trim(),
       ...(itemType === "event"
         ? {
-            location: newLocation.trim() || undefined,
-            guestName: newGuestName.trim() || undefined,
-            description: newDescription.trim() || undefined,
-          }
+          location: newLocation.trim() || undefined,
+          guestName: newGuestName.trim() || undefined,
+          description: newDescription.trim() || undefined,
+        }
         : {
-            deadline: newDeadline.trim() || undefined,
-            completed: false,
-          }),
+          deadline: newDeadline.trim() || undefined,
+          completed: false,
+        }),
     };
 
     setSchedules((prev) => [...prev, newItem]);
@@ -331,10 +331,10 @@ export const CalendarPanel: React.FC = () => {
   return (
     <aside
       aria-label="Calendar Panel"
-      className="fixed right-[60px] sm:right-[62px] top-[60px] bottom-0 w-[350px] sm:w-[360px] bg-[#f8fbff] border-l border-[#b9d9f9] shadow-[-6px_0_24px_rgba(30,58,138,0.08)] z-50 flex flex-col select-none transition-transform duration-300 ease-in-out animate-in slide-in-from-right-4 overflow-y-auto no-scrollbar"
+      className="fixed right-[60px] sm:right-[62px] top-[64px] bottom-0 w-[350px] sm:w-[360px] bg-[#f8fbff] border-l border-[#b9d9f9] shadow-[-6px_0_24px_rgba(30,58,138,0.08)] z-50 flex flex-col select-none transition-transform duration-300 ease-in-out animate-in slide-in-from-right-4 overflow-y-auto no-scrollbar"
     >
       {/* Top Header matching exact screenshot */}
-      <div className="h-[44px] px-4 flex items-center justify-between border-b border-[#e2eaf4] bg-white shrink-0">
+      <div className="h-[48px] px-4 flex items-center justify-between border-b border-[#e2eaf4] bg-white shrink-0">
         <h2 className="text-[15px] font-extrabold text-[#0f172a] tracking-wider uppercase">
           CALENDAR
         </h2>
@@ -544,11 +544,10 @@ export const CalendarPanel: React.FC = () => {
           <button
             type="button"
             onClick={() => setFilterTab("all")}
-            className={`py-1 text-[11px] font-bold rounded-lg transition cursor-pointer flex items-center justify-center gap-1 ${
-              filterTab === "all"
-                ? "bg-[#2563eb] text-white shadow-xs"
-                : "text-gray-600 hover:text-gray-900"
-            }`}
+            className={`py-1 text-[11px] font-bold rounded-lg transition cursor-pointer flex items-center justify-center gap-1 ${filterTab === "all"
+              ? "bg-[#2563eb] text-white shadow-xs"
+              : "text-gray-600 hover:text-gray-900"
+              }`}
           >
             <span>All</span>
             <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-black/10">
@@ -558,11 +557,10 @@ export const CalendarPanel: React.FC = () => {
           <button
             type="button"
             onClick={() => setFilterTab("event")}
-            className={`py-1 text-[11px] font-bold rounded-lg transition cursor-pointer flex items-center justify-center gap-1 ${
-              filterTab === "event"
-                ? "bg-purple-600 text-white shadow-xs"
-                : "text-gray-600 hover:text-gray-900"
-            }`}
+            className={`py-1 text-[11px] font-bold rounded-lg transition cursor-pointer flex items-center justify-center gap-1 ${filterTab === "event"
+              ? "bg-purple-600 text-white shadow-xs"
+              : "text-gray-600 hover:text-gray-900"
+              }`}
           >
             <CalendarIcon className="w-3 h-3" />
             <span>Events</span>
@@ -573,11 +571,10 @@ export const CalendarPanel: React.FC = () => {
           <button
             type="button"
             onClick={() => setFilterTab("task")}
-            className={`py-1 text-[11px] font-bold rounded-lg transition cursor-pointer flex items-center justify-center gap-1 ${
-              filterTab === "task"
-                ? "bg-emerald-600 text-white shadow-xs"
-                : "text-gray-600 hover:text-gray-900"
-            }`}
+            className={`py-1 text-[11px] font-bold rounded-lg transition cursor-pointer flex items-center justify-center gap-1 ${filterTab === "task"
+              ? "bg-emerald-600 text-white shadow-xs"
+              : "text-gray-600 hover:text-gray-900"
+              }`}
           >
             <CheckSquare className="w-3 h-3" />
             <span>Tasks</span>
@@ -598,11 +595,10 @@ export const CalendarPanel: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setItemType("event")}
-                className={`py-1 text-xs font-bold rounded-lg transition flex items-center justify-center gap-1.5 cursor-pointer ${
-                  itemType === "event"
-                    ? "bg-white text-purple-700 shadow-xs"
-                    : "text-gray-500 hover:text-gray-800"
-                }`}
+                className={`py-1 text-xs font-bold rounded-lg transition flex items-center justify-center gap-1.5 cursor-pointer ${itemType === "event"
+                  ? "bg-white text-purple-700 shadow-xs"
+                  : "text-gray-500 hover:text-gray-800"
+                  }`}
               >
                 <CalendarIcon className="w-3.5 h-3.5 text-purple-600" />
                 <span>Event</span>
@@ -610,11 +606,10 @@ export const CalendarPanel: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setItemType("task")}
-                className={`py-1 text-xs font-bold rounded-lg transition flex items-center justify-center gap-1.5 cursor-pointer ${
-                  itemType === "task"
-                    ? "bg-white text-emerald-700 shadow-xs"
-                    : "text-gray-500 hover:text-gray-800"
-                }`}
+                className={`py-1 text-xs font-bold rounded-lg transition flex items-center justify-center gap-1.5 cursor-pointer ${itemType === "task"
+                  ? "bg-white text-emerald-700 shadow-xs"
+                  : "text-gray-500 hover:text-gray-800"
+                  }`}
               >
                 <CheckSquare className="w-3.5 h-3.5 text-emerald-600" />
                 <span>Task</span>
@@ -738,11 +733,10 @@ export const CalendarPanel: React.FC = () => {
               </button>
               <button
                 type="submit"
-                className={`text-xs font-bold px-4 py-1.5 rounded-lg text-white transition cursor-pointer shadow-xs ${
-                  itemType === "event"
-                    ? "bg-purple-600 hover:bg-purple-700"
-                    : "bg-emerald-600 hover:bg-emerald-700"
-                }`}
+                className={`text-xs font-bold px-4 py-1.5 rounded-lg text-white transition cursor-pointer shadow-xs ${itemType === "event"
+                  ? "bg-purple-600 hover:bg-purple-700"
+                  : "bg-emerald-600 hover:bg-emerald-700"
+                  }`}
               >
                 Save {itemType === "event" ? "Event" : "Task"}
               </button>
@@ -759,11 +753,10 @@ export const CalendarPanel: React.FC = () => {
               return (
                 <div
                   key={item.id}
-                  className={`p-3 rounded-2xl border transition group shadow-2xs space-y-2 ${
-                    isEvent
-                      ? "border-purple-200/90 bg-white hover:bg-purple-50/30"
-                      : "border-emerald-200/90 bg-white hover:bg-emerald-50/30"
-                  }`}
+                  className={`p-3 rounded-2xl border transition group shadow-2xs space-y-2 ${isEvent
+                    ? "border-purple-200/90 bg-white hover:bg-purple-50/30"
+                    : "border-emerald-200/90 bg-white hover:bg-emerald-50/30"
+                    }`}
                 >
                   {/* Top row: Type badge, Title & Delete button */}
                   <div className="flex items-start justify-between gap-2">
@@ -790,20 +783,18 @@ export const CalendarPanel: React.FC = () => {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-1.5 flex-wrap">
                           <span
-                            className={`text-[9px] font-extrabold uppercase px-1.5 py-0.2 rounded-md ${
-                              isEvent
-                                ? "bg-purple-100 text-purple-800"
-                                : "bg-emerald-100 text-emerald-800"
-                            }`}
+                            className={`text-[9px] font-extrabold uppercase px-1.5 py-0.2 rounded-md ${isEvent
+                              ? "bg-purple-100 text-purple-800"
+                              : "bg-emerald-100 text-emerald-800"
+                              }`}
                           >
                             {isEvent ? "Event" : "Task"}
                           </span>
                           <p
-                            className={`text-xs font-bold leading-tight ${
-                              item.completed
-                                ? "line-through text-gray-400"
-                                : "text-gray-900"
-                            }`}
+                            className={`text-xs font-bold leading-tight ${item.completed
+                              ? "line-through text-gray-400"
+                              : "text-gray-900"
+                              }`}
                           >
                             {item.title}
                           </p>
@@ -873,8 +864,8 @@ export const CalendarPanel: React.FC = () => {
               {filterTab === "all"
                 ? "No events or tasks scheduled for this day."
                 : filterTab === "event"
-                ? "No events scheduled for this day."
-                : "No tasks scheduled for this day."}
+                  ? "No events scheduled for this day."
+                  : "No tasks scheduled for this day."}
             </p>
           </div>
         )}
@@ -929,22 +920,20 @@ export const CalendarPanel: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setClockPeriod("AM")}
-                  className={`px-3 py-1.5 text-xs font-black rounded-lg transition cursor-pointer ${
-                    clockPeriod === "AM"
-                      ? "bg-blue-600 text-white shadow-xs"
-                      : "text-gray-600 hover:text-gray-900"
-                  }`}
+                  className={`px-3 py-1.5 text-xs font-black rounded-lg transition cursor-pointer ${clockPeriod === "AM"
+                    ? "bg-blue-600 text-white shadow-xs"
+                    : "text-gray-600 hover:text-gray-900"
+                    }`}
                 >
                   AM
                 </button>
                 <button
                   type="button"
                   onClick={() => setClockPeriod("PM")}
-                  className={`px-3 py-1.5 text-xs font-black rounded-lg transition cursor-pointer ${
-                    clockPeriod === "PM"
-                      ? "bg-blue-600 text-white shadow-xs"
-                      : "text-gray-600 hover:text-gray-900"
-                  }`}
+                  className={`px-3 py-1.5 text-xs font-black rounded-lg transition cursor-pointer ${clockPeriod === "PM"
+                    ? "bg-blue-600 text-white shadow-xs"
+                    : "text-gray-600 hover:text-gray-900"
+                    }`}
                 >
                   PM
                 </button>
@@ -964,11 +953,10 @@ export const CalendarPanel: React.FC = () => {
                       key={h}
                       type="button"
                       onClick={() => setClockHour(h)}
-                      className={`h-9 rounded-lg text-xs font-black transition cursor-pointer flex items-center justify-center border ${
-                        clockHour === h
-                          ? "bg-blue-600 text-white border-blue-600 shadow-2xs"
-                          : "bg-white hover:bg-blue-50 text-gray-800 border-gray-200"
-                      }`}
+                      className={`h-9 rounded-lg text-xs font-black transition cursor-pointer flex items-center justify-center border ${clockHour === h
+                        ? "bg-blue-600 text-white border-blue-600 shadow-2xs"
+                        : "bg-white hover:bg-blue-50 text-gray-800 border-gray-200"
+                        }`}
                     >
                       {h}
                     </button>
@@ -988,11 +976,10 @@ export const CalendarPanel: React.FC = () => {
                       key={m}
                       type="button"
                       onClick={() => setClockMinute(m)}
-                      className={`h-9 rounded-lg text-xs font-black transition cursor-pointer flex items-center justify-center border ${
-                        clockMinute === m
-                          ? "bg-blue-600 text-white border-blue-600 shadow-2xs"
-                          : "bg-white hover:bg-blue-50 text-gray-800 border-gray-200"
-                      }`}
+                      className={`h-9 rounded-lg text-xs font-black transition cursor-pointer flex items-center justify-center border ${clockMinute === m
+                        ? "bg-blue-600 text-white border-blue-600 shadow-2xs"
+                        : "bg-white hover:bg-blue-50 text-gray-800 border-gray-200"
+                        }`}
                     >
                       :{m.toString().padStart(2, "0")}
                     </button>

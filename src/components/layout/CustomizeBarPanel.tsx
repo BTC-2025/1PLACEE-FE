@@ -105,10 +105,10 @@ export const CustomizeBarPanel: React.FC = () => {
   return (
     <aside
       aria-label="Customize Bar Panel"
-      className="fixed right-[60px] sm:right-[62px] top-[60px] bottom-0 w-[350px] sm:w-[360px] bg-white border-l border-[#d0e5fb] shadow-[-6px_0_20px_rgba(0,0,0,0.06)] z-[60] flex flex-col select-none overflow-hidden animate-in slide-in-from-right duration-200"
+      className="fixed right-[60px] sm:right-[62px] top-[64px] bottom-0 w-[350px] sm:w-[360px] bg-white border-l border-[#d0e5fb] shadow-[-6px_0_20px_rgba(0,0,0,0.06)] z-[60] flex flex-col select-none overflow-hidden animate-in slide-in-from-right duration-200"
     >
       {/* 1. Header Bar: Customize Bar title + Reset + Close */}
-      <div className="h-[54px] px-5 flex items-center justify-between border-b border-gray-100 shrink-0 bg-white">
+      <div className="h-[48px] px-5 flex items-center justify-between border-b border-gray-100 shrink-0 bg-white">
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 rounded-lg bg-blue-50 text-[#1559ac] flex items-center justify-center font-bold">
             <Palette className="w-4 h-4" />
@@ -149,8 +149,8 @@ export const CustomizeBarPanel: React.FC = () => {
           type="button"
           onClick={() => setActiveTab("order")}
           className={`py-2.5 px-3 border-b-2 transition cursor-pointer ${activeTab === "order"
-              ? "border-[#1559ac] text-[#1559ac]"
-              : "border-transparent text-gray-500 hover:text-gray-800"
+            ? "border-[#1559ac] text-[#1559ac]"
+            : "border-transparent text-gray-500 hover:text-gray-800"
             }`}
         >
           Position & Order
@@ -159,8 +159,8 @@ export const CustomizeBarPanel: React.FC = () => {
           type="button"
           onClick={() => setActiveTab("colors")}
           className={`py-2.5 px-3 border-b-2 transition cursor-pointer ${activeTab === "colors"
-              ? "border-[#1559ac] text-[#1559ac]"
-              : "border-transparent text-gray-500 hover:text-gray-800"
+            ? "border-[#1559ac] text-[#1559ac]"
+            : "border-transparent text-gray-500 hover:text-gray-800"
             }`}
         >
           Rail Color
@@ -169,8 +169,8 @@ export const CustomizeBarPanel: React.FC = () => {
           type="button"
           onClick={() => setActiveTab("favorites")}
           className={`py-2.5 px-3 border-b-2 transition cursor-pointer ${activeTab === "favorites"
-              ? "border-[#1559ac] text-[#1559ac]"
-              : "border-transparent text-gray-500 hover:text-gray-800"
+            ? "border-[#1559ac] text-[#1559ac]"
+            : "border-transparent text-gray-500 hover:text-gray-800"
             }`}
         >
           Favorites ⭐
@@ -375,8 +375,8 @@ export const CustomizeBarPanel: React.FC = () => {
                         onClick={() => toggleFavorite(id)}
                         title={isFav ? "Remove Favorite" : "Mark as Favorite"}
                         className={`w-8 h-8 rounded-full flex items-center justify-center transition cursor-pointer ${isFav
-                            ? "bg-amber-50 text-amber-500 hover:bg-amber-100"
-                            : "text-gray-300 hover:text-amber-500 hover:bg-gray-100"
+                          ? "bg-amber-50 text-amber-500 hover:bg-amber-100"
+                          : "text-gray-300 hover:text-amber-500 hover:bg-gray-100"
                           }`}
                       >
                         <Star
@@ -390,8 +390,8 @@ export const CustomizeBarPanel: React.FC = () => {
                         onClick={() => togglePinned(id)}
                         title={isPinned ? "Unpin from Rail" : "Pin to Rail"}
                         className={`w-8 h-8 rounded-full flex items-center justify-center transition cursor-pointer ${isPinned
-                            ? "bg-blue-50 text-blue-600 hover:bg-blue-100"
-                            : "bg-gray-100 text-gray-400 hover:bg-gray-200"
+                          ? "bg-blue-50 text-blue-600 hover:bg-blue-100"
+                          : "bg-gray-100 text-gray-400 hover:bg-gray-200"
                           }`}
                       >
                         {isPinned ? (

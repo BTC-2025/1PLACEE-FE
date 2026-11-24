@@ -177,10 +177,10 @@ export const NotesPanel: React.FC = () => {
   return (
     <aside
       aria-label="Notes Panel"
-      className="fixed right-[60px] sm:right-[62px] top-[60px] bottom-0 w-[350px] sm:w-[360px] bg-white border-l border-[#d0e5fb] shadow-[-6px_0_20px_rgba(0,0,0,0.06)] z-[60] flex flex-col select-none overflow-hidden animate-in slide-in-from-right duration-200"
+      className="fixed right-[60px] sm:right-[62px] top-[64px] bottom-0 w-[350px] sm:w-[360px] bg-white border-l border-[#d0e5fb] shadow-[-6px_0_20px_rgba(0,0,0,0.06)] z-[60] flex flex-col select-none overflow-hidden animate-in slide-in-from-right duration-200"
     >
       {/* 1. Header Bar: Notes title with Close Button */}
-      <div className="h-[44px] px-5 flex items-center justify-between border-b border-gray-100/90 shrink-0 bg-white">
+      <div className="h-[48px] px-5 flex items-center justify-between border-b border-gray-100/90 shrink-0 bg-white">
         <h2 className="text-[17px] font-black text-[#111827] tracking-tight">
           Notes
         </h2>

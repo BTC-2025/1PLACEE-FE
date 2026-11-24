@@ -137,13 +137,13 @@ export const QuickSideRail: React.FC = () => {
     <aside
       aria-label="Quick Tools Sidebar"
       style={{ backgroundColor: backgroundColor || "#ffffff" }}
-      className={`fixed right-0 top-[60px] bottom-0 w-[60px] sm:w-[62px] border-l ${isDarkRail ? "border-slate-800" : "border-[#d0e5fb]"
+      className={`fixed right-0 top-[64px] bottom-0 w-[60px] sm:w-[62px] border-l ${isDarkRail ? "border-slate-800" : "border-[#d0e5fb]"
         } shadow-[-4px_0_15px_rgba(0,0,0,0.08)] z-50 flex flex-col items-center select-none transition-transform duration-300 ease-in-out ${isSidebarOpen ? "translate-x-0" : "translate-x-full pointer-events-none"
         }`}
     >
       {/* Top Section */}
       {!isEditPinsMode ? (
-        <div className="h-[44px] w-full flex items-center justify-center border-b border-gray-200/90 shrink-0">
+        <div className="h-[48px] w-full flex items-center justify-center border-b border-gray-200/90 shrink-0">
           <button
             onClick={() => togglePanel("beta")}
             title="Beta Ecosystem Applications"
@@ -163,7 +163,7 @@ export const QuickSideRail: React.FC = () => {
           </button>
         </div>
       ) : (
-        <div className="h-[44px] w-full flex flex-col items-center justify-center border-b border-gray-200/90 shrink-0">
+        <div className="h-[48px] w-full flex flex-col items-center justify-center border-b border-gray-200/90 shrink-0">
           <div className="flex items-center gap-1 leading-none text-center">
             <span
               className={`text-[10px] font-black tracking-wider ${isDarkRail ? "text-slate-200" : "text-[#1e293b]"

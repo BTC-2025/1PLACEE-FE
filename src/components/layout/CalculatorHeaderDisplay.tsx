@@ -72,7 +72,8 @@ export const CalculatorHeaderDisplay: React.FC<CalculatorHeaderDisplayProps> = (
   return (
     <>
       {/* 1. Header Bar: Calculator Title + Action Icons (History, Copy, Delete, Close) */}
-      <div className="h-[44px] px-4 flex items-center justify-between border-b border-gray-100 bg-white shrink-0">
+
+      <div className="h-[48px] px-4 flex items-center justify-between border-b border-gray-100 bg-white shrink-0">
         <h2 className="text-[17px] font-black text-[#111827] tracking-tight">
           Calculator
         </h2>
@@ -200,9 +201,8 @@ export const CalculatorHeaderDisplay: React.FC<CalculatorHeaderDisplayProps> = (
                   handleEquals();
                 }
               }}
-              className={`text-3xl sm:text-4xl font-black tracking-tight text-right w-full bg-transparent outline-none border-none cursor-text leading-none placeholder:text-gray-300 ${
-                isCalculated ? "text-emerald-600" : "text-gray-900"
-              }`}
+              className={`text-3xl sm:text-4xl font-black tracking-tight text-right w-full bg-transparent outline-none border-none cursor-text leading-none placeholder:text-gray-300 ${isCalculated ? "text-emerald-600" : "text-gray-900"
+                }`}
             />
           )}
         </div>
