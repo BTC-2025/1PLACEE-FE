@@ -4,9 +4,12 @@ import React, { useRef } from "react";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, Heart, Star, ShoppingCart } from "lucide-react";
 import { WATCHES_PRODUCTS } from "@/data/watchesData";
+import { useWishlistStore } from "@/stores/wishlistStore";
+import { toWishlistProduct } from "@/lib/wishlistHelper";
 
 export const WatchesSection: React.FC = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const { toggleWishlist, isInWishlist } = useWishlistStore();
 
   const scroll = (direction: "left" | "right") => {
     if (scrollRef.current) {
@@ -75,11 +78,14 @@ export const WatchesSection: React.FC = () => {
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
+                    toggleWishlist(toWishlistProduct(product));
                   }}
                   aria-label="Add to wishlist"
-                  className="absolute top-2.5 right-2.5 text-gray-400 hover:text-red-500 transition cursor-pointer z-10 p-1"
+                  className={`absolute top-2.5 right-2.5 transition cursor-pointer z-10 p-1 ${
+                    isInWishlist(product.id) ? "text-red-500" : "text-gray-400 hover:text-red-500"
+                  }`}
                 >
-                  <Heart className="w-4 h-4 stroke-[1.8]" />
+                  <Heart className={`w-4 h-4 stroke-[1.8] ${isInWishlist(product.id) ? "fill-red-500" : ""}`} />
                 </button>
 
                 {/* Product Watch Device Image Area */}

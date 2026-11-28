@@ -4,9 +4,12 @@ import React, { useRef } from "react";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, Heart, ShoppingCart } from "lucide-react";
 import { TOP_PICKS_PRODUCTS } from "@/data/topPicksData";
+import { useWishlistStore } from "@/stores/wishlistStore";
+import { toWishlistProduct } from "@/lib/wishlistHelper";
 
 export const TopPicksSection: React.FC = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const { toggleWishlist, isInWishlist } = useWishlistStore();
 
   const scroll = (direction: "left" | "right") => {
     if (scrollRef.current) {
@@ -66,11 +69,20 @@ export const TopPicksSection: React.FC = () => {
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
+                    toggleWishlist(toWishlistProduct(product));
                   }}
                   aria-label="Add to wishlist"
-                  className="absolute top-2.5 right-2.5 text-gray-400 hover:text-red-500 transition cursor-pointer z-10 p-1"
+                  className={`absolute top-2.5 right-2.5 transition cursor-pointer z-10 p-1 ${
+                    isInWishlist(product.id)
+                      ? "text-red-500"
+                      : "text-gray-400 hover:text-red-500"
+                  }`}
                 >
-                  <Heart className="w-4 h-4 stroke-[1.8]" />
+                  <Heart
+                    className={`w-4 h-4 stroke-[1.8] ${
+                      isInWishlist(product.id) ? "fill-red-500" : ""
+                    }`}
+                  />
                 </button>
 
                 {/* Product Image (Prism clean with no inner heart) */}

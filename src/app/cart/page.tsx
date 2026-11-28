@@ -102,7 +102,7 @@ const RECOMMENDED_PRODUCTS: RecommendedProduct[] = [
 export default function CartPage() {
   const [mounted, setMounted] = useState(false);
   const { items, updateQuantity, removeFromCart, clearCart, addToCart } = useCartStore();
-  const { addToWishlist, isInWishlist } = useWishlistStore();
+  const { toggleWishlist, isInWishlist } = useWishlistStore();
 
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [couponCode, setCouponCode] = useState("");
@@ -735,7 +735,7 @@ export default function CartPage() {
                 {/* Wishlist Heart Icon */}
                 <button
                   onClick={() =>
-                    addToWishlist({
+                    toggleWishlist({
                       id: prod.id,
                       name: prod.name,
                       title: prod.name,

@@ -4,9 +4,12 @@ import React, { useRef } from "react";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, Heart, Star, ShoppingCart } from "lucide-react";
 import { FEEDING_PRODUCTS } from "@/data/feedingData";
+import { useWishlistStore } from "@/stores/wishlistStore";
+import { toWishlistProduct } from "@/lib/wishlistHelper";
 
 export const FeedingSection: React.FC = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const { toggleWishlist, isInWishlist } = useWishlistStore();
 
   const scroll = (direction: "left" | "right") => {
     if (scrollRef.current) {
@@ -86,11 +89,14 @@ export const FeedingSection: React.FC = () => {
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
+                    toggleWishlist(toWishlistProduct(product));
                   }}
                   aria-label="Add to wishlist"
-                  className="absolute top-2 right-2 z-10 w-6 h-6 rounded-full bg-white/80 hover:bg-white flex items-center justify-center text-gray-400 hover:text-red-500 transition shadow-2xs"
+                  className={`absolute top-2 right-2 z-10 w-6 h-6 rounded-full bg-white/80 hover:bg-white flex items-center justify-center transition shadow-2xs cursor-pointer ${
+                    isInWishlist(product.id) ? "text-red-500" : "text-gray-400 hover:text-red-500"
+                  }`}
                 >
-                  <Heart className="w-3.5 h-3.5" />
+                  <Heart className={`w-3.5 h-3.5 ${isInWishlist(product.id) ? "fill-red-500" : ""}`} />
                 </button>
 
                 {/* Product Image Area - Compact Height */}
